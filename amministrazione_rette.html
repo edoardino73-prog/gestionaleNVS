@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NVS Masterpiece - Amministrazione, Rette & Spese Extra</title>
+
+    <style>
+        :root {
+            --bg-color: #f1f5f9;
+            --box-bg: #ffffff;
+            --primary-color: #4f46e5;
+            --secondary-color: #4338ca;
+            --text-main: #0f172a;
+            --text-light: #475569;
+            --border-color: #cbd5e1;
+            --error-color: #e11d48;
+            --warning-color: #d97706;
+            --success-color: #059669;
+            --radius: 8px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            color: var(--text-main);
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* BLOCCO DI ACCESSO SE NON AMMINISTRAZIONE */
+        #accessDeniedScreen {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #0f172a;
+            color: white;
+            z-index: 99999;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--secondary-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .navbar-brand { font-weight: bold; font-size: 1.15em; display: flex; align-items: center; gap: 10px; }
+        .nav-btn {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 6px 14px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.88em;
+            display: inline-flex;
+            align-items: center;
+        }
+        .nav-btn:hover { background: rgba(255,255,255,0.25); }
+        .current-op-badge { background: #fff; color: var(--primary-color); padding: 5px 12px; border-radius: 4px; font-weight: bold; font-size: 0.85em; }
+
+        .container { max-width: 1440px; width: 96%; margin: 15px auto; flex-grow: 1; }
+
+        .card {
+            background: var(--box-bg);
+            padding: 20px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .card-header h3 { margin: 0; color: var(--primary-color); font-size: 1.15em; text-transform: uppercase; }
+
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-bottom: 18px; }
+        .metric-card {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-left: 5px solid var(--primary-color);
+            border-radius: var(--radius);
+            padding: 14px;
+            text-align: center;
+        }
+        .metric-card h2 { margin: 0; font-size: 1.8em; color: var(--primary-color); }
+        .metric-card small { color: var(--text-light); text-transform: uppercase; font-weight: 700; font-size: 0.8em; }
+
+        .btn-primary, .btn-success, .btn-danger, .btn-warning, .btn-doc {
+            color: white; border: none; padding: 8px 14px; border-radius: var(--radius); font-weight: 700; cursor: pointer; font-size: 0.88em; transition: 0.15s; display: inline-flex; align-items: center; gap: 5px;
+        }
+        .btn-primary { background: var(--secondary-color); }
+        .btn-success { background: var(--success-color); }
+        .btn-danger { background: var(--error-color); }
+        .btn-warning { background: var(--warning-color); }
+        .btn-doc { background: #475569; }
+
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; margin-bottom: 4px; font-weight: 700; font-size: 0.85em; }
+        input[type="text"], input[type="number"], input[type="date"], select, textarea {
+            width: 100%; padding: 8px 10px; border: 1px solid #94a3b8; border-radius: 6px; font-family: inherit; font-size: 0.92em;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary-color); outline: none; background: #eef2ff; }
+
+        /* TABELLA RETTE ANNUALE */
+        .table-rette { width: 100%; border-collapse: collapse; font-size: 0.85em; background: #ffffff; text-align: center; }
+        .table-rette th, .table-rette td { border: 1px solid var(--border-color); padding: 6px 4px; }
+        .table-rette th { background: var(--primary-color); color: white; padding: 8px 4px; font-weight: 700; font-size: 0.82em; }
+        .table-rette td.guest-col { text-align: left; padding: 8px 10px; font-weight: 700; background: #f8fafc; min-width: 190px; position: sticky; left: 0; z-index: 2; border-right: 2px solid var(--primary-color); }
+
+        .month-chip {
+            display: block;
+            width: 100%;
+            min-height: 34px;
+            padding: 3px 2px;
+            border-radius: 4px;
+            border: 1px solid #cbd5e1;
+            font-size: 0.82em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            text-align: center;
+            line-height: 1.2;
+        }
+        .month-chip:hover { transform: scale(1.05); }
+        .month-chip.status-pagato { background: #dcfce7; color: #166534; border-color: #86efac; }
+        .month-chip.status-attesa { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+        .month-chip.status-insoluto { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+        .month-chip.status-vuoto { background: #f8fafc; color: #64748b; border-color: #e2e8f0; }
+
+        /* MODALE POPUP */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 30000;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 40000; }
+        .toast { background: var(--text-main); color: #fff; padding: 12px 20px; border-radius: 4px; font-weight: bold; margin-top: 10px; opacity: 0; transition: opacity 0.3s; }
+        .toast.show { opacity: 1; }
+
+        #printArea { display: none; }
+        @media print {
+            body * { visibility: hidden; }
+            #printArea, #printArea * { visibility: visible; }
+            #printArea { display: block !important; position: absolute; left: 0; top: 0; width: 100%; background: white !important; color: black !important; padding: 30px; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+            .print-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 9.5pt; }
+            .print-table th, .print-table td { border: 1px solid #94a3b8; padding: 6px 10px; text-align: left; }
+            .print-table th { background: #f1f5f9 !important; font-weight: bold; }
+        }
+    </style>
+</head>
+<body>
+    <div id="toast-container"></div>
+    <div id="printArea"></div>
+
+    <!-- SCHERMATA BLOCCO ACCESSO NON AUTORIZZATO -->
+    <div id="accessDeniedScreen">
+        <h1 style="font-size:2.4em; margin-bottom:10px;">🔒 Area Riservata</h1>
+        <p style="font-size:1.1em; color:#cbd5e1; max-width:500px; margin-bottom:20px;">
+            L'accesso al modulo Rette, Contabilità e Spese Extra è consentito <strong>esclusivamente al personale dell'Ufficio Amministrazione</strong>.
+        </p>
+        <button class="btn-primary" style="padding:10px 20px; font-size:1em;" onclick="window.navigaA('index.html')">⬅ Torna alla Home Reparto</button>
+    </div>
+
+    <!-- MODALE DETTAGLIO SALDO MESE & SPESE EXTRA -->
+    <div id="modalMeseDettaglio" class="modal-overlay">
+        <div style="background:#fff; border-radius:8px; max-width:720px; width:100%; padding:22px; max-height:92vh; overflow-y:auto; box-shadow:0 12px 30px rgba(0,0,0,0.3);">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid var(--primary-color); padding-bottom:8px; margin-bottom:14px;">
+                <div>
+                    <h3 id="modalMeseTitle" style="margin:0; color:var(--primary-color);">Dettaglio Retta & Spese Extra</h3>
+                    <small id="modalMeseSubtitle" style="color:var(--text-light); font-weight:bold;"></small>
+                </div>
+                <button onclick="document.getElementById('modalMeseDettaglio').style.display='none'" style="background:none; border:none; font-size:1.4em; cursor:pointer; color:#64748b;">✕</button>
+            </div>
+
+            <!-- SEZIONE 1: STATO SALDO RETTA MENSILE -->
+            <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:14px; margin-bottom:16px;">
+                <h4 style="margin:0 0 10px 0; color:var(--primary-color); font-size:1em;">💶 Quota Retta Ordinaria</h4>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px; margin-bottom:10px;">
+                    <div class="form-group" style="margin:0;">
+                        <label>Importo Retta Mese (€) *</label>
+                        <input type="number" step="0.01" id="modalRettaImporto" placeholder="Es. 1850.00" oninput="window.aggiornaTotaleModal()">
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label>Stato del Pagamento *</label>
+                        <select id="modalRettaStato">
+                            <option value="NON SALDATO">🔴 Non Saldato / Insoluto</option>
+                            <option value="IN ATTESA">🟡 In Attesa / Ricevuta Emessa</option>
+                            <option value="PAGATO">🟢 Saldato Interamente</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label>Data Pagamento</label>
+                        <input type="date" id="modalRettaDataPag">
+                    </div>
+                </div>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px;">
+                    <div class="form-group" style="margin:0;">
+                        <label>Metodo di Pagamento</label>
+                        <select id="modalRettaMetodo">
+                            <option value="Bonifico Bancario">Bonifico Bancario</option>
+                            <option value="RID / SDD Bancario">Addebito Diretto RID / SDD</option>
+                            <option value="Assegno Circolare / Bancario">Assegno</option>
+                            <option value="Contanti (entro limiti di legge)">Contanti</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label>N° Fattura / Ricevuta</label>
+                        <input type="text" id="modalRettaFattura" placeholder="Es. FATT-2026/045">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEZIONE 2: SPESE EXTRA DEL MESE -->
+            <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:6px; padding:14px; margin-bottom:16px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <h4 style="margin:0; color:#b45309; font-size:1em;">🧾 Spese Extra del Mese (Medicine, Servizi, Presidi)</h4>
+                    <span id="modalExtraSubtotalBadge" style="font-weight:bold; font-size:0.9em; color:#b45309;">Extra: € 0.00</span>
+                </div>
+
+                <!-- FORM AGGIUNTA RAPIDA SPESA EXTRA -->
+                <div style="display:grid; grid-template-columns: 2fr 1fr 1.2fr auto; gap:8px; margin-bottom:10px; align-items:flex-end;">
+                    <div class="form-group" style="margin:0;">
+                        <label style="font-size:0.8em;">Voce / Categoria Extra</label>
+                        <select id="modalNewExtraCat">
+                            <option value="Farmaci & Ticket">💊 Farmaci & Ticket Sanitari</option>
+                            <option value="Parrucchiere / Barbiere">💇 Parrucchiere / Barbiere</option>
+                            <option value="Pedicure / Podologo">🦶 Pedicure & Podologo</option>
+                            <option value="Pannoloni Extra">🧻 Pannoloni Extra Scorta</option>
+                            <option value="Traverse Extra">🛏️ Traverse Extra Letto</option>
+                            <option value="Trasporto & Visite">🚐 Trasporto Protetto / Visite</option>
+                            <option value="Altro / Varie">📦 Varie / Altro</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label style="font-size:0.8em;">Importo (€)</label>
+                        <input type="number" step="0.01" id="modalNewExtraImporto" placeholder="0.00">
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label style="font-size:0.8em;">Descrizione / Note</label>
+                        <input type="text" id="modalNewExtraNote" placeholder="Es. 2 scatole farmaco X">
+                    </div>
+                    <button class="btn-warning" style="padding:9px 12px;" onclick="window.aggiungiSpesaExtraModal()">➕ Aggiungi</button>
+                </div>
+
+                <div id="modalExtraListContainer" style="max-height:160px; overflow-y:auto; display:flex; flex-direction:column; gap:5px;"></div>
+            </div>
+
+            <!-- RIEPILOGO TOTALE & PULSANTI -->
+            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #cbd5e1; padding-top:14px; flex-wrap:wrap; gap:10px;">
+                <div>
+                    <span style="font-size:0.9em; color:var(--text-light);">Totale Complessivo Mese:</span><br>
+                    <strong id="modalGrandTotalLabel" style="font-size:1.4em; color:var(--primary-color);">€ 0.00</strong>
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button class="btn-doc" onclick="window.stampaEstrattoContoMese()">🖨️ Stampa Estratto Conto</button>
+                    <button class="btn-success" style="padding:9px 18px;" onclick="window.saldaSubitoModal()">✅ Salda Ora (Segna Pagato)</button>
+                    <button class="btn-primary" style="padding:9px 18px;" onclick="window.salvaSaldoMeseModal()">💾 Salva Modifiche</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVBAR PRINCIPALE -->
+    <div class="navbar">
+        <div class="navbar-brand">
+            <span>💼 NVS Masterpiece - Amministrazione, Rette & Contabilità</span>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+            <span class="current-op-badge" id="currentOpBadge">👤 Op</span>
+            <button class="nav-btn" onclick="window.navigaA('anagrafica.html')">🛏️ Anagrafica Ospiti ↗</button>
+            <button class="nav-btn" onclick="window.navigaA('index.html')">🏠 Home Reparto</button>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <!-- KPI CONTABILITÀ -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h2 id="kpi-incassato-mese">€ 0</h2>
+                <small id="kpi-incassato-lbl">Incassato Mese Corrente</small>
+            </div>
+            <div class="metric-card" style="border-left-color: var(--warning-color);">
+                <h2 id="kpi-attesa-mese" style="color:var(--warning-color);">€ 0</h2>
+                <small>In Attesa di Saldo</small>
+            </div>
+            <div class="metric-card" style="border-left-color: var(--error-color);">
+                <h2 id="kpi-insoluti-totali" style="color:var(--error-color);">0</h2>
+                <small>Quote Non Saldate</small>
+            </div>
+            <div class="metric-card" style="border-left-color: var(--success-color);">
+                <h2 id="kpi-extra-mese" style="color:var(--success-color);">€ 0</h2>
+                <small>Spese Extra Mese</small>
+            </div>
+        </div>
+
+        <!-- FORM REGISTRAZIONE RAPIDA PAGAMENTO DIRETTO (ACCESSIBILE E RESILIENTE) -->
+        <div class="card" style="border-top: 4px solid var(--success-color); background:#f0fdf4;">
+            <div class="card-header" style="border-bottom-color: var(--success-color);">
+                <h3 style="color:var(--success-color);">💳 Registrazione Rapida Pagamento / Saldo Retta</h3>
+                <small style="color:var(--text-light); font-weight:bold;">Compila e salva direttamente senza aprire la matrice</small>
+            </div>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px; margin-bottom:10px;">
+                <div class="form-group" style="margin:0;">
+                    <label>Seleziona Ospite *</label>
+                    <select id="quickPayGuest" onchange="window.caricaRettaBasePerQuickPay(this.value)" style="font-weight:bold;">
+                        <option value="" disabled selected>Seleziona ospite...</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin:0;">
+                    <label>Mese da Saldare *</label>
+                    <select id="quickPayMese">
+                        <option value="01">Gennaio</option>
+                        <option value="02">Febbraio</option>
+                        <option value="03">Marzo</option>
+                        <option value="04">Aprile</option>
+                        <option value="05">Maggio</option>
+                        <option value="06">Giugno</option>
+                        <option value="07">Luglio</option>
+                        <option value="08">Agosto</option>
+                        <option value="09">Settembre</option>
+                        <option value="10">Ottobre</option>
+                        <option value="11">Novembre</option>
+                        <option value="12">Dicembre</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin:0;">
+                    <label>Importo Retta (€) *</label>
+                    <input type="number" step="0.01" id="quickPayImporto" placeholder="1800.00">
+                </div>
+                <div class="form-group" style="margin:0;">
+                    <label>Data Pagamento *</label>
+                    <input type="date" id="quickPayData">
+                </div>
+                <div class="form-group" style="margin:0;">
+                    <label>Metodo Pagamento</label>
+                    <select id="quickPayMetodo">
+                        <option value="Bonifico Bancario">Bonifico Bancario</option>
+                        <option value="RID / SDD Bancario">Addebito Diretto RID</option>
+                        <option value="Assegno Circolare / Bancario">Assegno</option>
+                        <option value="Contanti">Contanti</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin:0;">
+                    <label>N° Fattura / Quietanza</label>
+                    <input type="text" id="quickPayFattura" placeholder="Es. FATT-2026/012">
+                </div>
+            </div>
+            <div style="display:flex; justify-content:flex-end;">
+                <button class="btn-success" style="padding:10px 24px; font-size:1em;" onclick="window.eseguiQuickPay()">
+                    💳 Registra Pagamento Mese
+                </button>
+            </div>
+        </div>
+
+        <!-- CARD PRINCIPALE GESTIONE RETTE -->
+        <div class="card">
+            <div class="card-header">
+                <h3>📋 Tabellone Rette di Degenza & Stato Pagamenti</h3>
+                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                    <label style="font-weight:700;">Anno Competenza:</label>
+                    <select id="selectAnnoCompetenza" style="width:110px; padding:6px; font-weight:bold;" onchange="window.cambiaAnnoCompetenza()">
+                        <option value="2026">2026</option>
+                        <option value="2025">2025</option>
+                        <option value="2027">2027</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- FILTRI DI RICERCA -->
+            <div style="display:flex; gap:12px; margin-bottom:15px; flex-wrap:wrap; background:#f8fafc; padding:12px; border-radius:6px; border:1px solid #e2e8f0; align-items:center;">
+                <input type="text" id="searchOspiteRette" placeholder="🔍 Cerca per Cognome, Nome, Camera..." oninput="window.renderTableRette()" style="flex:2; min-width:240px; padding:8px 12px;">
+                <select id="filterStatoRette" onchange="window.renderTableRette()" style="flex:1; min-width:180px; padding:8px 12px;">
+                    <option value="TUTTI">Tutti gli ospiti residenti</option>
+                    <option value="NON_SALDATI">Solo con quote da saldare nel mese</option>
+                    <option value="SALDATI">Solo saldati nel mese</option>
+                </select>
+                <span id="totaleOspitiRetteBadge" style="font-size:0.85em; font-weight:bold; color:var(--primary-color); background:#fff; padding:6px 12px; border:1px solid #cbd5e1; border-radius:4px;">Ospiti: 0</span>
+            </div>
+
+            <!-- TABELLA GRIGLIA ANNUALE DEI 12 MESI -->
+            <div style="overflow-x:auto;">
+                <table class="table-rette" id="tableRetteGrid">
+                    <thead>
+                        <tr>
+                            <th class="guest-col">Ospite / Stanza</th>
+                            <th style="min-width:105px;">Retta Base (€)</th>
+                            <th style="min-width:72px;">Gen</th>
+                            <th style="min-width:72px;">Feb</th>
+                            <th style="min-width:72px;">Mar</th>
+                            <th style="min-width:72px;">Apr</th>
+                            <th style="min-width:72px;">Mag</th>
+                            <th style="min-width:72px;">Giu</th>
+                            <th style="min-width:72px;">Lug</th>
+                            <th style="min-width:72px;">Ago</th>
+                            <th style="min-width:72px;">Set</th>
+                            <th style="min-width:72px;">Ott</th>
+                            <th style="min-width:72px;">Nov</th>
+                            <th style="min-width:72px;">Dic</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SCRIPT FIREBASE & LOGICA CONTABILITÀ -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, doc, setDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = { 
+            apiKey: "AIzaSyAc0fIlfds4Gne5m3qpH25uacK4NeR6TzM", 
+            authDomain: "gestione-visite-b445b.firebaseapp.com", 
+            projectId: "gestione-visite-b445b", 
+            storageBucket: "gestione-visite-b445b.firebasestorage.app", 
+            messagingSenderId: "720937824810", 
+            appId: "1:720937824810:web:b04b60d1d66bb8f4040953" 
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.dbOspiti = [];
+        window.dbRette = {};
+        window.activeAnno = "2026";
+        window.activeMeseModal = "01";
+        window.activeOspiteModal = null;
+        window.currentExtraBuffer = [];
+
+        window.activeOperator = sessionStorage.getItem("activeOperator") || localStorage.getItem("activeOperator") || "Amministrazione";
+        window.activeOperatorRole = sessionStorage.getItem("activeRole") || localStorage.getItem("activeRole") || "user";
+        window.activeOperatorQualifica = sessionStorage.getItem("activeQualifica") || localStorage.getItem("activeQualifica") || "Amministrazione";
+
+        const MESI_SIGLE = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+        const MESI_NOMI = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"];
+
+        window.showToast = (m) => { 
+            const c=document.getElementById('toast-container'); const t=document.createElement('div'); t.className='toast'; t.innerText=m; c.appendChild(t); 
+            setTimeout(()=>t.classList.add('show'),10); setTimeout(()=>{t.classList.remove('show'); setTimeout(()=>t.remove(),300);},3000); 
+        };
+        window.formatDateSafe = (d) => { if (!d) return '-'; if (typeof d === 'string' && d.includes('-')) return d.split('-').reverse().join('/'); return d; };
+        window.getTimestamp = () => { const n=new Date(); return `${n.toLocaleDateString('it-IT')} alle ${n.toLocaleTimeString('it-IT', {hour:'2-digit',minute:'2-digit'})}`; };
+        window.navigaA = (url) => { window.location.href = url; };
+
+        // 1. VERIFICA RIGIDA AUTORIZZAZIONI (AMMINISTRAZIONE O ADMIN)
+        window.verificaAccesso = () => {
+            const q = (window.activeOperatorQualifica || "").trim();
+            const r = (window.activeOperatorRole || "").trim();
+            if (q !== "Amministrazione" && r !== "admin") {
+                document.getElementById('accessDeniedScreen').style.display = 'flex';
+                return false;
+            }
+            return true;
+        };
+
+        window.cambiaAnnoCompetenza = () => {
+            window.activeAnno = document.getElementById('selectAnnoCompetenza').value;
+            window.renderTableRette();
+            window.calcolaKpiRette();
+        };
+
+        // POPOLA SELECT PER REGISTRAZIONE RAPIDA
+        window.popolaSelectQuickPay = () => {
+            const sel = document.getElementById('quickPayGuest');
+            if(!sel) return;
+            const curVal = sel.value;
+            sel.innerHTML = '<option value="" disabled selected>Seleziona ospite...</option>';
+            window.dbOspiti.filter(g => !g.decesso && !g.dimissione).sort((a,b) => a.name.localeCompare(b.name)).forEach(g => {
+                sel.innerHTML += `<option value="${g.id}">Stanza ${g.room||'-'} - ${g.name}</option>`;
+            });
+            if(curVal) sel.value = curVal;
+        };
+
+        window.caricaRettaBasePerQuickPay = (guestId) => {
+            const g = window.dbOspiti.find(x => x.id === guestId);
+            if(!g) return;
+            const docKey = `${g.id}_${window.activeAnno}`;
+            const r = window.dbRette[docKey] || {};
+            document.getElementById('quickPayImporto').value = r.rettaBase || 1800.00;
+        };
+
+        // REGISTRAZIONE RAPIDA PAGAMENTO DIRETTO
+        window.eseguiQuickPay = async () => {
+            const guestId = document.getElementById('quickPayGuest').value;
+            if(!guestId) return window.showToast("⚠️️ Seleziona un ospite!");
+
+            const g = window.dbOspiti.find(x => x.id === guestId);
+            if(!g) return window.showToast("⚠️ Ospite non trovato!");
+
+            const mese = document.getElementById('quickPayMese').value;
+            const importo = parseFloat(document.getElementById('quickPayImporto').value) || 0;
+            const dataPag = document.getElementById('quickPayData').value || new Date().toISOString().split('T')[0];
+            const metodo = document.getElementById('quickPayMetodo').value;
+            const fattura = document.getElementById('quickPayFattura').value.trim();
+
+            if(importo <= 0) return window.showToast("⚠️ Inserisci un importo valido!");
+
+            const docKey = `${g.id}_${window.activeAnno}`;
+            let d = window.dbRette[docKey] || { rettaBase: importo, mesi: {}, speseExtra: [] };
+
+            if(!d.mesi) d.mesi = {};
+            d.mesi[mese] = {
+                importo: importo,
+                stato: "PAGATO",
+                dataPagamento: dataPag,
+                metodo: metodo,
+                fattura: fattura,
+                aggiornatoIl: window.getTimestamp(),
+                operatore: window.activeOperator
+            };
+
+            try {
+                await setDoc(doc(db, "contabilita_rette", docKey), d, { merge: true });
+
+                // Traccia evento nell'audit trail
+                await addDoc(collection(db, "audit_trail"), {
+                    data: window.getTimestamp(),
+                    timestamp: Date.now(),
+                    ospite: g.name,
+                    operatore: window.activeOperator,
+                    qualifica: window.activeOperatorQualifica,
+                    azione: "REGISTRAZIONE_PAGAMENTO_RETTA",
+                    dettaglio: `Registrato saldo retta di € ${importo.toFixed(2)} per il mese di ${MESI_NOMI[parseInt(mese,10)-1]} ${window.activeAnno} via ${metodo}. Fattura: ${fattura||'N/D'}`
+                });
+
+                window.dbRette[docKey] = d;
+                window.showToast(`✅ Pagamento registrato per ${g.name} (Mese: ${MESI_NOMI[parseInt(mese,10)-1]})!`);
+                window.renderTableRette();
+                window.calcolaKpiRette();
+                document.getElementById('quickPayFattura').value = '';
+            } catch (err) {
+                console.error("Errore salvataggio quick pay:", err);
+                alert("Errore durante la registrazione del pagamento: " + err.message);
+            }
+        };
+
+        // 2. RENDERING TABELLA RETTE ANNUALE (SICURO DA APOSTROFI E CARATTERI SPECIALI)
+        window.renderTableRette = () => {
+            const tb = document.querySelector('#tableRetteGrid tbody');
+            if (!tb) return;
+            tb.innerHTML = '';
+
+            const query = (document.getElementById('searchOspiteRette')?.value || '').toLowerCase().trim();
+            const filtroStato = document.getElementById('filterStatoRette')?.value || 'TUTTI';
+            const meseOggiIdx = new Date().getMonth();
+            const meseOggiKey = MESI_SIGLE[meseOggiIdx];
+
+            const attivi = window.dbOspiti.filter(g => !g.decesso && !g.dimissione).sort((a,b) => a.name.localeCompare(b.name));
+            document.getElementById('totaleOspitiRetteBadge').innerText = `Ospiti Residenti: ${attivi.length}`;
+
+            let filtrati = attivi.filter(g => {
+                if (query && !g.name.toLowerCase().includes(query) && !(g.room||'').toLowerCase().includes(query)) return false;
+                
+                if (filtroStato !== 'TUTTI') {
+                    const docKey = `${g.id}_${window.activeAnno}`;
+                    const retteOspite = window.dbRette[docKey] || {};
+                    const meseDati = (retteOspite.mesi && retteOspite.mesi[meseOggiKey]) || {};
+                    const isPagato = meseDati.stato === 'PAGATO';
+                    if (filtroStato === 'SALDATI' && !isPagato) return false;
+                    if (filtroStato === 'NON_SALDATI' && isPagato) return false;
+                }
+                return true;
+            });
+
+            if (filtrati.length === 0) {
+                tb.innerHTML = `<tr><td colspan="14" style="padding:20px; color:#64748b;">Nessun ospite trovato per i filtri selezionati.</td></tr>`;
+                return;
+            }
+
+            filtrati.forEach(g => {
+                const docKey = `${g.id}_${window.activeAnno}`;
+                const retteOspite = window.dbRette[docKey] || { rettaBase: 1800, mesi: {}, speseExtra: [] };
+                const rettaBase = retteOspite.rettaBase || 1800;
+
+                let rowHtml = `<tr>
+                    <td class="guest-col">
+                        ${g.name}<br>
+                        <small style="color:var(--text-light); font-weight:normal;">Stanza: <strong>${g.room||'-'}</strong></small>
+                    </td>
+                    <td>
+                        <input type="number" step="10" value="${rettaBase}" style="width:90px; padding:4px; text-align:center; font-weight:bold;" onchange="window.aggiornaRettaBase('${g.id}', this.value)">
+                    </td>`;
+
+                MESI_SIGLE.forEach((mKey) => {
+                    const mDati = (retteOspite.mesi && retteOspite.mesi[mKey]) || null;
+                    let chipClass = "status-vuoto";
+                    let label = "Da saldare";
+
+                    if (mDati) {
+                        if (mDati.stato === 'PAGATO') { chipClass = "status-pagato"; label = `✓ €${mDati.importo||rettaBase}`; }
+                        else if (mDati.stato === 'IN ATTESA') { chipClass = "status-attesa"; label = `⏳ In attesa`; }
+                        else if (mDati.stato === 'NON SALDATO') { chipClass = "status-insoluto"; label = `✗ Da saldare`; }
+                    }
+
+                    const extraMese = (retteOspite.speseExtra || []).filter(e => e.mese === mKey);
+                    const totExtra = extraMese.reduce((acc, x) => acc + (parseFloat(x.importo)||0), 0);
+                    const badgeExtra = totExtra > 0 ? `<br><small style="font-size:0.7em; color:#b45309;">+€${totExtra.toFixed(0)} ext</small>` : '';
+
+                    rowHtml += `<td>
+                        <button class="month-chip ${chipClass}" onclick="window.apriDettaglioMeseById('${g.id}', '${mKey}')">
+                            ${label}${badgeExtra}
+                        </button>
+                    </td>`;
+                });
+
+                rowHtml += `</tr>`;
+                tb.innerHTML += rowHtml;
+            });
+        };
+
+        // AGGIORNAMENTO RETTA BASE
+        window.aggiornaRettaBase = async (guestId, val) => {
+            const v = parseFloat(val) || 0;
+            const docKey = `${guestId}_${window.activeAnno}`;
+            let d = window.dbRette[docKey] || { mesi: {}, speseExtra: [] };
+            d.rettaBase = v;
+            try {
+                await setDoc(doc(db, "contabilita_rette", docKey), d, { merge: true });
+                window.dbRette[docKey] = d;
+                window.showToast(`Retta base aggiornata: € ${v}`);
+            } catch (err) {
+                alert("Errore aggiornamento retta base: " + err.message);
+            }
+        };
+
+        // 4. APERTURA MODALE DETTAGLIO MESE TRAMITE ID OSPITE (NO BUG APOSTROFI)
+        window.apriDettaglioMeseById = (guestId, meseKey) => {
+            const g = window.dbOspiti.find(x => x.id === guestId);
+            if (!g) return;
+
+            window.activeOspiteModal = g;
+            window.activeMeseModal = meseKey;
+
+            const docKey = `${g.id}_${window.activeAnno}`;
+            const retteOspite = window.dbRette[docKey] || { rettaBase: 1800, mesi: {}, speseExtra: [] };
+            const mIdx = parseInt(meseKey, 10) - 1;
+            const nomeMese = MESI_NOMI[mIdx];
+
+            document.getElementById('modalMeseTitle').innerText = `Gestione Retta: ${g.name}`;
+            document.getElementById('modalMeseSubtitle').innerText = `Mese di ${nomeMese} ${window.activeAnno} | Stanza: ${g.room||'-'}`;
+
+            const mDati = (retteOspite.mesi && retteOspite.mesi[meseKey]) || {};
+            document.getElementById('modalRettaImporto').value = mDati.importo !== undefined ? mDati.importo : (retteOspite.rettaBase || 1800);
+            document.getElementById('modalRettaStato').value = mDati.stato || 'NON SALDATO';
+            document.getElementById('modalRettaDataPag').value = mDati.dataPagamento || new Date().toISOString().split('T')[0];
+            document.getElementById('modalRettaMetodo').value = mDati.metodo || 'Bonifico Bancario';
+            document.getElementById('modalRettaFattura').value = mDati.fattura || '';
+
+            window.currentExtraBuffer = (retteOspite.speseExtra || []).filter(e => e.mese === meseKey);
+            window.renderExtraListModal();
+            window.aggiornaTotaleModal();
+
+            document.getElementById('modalMeseDettaglio').style.display = 'flex';
+        };
+
+        window.renderExtraListModal = () => {
+            const box = document.getElementById('modalExtraListContainer');
+            box.innerHTML = '';
+            let sub = 0;
+
+            window.currentExtraBuffer.forEach((ex, idx) => {
+                const imp = parseFloat(ex.importo) || 0;
+                sub += imp;
+                box.innerHTML += `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:#ffffff; border:1px solid #cbd5e1; padding:6px 10px; border-radius:4px; font-size:0.88em;">
+                        <div>
+                            <strong>${ex.categoria}</strong>: € ${imp.toFixed(2)}
+                            ${ex.note ? `<small style="color:#64748b;"> (${ex.note})</small>` : ''}
+                        </div>
+                        <button class="btn-danger" style="padding:2px 6px; font-size:0.75em;" onclick="window.currentExtraBuffer.splice(${idx}, 1); window.renderExtraListModal(); window.aggiornaTotaleModal();">✕</button>
+                    </div>`;
+            });
+
+            if (window.currentExtraBuffer.length === 0) {
+                box.innerHTML = `<span style="color:#64748b; font-size:0.82em;">Nessuna spesa extra registrata per questo mese.</span>`;
+            }
+
+            document.getElementById('modalExtraSubtotalBadge').innerText = `Extra: € ${sub.toFixed(2)}`;
+        };
+
+        window.aggiungiSpesaExtraModal = () => {
+            const cat = document.getElementById('modalNewExtraCat').value;
+            const imp = parseFloat(document.getElementById('modalNewExtraImporto').value);
+            const note = document.getElementById('modalNewExtraNote').value.trim();
+
+            if (isNaN(imp) || imp <= 0) return window.showToast("⚠️ Inserisci un importo valido per la spesa extra!");
+
+            window.currentExtraBuffer.push({
+                id: 'ext_' + Date.now(),
+                mese: window.activeMeseModal,
+                data: new Date().toISOString().split('T')[0],
+                categoria: cat,
+                importo: imp,
+                note: note
+            });
+
+            document.getElementById('modalNewExtraImporto').value = '';
+            document.getElementById('modalNewExtraNote').value = '';
+            window.renderExtraListModal();
+            window.aggiornaTotaleModal();
+            window.showToast("Voce extra aggiunta");
+        };
+
+        window.aggiornaTotaleModal = () => {
+            const retta = parseFloat(document.getElementById('modalRettaImporto')?.value) || 0;
+            const subExtra = window.currentExtraBuffer.reduce((acc, x) => acc + (parseFloat(x.importo)||0), 0);
+            const grandTotal = retta + subExtra;
+            document.getElementById('modalGrandTotalLabel').innerText = `€ ${grandTotal.toFixed(2)}`;
+        };
+
+        // SALVATAGGIO ONE-CLICK COME PAGATO
+        window.saldaSubitoModal = async () => {
+            document.getElementById('modalRettaStato').value = 'PAGATO';
+            if(!document.getElementById('modalRettaDataPag').value) {
+                document.getElementById('modalRettaDataPag').value = new Date().toISOString().split('T')[0];
+            }
+            await window.salvaSaldoMeseModal();
+        };
+
+        // SALVATAGGIO MODALE
+        window.salvaSaldoMeseModal = async () => {
+            const g = window.activeOspiteModal;
+            const meseKey = window.activeMeseModal;
+            if (!g) return;
+
+            const docKey = `${g.id}_${window.activeAnno}`;
+            let d = window.dbRette[docKey] || { rettaBase: 1800, mesi: {}, speseExtra: [] };
+
+            const importoRetta = parseFloat(document.getElementById('modalRettaImporto').value) || 0;
+            const stato = document.getElementById('modalRettaStato').value;
+            const dataPag = document.getElementById('modalRettaDataPag').value || '';
+            const metodo = document.getElementById('modalRettaMetodo').value || 'Bonifico Bancario';
+            const fattura = document.getElementById('modalRettaFattura').value.trim();
+
+            if (!d.mesi) d.mesi = {};
+            d.mesi[meseKey] = {
+                importo: importoRetta,
+                stato: stato,
+                dataPagamento: dataPag,
+                metodo: metodo,
+                fattura: fattura,
+                aggiornatoIl: window.getTimestamp(),
+                operatore: window.activeOperator
+            };
+
+            let altreSpese = (d.speseExtra || []).filter(e => e.mese !== meseKey);
+            d.speseExtra = [...altreSpese, ...window.currentExtraBuffer];
+
+            try {
+                await setDoc(doc(db, "contabilita_rette", docKey), d, { merge: true });
+
+                // Traccia evento nell'audit trail
+                await addDoc(collection(db, "audit_trail"), {
+                    data: window.getTimestamp(),
+                    timestamp: Date.now(),
+                    ospite: g.name,
+                    operatore: window.activeOperator,
+                    qualifica: window.activeOperatorQualifica,
+                    azione: "AGGIORNAMENTO_RETTA_MESE",
+                    dettaglio: `Aggiornato stato retta (${stato}) per ${g.name} (${MESI_NOMI[parseInt(meseKey,10)-1]} ${window.activeAnno}): € ${importoRetta.toFixed(2)}.`
+                });
+
+                window.dbRette[docKey] = d;
+                document.getElementById('modalMeseDettaglio').style.display = 'none';
+                window.showToast("✅ Pagamento e contabilità salvati con successo!");
+                window.renderTableRette();
+                window.calcolaKpiRette();
+            } catch (err) {
+                console.error("Errore salvataggio retta modal:", err);
+                alert("Errore durante il salvataggio: " + err.message);
+            }
+        };
+
+        // CALCOLO KPI
+        window.calcolaKpiRette = () => {
+            const meseOggiIdx = new Date().getMonth();
+            const meseOggiKey = MESI_SIGLE[meseOggiIdx];
+            const nomeMeseOggi = MESI_NOMI[meseOggiIdx];
+            document.getElementById('kpi-incassato-lbl').innerText = `Incassato (${nomeMeseOggi})`;
+
+            let incassato = 0;
+            let inAttesa = 0;
+            let insolutiCount = 0;
+            let extraMeseTot = 0;
+
+            const attivi = window.dbOspiti.filter(g => !g.decesso && !g.dimissione);
+
+            attivi.forEach(g => {
+                const docKey = `${g.id}_${window.activeAnno}`;
+                const r = window.dbRette[docKey] || {};
+                const mDati = (r.mesi && r.mesi[meseOggiKey]) || {};
+                const rettaBase = r.rettaBase || 1800;
+                const imp = mDati.importo !== undefined ? mDati.importo : rettaBase;
+
+                if (mDati.stato === 'PAGATO') {
+                    incassato += imp;
+                } else if (mDati.stato === 'IN ATTESA') {
+                    inAttesa += imp;
+                } else {
+                    insolutiCount++;
+                }
+
+                (r.speseExtra || []).filter(e => e.mese === meseOggiKey).forEach(e => {
+                    extraMeseTot += (parseFloat(e.importo) || 0);
+                });
+            });
+
+            document.getElementById('kpi-incassato-mese').innerText = `€ ${incassato.toLocaleString('it-IT')}`;
+            document.getElementById('kpi-attesa-mese').innerText = `€ ${inAttesa.toLocaleString('it-IT')}`;
+            document.getElementById('kpi-insoluti-totali').innerText = insolutiCount;
+            document.getElementById('kpi-extra-mese').innerText = `€ ${extraMeseTot.toLocaleString('it-IT')}`;
+        };
+
+        // STAMPA ESTRATTO CONTO A4
+        window.stampaEstrattoContoMese = () => {
+            const g = window.activeOspiteModal;
+            const meseKey = window.activeMeseModal;
+            if (!g) return;
+
+            const mIdx = parseInt(meseKey, 10) - 1;
+            const nomeMese = MESI_NOMI[mIdx];
+
+            const retta = parseFloat(document.getElementById('modalRettaImporto')?.value) || 0;
+            const stato = document.getElementById('modalRettaStato')?.value || 'NON SALDATO';
+            const dataPag = document.getElementById('modalRettaDataPag')?.value;
+            const metodo = document.getElementById('modalRettaMetodo')?.value;
+            const fattura = document.getElementById('modalRettaFattura')?.value;
+
+            let extraRows = '';
+            let subExtra = 0;
+            window.currentExtraBuffer.forEach(ex => {
+                const imp = parseFloat(ex.importo) || 0;
+                subExtra += imp;
+                extraRows += `<tr><td>${ex.categoria}</td><td>${ex.note||'-'}</td><td style="text-align:right;">€ ${imp.toFixed(2)}</td></tr>`;
+            });
+
+            const totale = retta + subExtra;
+
+            const html = `
+                <div style="border-bottom:2px solid #4f46e5; padding-bottom:12px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <h1 style="margin:0; font-size:18pt; color:#4f46e5;">NUOVA VILLA SILVANA S.R.L.</h1>
+                        <p style="margin:3px 0; font-size:9.5pt; color:#64748b;">Residenza Protetta per Anziani | P.IVA: 01234567890 | Terni (TR)</p>
+                    </div>
+                    <div style="text-align:right;">
+                        <h3 style="margin:0; color:#0f172a;">ESTRATTO CONTO RETTA MENSILE</h3>
+                        <small>Mese di competenza: <strong>${nomeMese} ${window.activeAnno}</strong></small>
+                    </div>
+                </div>
+
+                <div style="border:1px solid #cbd5e1; background:#f8fafc; padding:12px; border-radius:6px; margin-bottom:18px;">
+                    <table style="width:100%; border-collapse:collapse; font-size:9.5pt;">
+                        <tr><td style="width:50%;">Intestatario / Ospite: <strong>${g.name}</strong></td><td>Stanza / Posto Letto: <strong>Stanza ${g.room||'-'}</strong></td></tr>
+                        <tr><td>Codice Fiscale: <strong>${g.cf||'-'}</strong></td><td>Data Ingresso: <strong>${window.formatDateSafe(g.ingresso)}</strong></td></tr>
+                        <tr><td>Amministratore / Referente: <strong>${g.tutore || g.ref || 'Familiari'}</strong></td><td>Stato Pagamento: <strong>${stato}</strong></td></tr>
+                    </table>
+                </div>
+
+                <h4 style="margin:10px 0 6px 0; color:#4f46e5;">1. Quota Retta Ordinaria di Degenza</h4>
+                <table class="print-table">
+                    <thead><tr><th>Descrizione Servizio</th><th>Dettagli / Modalità</th><th style="text-align:right;">Importo</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td>Retta mensile alberghiera e socio-assistenziale</td>
+                            <td>${metodo} ${fattura ? '(Rif. ' + fattura + ')' : ''} ${dataPag ? '- Saldato il: ' + window.formatDateSafe(dataPag) : ''}</td>
+                            <td style="text-align:right; font-weight:bold;">€ ${retta.toFixed(2)}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4 style="margin:18px 0 6px 0; color:#b45309;">2. Dettaglio Analitico Spese Extra & Prestazioni Individuali</h4>
+                <table class="print-table">
+                    <thead><tr><th>Tipologia Servizio Extra</th><th>Descrizione / Note</th><th style="text-align:right;">Importo</th></tr></thead>
+                    <tbody>
+                        ${extraRows || '<tr><td colspan="3" style="text-align:center; color:#64748b;">Nessuna spesa extra addebitata nel mese.</td></tr>'}
+                    </tbody>
+                </table>
+
+                <div style="margin-top:20px; display:flex; justify-content:flex-end;">
+                    <div style="border:2px solid #4f46e5; background:#f8fafc; padding:12px 20px; border-radius:6px; text-align:right; min-width:280px;">
+                        <span style="font-size:9.5pt; color:#64748b;">Subtotale Retta: € ${retta.toFixed(2)}<br>Subtotale Spese Extra: € ${subExtra.toFixed(2)}</span><br>
+                        <strong style="font-size:14pt; color:#4f46e5;">TOTALE DOVUTO: € ${totale.toFixed(2)}</strong>
+                    </div>
+                </div>
+
+                <div style="margin-top:40px; font-size:8.5pt; color:#64748b; border-top:1px solid #cbd5e1; padding-top:10px; display:flex; justify-content:space-between;">
+                    <div>Documento emesso ad uso interno amministrativo il ${window.getTimestamp()} da ${window.activeOperator}</div>
+                    <div>Timbro e Firma Amministrazione: ___________________________</div>
+                </div>
+            `;
+
+            document.getElementById('printArea').innerHTML = html;
+            setTimeout(() => window.print(), 300);
+        };
+
+        // LISTENERS REALTIME FIRESTORE
+        onSnapshot(collection(db, "ospiti"), snap => {
+            window.dbOspiti = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            window.popolaSelectQuickPay();
+            window.renderTableRette();
+            window.calcolaKpiRette();
+        });
+
+        onSnapshot(collection(db, "contabilita_rette"), snap => {
+            window.dbRette = {};
+            snap.forEach(d => { window.dbRette[d.id] = d.data(); });
+            window.renderTableRette();
+            window.calcolaKpiRette();
+        });
+
+        window.onload = () => {
+            if (!window.verificaAccesso()) return;
+            document.getElementById('currentOpBadge').innerText = `👤 ${window.activeOperator} (${window.activeOperatorQualifica})`;
+            
+            const d = new Date();
+            const curMese = String(d.getMonth() + 1).padStart(2, '0');
+            document.getElementById('quickPayMese').value = curMese;
+            document.getElementById('quickPayData').value = d.toISOString().split('T')[0];
+        };
+    </script>
+</body>
+</html>

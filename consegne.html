@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NVS Masterpiece - Bacheca Consegne & Assistenza O.S.S.</title>
+
+    <style>
+        :root {
+            --bg-color: #f1f5f9;
+            --box-bg: #ffffff;
+            --primary-color: #0d9488;
+            --secondary-color: #0f766e;
+            --oss-color: #b45309;
+            --oss-light: #fef3c7;
+            --text-main: #0f172a;
+            --text-light: #475569;
+            --border-color: #cbd5e1;
+            --error-color: #e11d48;
+            --warning-color: #d97706;
+            --success-color: #059669;
+            --base-font-size: 14px;
+            --radius: 8px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            color: var(--text-main);
+            font-size: var(--base-font-size);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--secondary-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .navbar-brand { font-weight: bold; font-size: 1.15em; display: flex; align-items: center; gap: 10px; }
+        .nav-btn {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 6px 14px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.88em;
+            display: inline-flex;
+            align-items: center;
+        }
+        .nav-btn:hover { background: rgba(255,255,255,0.25); }
+        .current-op-badge { background: #fff; color: var(--primary-color); padding: 5px 12px; border-radius: 4px; font-weight: bold; font-size: 0.85em; }
+
+        .container { max-width: 1420px; width: 96%; margin: 15px auto; flex-grow: 1; }
+
+        .card {
+            background: var(--box-bg);
+            padding: 20px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--oss-color);
+            padding-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .card-header h3 { margin: 0; color: var(--oss-color); font-size: 1.15em; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+
+        .btn-primary, .btn-success, .btn-danger, .btn-warning, .btn-doc {
+            color: white; border: none; padding: 9px 16px; border-radius: var(--radius); font-weight: 700; cursor: pointer; font-size: 0.9em; transition: 0.15s;
+        }
+        .btn-primary { background: var(--secondary-color); }
+        .btn-success { background: var(--success-color); }
+        .btn-danger { background: var(--error-color); }
+        .btn-warning { background: var(--warning-color); }
+        .btn-doc { background: #475569; }
+
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; margin-bottom: 4px; font-weight: 700; font-size: 0.88em; }
+        input[type="text"], input[type="date"], select, textarea {
+            width: 100%; padding: 8px 10px; border: 1px solid #94a3b8; border-radius: 6px; font-family: inherit; font-size: 0.95em;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--oss-color); outline: none; background: #fffbeb; }
+
+        /* SELETTORE MULTIPLO OSPITI A TESSERE TOUCH */
+        .activity-block {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-left: 5px solid var(--oss-color);
+            border-radius: 6px;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .activity-title { font-weight: 800; font-size: 1em; color: #92400e; display: flex; align-items: center; gap: 6px; }
+
+        .chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            max-height: 180px;
+            overflow-y: auto;
+            padding: 4px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+        }
+        .guest-chip {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .guest-chip:hover { border-color: var(--oss-color); background: #fef3c7; }
+        .guest-chip.selected {
+            background: #d97706;
+            color: #ffffff;
+            border-color: #b45309;
+            box-shadow: 0 1px 3px rgba(180, 83, 9, 0.3);
+        }
+
+        /* TIMELINE BACHECA CONSEGNE */
+        .handover-entry {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-left: 6px solid var(--oss-color);
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .handover-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .badge-shift {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: 800;
+            font-size: 0.82em;
+            text-transform: uppercase;
+        }
+        .shift-mattina { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .shift-pomeriggio { background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
+        .shift-notte { background: #ede9fe; color: #5b21b6; border: 1px solid #ddd6fe; }
+
+        .tag-pill {
+            display: inline-block;
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-size: 0.78em;
+            font-weight: 700;
+            color: #334155;
+            margin: 2px 3px 2px 0;
+        }
+
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 40000; }
+        .toast { background: var(--text-main); color: #fff; padding: 12px 20px; border-radius: 4px; font-weight: bold; margin-top: 10px; opacity: 0; transition: opacity 0.3s; }
+        .toast.show { opacity: 1; }
+
+        #printArea { display: none; }
+        @media print {
+            body * { visibility: hidden; }
+            #printArea, #printArea * { visibility: visible; }
+            #printArea { display: block !important; position: absolute; left: 0; top: 0; width: 100%; background: white !important; color: black !important; padding: 25px; box-sizing: border-box; }
+            .print-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 8.5pt; }
+            .print-table th, .print-table td { border: 1px solid #777; padding: 6px; text-align: left; }
+            .print-table th { background: #f1f5f9 !important; font-weight: bold; }
+        }
+    </style>
+</head>
+<body>
+    <div id="toast-container"></div>
+    <div id="printArea"></div>
+
+    <!-- NAVBAR SATELLITE -->
+    <div class="navbar">
+        <div class="navbar-brand">
+            <span>📖 NVS Masterpiece - Bacheca Consegne & Registro Assistenza O.S.S.</span>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+            <span class="current-op-badge" id="currentOpBadge">👤 Op</span>
+            <button class="nav-btn" onclick="window.navigaA('cartella_checkin_ingresso.html')">🩺 Check-in & Mappa</button>
+            <button class="nav-btn" onclick="window.navigaA('terapia.html')">💊 Terapie</button>
+            <button class="nav-btn" onclick="window.navigaA('index.html')">🏠 Home Reparto</button>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <!-- CARD REDAZIONE CONSEGNA DEL TURNO -->
+        <div class="card" style="border-top: 5px solid var(--oss-color);">
+            <div class="card-header">
+                <h3>✍️ Registra Consegna del Turno & Attività Assistenziali Eseguite</h3>
+                <div style="display:flex; gap:8px;">
+                    <button class="btn-doc" onclick="window.stampaFoglioConsegneOggi()">🖨️ Stampa Consegne di Oggi</button>
+                    <button class="btn-success" onclick="window.salvaConsegnaTurno()">💾 Salva & Registra in Cartella</button>
+                </div>
+            </div>
+
+            <!-- INTESTAZIONE TURNO -->
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:12px; background:#fffbeb; padding:12px; border-radius:6px; margin-bottom:15px; border:1px solid #fde68a;">
+                <div class="form-group" style="margin:0;">
+                    <label>Data Turno *</label>
+                    <input type="date" id="consegnaData">
+                </div>
+                <div class="form-group" style="margin:0;">
+                    <label>Fascia di Turno *</label>
+                    <select id="consegnaTurno">
+                        <option value="MATTINA">🌅 Mattina (07:00 - 14:00)</option>
+                        <option value="POMERIGGIO">🌇 Pomeriggio (14:00 - 21:00)</option>
+                        <option value="NOTTE">🌙 Notte (21:00 - 07:00)</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin:0;">
+                    <label>Operatori O.S.S. in Turno *</label>
+                    <input type="text" id="consegnaOperatori" placeholder="Es. Pastori E., Rossi M.">
+                </div>
+                <div class="form-group" style="margin:0;">
+                    <label>Stato Generale del Reparto</label>
+                    <select id="consegnaStatoGenerale">
+                        <option value="CALMO">🟢 Reparto Calmo e Regolare</option>
+                        <option value="IMPEGNATIVO">🟡 Turno Impegnativo / Assistenza Intensa</option>
+                        <option value="CRITICO">🔴 Emergenze / Criticità Sanitarie</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- FILTRO VELOCE CERCA OSPITI PER TUTTE LE SCHEDE -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <span style="font-weight:bold; font-size:0.95em; color:var(--text-light);">
+                    ⚡ Seleziona gli ospiti toccando il loro nome per ciascuna attività svolta (Multi-Selezione Touch):
+                </span>
+                <input type="text" id="filterGuestSearch" placeholder="🔍 Filtra lista ospiti..." oninput="window.filtraChipsOspiti(this.value)" style="width:240px; padding:6px;">
+            </div>
+
+            <!-- 1. IGIENE PERSONALE E DOCCIA -->
+            <div class="activity-block">
+                <div class="activity-header">
+                    <span class="activity-title">🚿 Doccia Completa / Bagno Assistito</span>
+                    <small style="color:#78350f;">Seleziona gli ospiti che hanno effettuato la doccia/bagno in questo turno</small>
+                </div>
+                <div class="chips-container" id="chips_doccia"></div>
+            </div>
+
+            <!-- 2. IGIENE A LETTO & CURE IGIENICHE SPECIALI -->
+            <div class="activity-block" style="border-left-color:#d97706; background:#fff7ed; border-color:#fed7aa;">
+                <div class="activity-header">
+                    <span class="activity-title" style="color:#c2410c;">🧽 Igiene Totale a Letto & Cambio Biancheria Piana</span>
+                    <small style="color:#7c2d12;">Ospiti allettati trattati a letto con spugnatura e cambio lenzuola</small>
+                </div>
+                <div class="chips-container" id="chips_igiene_letto"></div>
+            </div>
+
+            <!-- 3. MOBILIZZAZIONE, ALZATA & PASSO -->
+            <div class="activity-block" style="border-left-color:#0284c7; background:#f0f9ff; border-color:#bae6fd;">
+                <div class="activity-header">
+                    <span class="activity-title" style="color:#0369a1;">🚶‍♂️ Mobilizzazione, Alzata in Carrozzina & Deambulazione Assistita</span>
+                    <small style="color:#075985;">Ospiti mobilizzati, alzati con sollevatore o stimolati al cammino</small>
+                </div>
+                <div class="chips-container" id="chips_movimento"></div>
+            </div>
+
+            <!-- 4. CAMBI POSTURALI DECUBITI -->
+            <div class="activity-block" style="border-left-color:#8b5cf6; background:#f5f3ff; border-color:#ddd6fe;">
+                <div class="activity-header">
+                    <span class="activity-title" style="color:#6d28d9;">🔄 Cambi Posturali Programmati a Letto (Ogni 2 Ore)</span>
+                    <small style="color:#5b21b6;">Ospiti ad alto rischio decubito ruotati supino/fianco dx/fianco sx</small>
+                </div>
+                <div class="chips-container" id="chips_posture"></div>
+            </div>
+
+            <!-- 5. NUTRIZIONE & IDRATAZIONE ASSISTITA -->
+            <div class="activity-block" style="border-left-color:#059669; background:#f0fdf4; border-color:#bbf7d0;">
+                <div class="activity-header">
+                    <span class="activity-title" style="color:#15803d;">🥣 Inappetenza, Imbocco Totale o Idratazione con Acqua Gelificata</span>
+                    <small style="color:#14532d;">Ospiti che hanno rifiutato il pasto (<50%) o disfagici idratati attivamente</small>
+                </div>
+                <div class="chips-container" id="chips_nutrizione"></div>
+            </div>
+
+            <!-- 6. ELIMINAZIONE & CONTROLLO ALVO/CUTE -->
+            <div class="activity-block" style="border-left-color:#e11d48; background:#fff1f2; border-color:#fecdd3;">
+                <div class="activity-header">
+                    <span class="activity-title" style="color:#be123c;">⚠️ Alvo Chiuso da ≥ 3 Giorni o Arrossamenti Cutanei Rilevati</span>
+                    <small style="color:#9f1239;">Segnalazioni per stipsi prolungata o iperemia sacrale al cambio ausilio</small>
+                </div>
+                <div class="chips-container" id="chips_alvo_cute"></div>
+            </div>
+
+            <!-- SEGNALAZIONI PARTICOLARI INDIVIDUALI -->
+            <div style="background:#f8fafc; border:1px solid var(--border-color); padding:15px; border-radius:6px; margin-bottom:15px;">
+                <h4 style="margin:0 0 10px 0; color:var(--primary-color);">📝 Note Assistenziali Specifiche per Singolo Ospite</h4>
+                <div style="display:flex; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
+                    <select id="singleNoteGuest" style="flex:1.5; min-width:220px; font-weight:bold;">
+                        <option value="" disabled selected>Seleziona ospite...</option>
+                    </select>
+                    <select id="singleNoteGravita" style="flex:1; min-width:140px;">
+                        <option value="INFO">ℹ️ Informativo</option>
+                        <option value="ATTENZIONE">⚠️ Da Monitorare</option>
+                        <option value="URGENTE">🚨 Urgente / Avvisato Inf.</option>
+                    </select>
+                    <input type="text" id="singleNoteTesto" placeholder="Es. Tentata alzata ma non collaborante; notato lieve arrossamento al tallone dx..." style="flex:3; min-width:280px;">
+                    <button class="btn-primary" onclick="window.aggiungiNotaOspite()">➕ Aggiungi Nota</button>
+                </div>
+                <div id="singleNotesList" style="display:flex; flex-direction:column; gap:6px;"></div>
+            </div>
+
+            <!-- NOTE GENERALI DI REPARTO & FIRMA -->
+            <div style="display:grid; grid-template-columns: 2fr 1.2fr; gap:15px; margin-bottom:15px; flex-wrap:wrap;">
+                <div class="form-group" style="margin:0;">
+                    <label>📢 Note Generali di Consegna per il Turno Successivo</label>
+                    <textarea id="consegnaNoteGenerali" rows="5" placeholder="Es. Rifiniti pannoloni taglia L nel deposito; campanello camera 14 da verificare; effettuato cambio carrelli biancheria..."></textarea>
+                </div>
+
+                <div style="background:#f8fafc; border:2px dashed #cbd5e1; padding:12px; border-radius:6px; text-align:center;">
+                    <label style="font-weight:bold; font-size:0.85em; display:block; margin-bottom:4px;">✍️ Firma Digitale Responsabile Consegna</label>
+                    <canvas id="sigPadConsegna" width="360" height="110" style="background:#fff; border:1px solid #cbd5e1; border-radius:4px; touch-action:none; cursor:crosshair; width:100%; max-width:360px;"></canvas>
+                    <div style="display:flex; gap:8px; justify-content:center; margin-top:6px;">
+                        <button class="btn-doc" style="padding:3px 10px; font-size:0.75em;" onclick="window.pulisciFirma()">Pulisci Tratto</button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end;">
+                <button class="btn-success" style="padding:12px 24px; font-size:1.05em;" onclick="window.salvaConsegnaTurno()">
+                    💾 Conferma & Salva Consegna Turno
+                </button>
+            </div>
+        </div>
+
+        <!-- STORICO DELLE CONSEGNE (BACHECA) -->
+        <div class="card">
+            <div class="card-header">
+                <h3>📜 Storico Consegne & Passaggi di Turno</h3>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <input type="date" id="filterDateHandover" onchange="window.renderHandoverList()" style="width:auto; padding:5px 8px;">
+                    <button class="btn-doc" onclick="document.getElementById('filterDateHandover').value=''; window.renderHandoverList();">Tutti i Giorni</button>
+                </div>
+            </div>
+            <div id="handoverTimelineList"></div>
+        </div>
+
+    </div>
+
+    <!-- SCRIPT FIREBASE v10.8 -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = { 
+            apiKey: "AIzaSyAc0fIlfds4Gne5m3qpH25uacK4NeR6TzM", 
+            authDomain: "gestione-visite-b445b.firebaseapp.com", 
+            projectId: "gestione-visite-b445b", 
+            storageBucket: "gestione-visite-b445b.firebasestorage.app", 
+            messagingSenderId: "720937824810", 
+            appId: "1:720937824810:web:b04b60d1d66bb8f4040953" 
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.dbOspiti = [];
+        window.dbConsegne = [];
+        window.noteIndividualiBuffer = [];
+
+        window.activeOperator = sessionStorage.getItem("activeOperator") || localStorage.getItem("activeOperator") || "Operatore OSS";
+        window.activeOperatorQualifica = sessionStorage.getItem("activeQualifica") || localStorage.getItem("activeQualifica") || "OSS";
+
+        window.showToast = (m) => { 
+            const c=document.getElementById('toast-container'); const t=document.createElement('div'); t.className='toast'; t.innerText=m; c.appendChild(t); 
+            setTimeout(()=>t.classList.add('show'),10); setTimeout(()=>{t.classList.remove('show'); setTimeout(()=>t.remove(),300);},3000); 
+        };
+        window.formatDateSafe = (d) => { if (!d) return '-'; if (typeof d === 'string' && d.includes('-')) return d.split('-').reverse().join('/'); return d; };
+        window.getTimestamp = () => { const n=new Date(); return `${n.toLocaleDateString('it-IT')} alle ${n.toLocaleTimeString('it-IT', {hour:'2-digit',minute:'2-digit'})}`; };
+        window.navigaA = (url) => { window.location.href = url; };
+
+        // GESTIONE CANVAS FIRMA
+        const canvas = document.getElementById('sigPadConsegna');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let hasSignature = false;
+
+        ctx.lineWidth = 2.5;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = '#0f172a';
+
+        const getPos = (e) => {
+            const r = canvas.getBoundingClientRect();
+            let cx = e.touches ? e.touches[0].clientX : e.clientX;
+            let cy = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: (cx - r.left) * (canvas.width / r.width),
+                y: (cy - r.top) * (canvas.height / r.height)
+            };
+        };
+
+        canvas.addEventListener('mousedown', (e)=>{ isDrawing=true; hasSignature=true; let p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); });
+        canvas.addEventListener('mousemove', (e)=>{ if(!isDrawing) return; let p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); });
+        window.addEventListener('mouseup', ()=>isDrawing=false);
+        canvas.addEventListener('touchstart', (e)=>{ isDrawing=true; hasSignature=true; let p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); e.preventDefault(); }, {passive:false});
+        canvas.addEventListener('touchmove', (e)=>{ if(!isDrawing) return; let p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); e.preventDefault(); }, {passive:false});
+        canvas.addEventListener('touchend', ()=>isDrawing=false);
+
+        window.pulisciFirma = () => {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            hasSignature = false;
+        };
+
+        // POPOLAMENTO CHIPS OSPITI
+        const categorieChips = ['doccia', 'igiene_letto', 'movimento', 'posture', 'nutrizione', 'alvo_cute'];
+
+        window.popolaChipsOspiti = () => {
+            const attivi = window.dbOspiti.filter(g => !g.decesso && !g.dimissione).sort((a,b) => a.name.localeCompare(b.name));
+            
+            // Popola anche la select delle note singole
+            const selSingle = document.getElementById('singleNoteGuest');
+            if (selSingle) {
+                selSingle.innerHTML = '<option value="" disabled selected>Seleziona ospite...</option>';
+                attivi.forEach(g => {
+                    selSingle.innerHTML += `<option value="${g.name}">Stanza ${g.room||'-'} - ${g.name}</option>`;
+                });
+            }
+
+            categorieChips.forEach(cat => {
+                const box = document.getElementById(`chips_${cat}`);
+                if (!box) return;
+                box.innerHTML = '';
+                attivi.forEach(g => {
+                    const chip = document.createElement('div');
+                    chip.className = 'guest-chip';
+                    chip.setAttribute('data-name', g.name);
+                    chip.innerHTML = `<span>👤</span> ${g.name} <small style="opacity:0.7;">(${g.room||'-'})</small>`;
+                    chip.onclick = () => {
+                        chip.classList.toggle('selected');
+                    };
+                    box.appendChild(chip);
+                });
+            });
+        };
+
+        window.filtraChipsOspiti = (txt) => {
+            const query = (txt || '').toLowerCase().trim();
+            document.querySelectorAll('.chips-container .guest-chip').forEach(c => {
+                const name = c.getAttribute('data-name').toLowerCase();
+                c.style.display = name.includes(query) ? 'inline-flex' : 'none';
+            });
+        };
+
+        // GESTIONE NOTE INDIVIDUALI BUFFER
+        window.aggiungiNotaOspite = () => {
+            const g = document.getElementById('singleNoteGuest').value;
+            const grav = document.getElementById('singleNoteGravita').value;
+            const txt = document.getElementById('singleNoteTesto').value.trim();
+
+            if (!g || !txt) return window.showToast("⚠️ Seleziona un ospite e inserisci la nota");
+
+            window.noteIndividualiBuffer.push({ ospite: g, gravita: grav, testo: txt });
+            document.getElementById('singleNoteTesto').value = '';
+            window.renderNoteIndividualiList();
+        };
+
+        window.renderNoteIndividualiList = () => {
+            const box = document.getElementById('singleNotesList');
+            if (!box) return;
+            box.innerHTML = '';
+            window.noteIndividualiBuffer.forEach((n, idx) => {
+                let badgeStyle = n.gravita === 'URGENTE' ? 'background:#fee2e2; color:#991b1b; border:1px solid #f87171;' : (n.gravita === 'ATTENZIONE' ? 'background:#fef3c7; color:#92400e; border:1px solid #fde68a;' : 'background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd;');
+                box.innerHTML += `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:#ffffff; border:1px solid #cbd5e1; padding:8px 12px; border-radius:4px; font-size:0.9em;">
+                        <div>
+                            <span style="padding:2px 6px; border-radius:3px; font-weight:bold; font-size:0.75em; ${badgeStyle}">${n.gravita}</span>
+                            <strong style="margin-left:6px;">${n.ospite}:</strong> ${n.testo}
+                        </div>
+                        <button class="btn-danger" style="padding:2px 6px; font-size:0.75em;" onclick="window.noteIndividualiBuffer.splice(${idx},1); window.renderNoteIndividualiList();">✕</button>
+                    </div>`;
+            });
+        };
+
+        // SALVATAGGIO CONSEGNA & PROPAGAZIONE IN CARTELLA CLINICA
+        window.salvaConsegnaTurno = async () => {
+            const dataT = document.getElementById('consegnaData').value;
+            const turno = document.getElementById('consegnaTurno').value;
+            const ops = document.getElementById('consegnaOperatori').value.trim();
+            const statoGen = document.getElementById('consegnaStatoGenerale').value;
+            const noteGen = document.getElementById('consegnaNoteGenerali').value.trim();
+
+            if (!dataT || !ops) return window.showToast("⚠️ Data e Operatori in turno sono obbligatori!");
+
+            // Raccoglie gli ospiti selezionati per ciascuna categoria
+            const getSelected = (cat) => Array.from(document.querySelectorAll(`#chips_${cat} .guest-chip.selected`)).map(c => c.getAttribute('data-name'));
+
+            const docceList = getSelected('doccia');
+            const igieneLettoList = getSelected('igiene_letto');
+            const movimentoList = getSelected('movimento');
+            const postureList = getSelected('posture');
+            const nutrizioneList = getSelected('nutrizione');
+            const alvoCuteList = getSelected('alvo_cute');
+
+            const sigBase64 = hasSignature ? canvas.toDataURL('image/png') : '';
+
+            const handoverPayload = {
+                data: dataT,
+                turno: turno,
+                operatori: ops,
+                statoGenerale: statoGen,
+                docce: docceList,
+                igieneLetto: igieneLettoList,
+                movimento: movimentoList,
+                posture: postureList,
+                nutrizione: nutrizioneList,
+                alvoCute: alvoCuteList,
+                noteIndividuali: window.noteIndividualiBuffer,
+                noteGenerali: noteGen,
+                firmaB64: sigBase64,
+                registratoDa: window.activeOperator,
+                timestamp: Date.now()
+            };
+
+            await addDoc(collection(db, "consegne_oss"), handoverPayload);
+
+            // AUTOMAZIONE CHIAVE: Propagazione dei dati nel nodo 'assistenza' di cartelle_cliniche per ciascun ospite trattato
+            const tuttiOspitiCoinvolti = new Set([
+                ...docceList, ...igieneLettoList, ...movimentoList, 
+                ...postureList, ...nutrizioneList, ...alvoCuteList,
+                ...window.noteIndividualiBuffer.map(n => n.ospite)
+            ]);
+
+            const timeStr = window.getTimestamp();
+
+            for (const nomeOspite of tuttiOspitiCoinvolti) {
+                try {
+                    let descAttivita = [];
+                    if (docceList.includes(nomeOspite)) descAttivita.push("Doccia completa / bagno assistito");
+                    if (igieneLettoList.includes(nomeOspite)) descAttivita.push("Igiene a letto e cambio biancheria");
+                    if (movimentoList.includes(nomeOspite)) descAttivita.push("Alzata in poltrona e deambulazione");
+                    if (postureList.includes(nomeOspite)) descAttivita.push("Cambi posturali programmati a letto");
+                    if (nutrizioneList.includes(nomeOspite)) descAttivita.push("Imbocco assistito / idratazione addensata");
+                    if (alvoCuteList.includes(nomeOspite)) descAttivita.push("Segnalato alvo chiuso / arrossamento cute");
+
+                    const noteSpecifiche = window.noteIndividualiBuffer.filter(n => n.ospite === nomeOspite).map(n => n.testo).join('; ');
+
+                    const entryAssistenza = {
+                        date: `${window.formatDateSafe(dataT)} (${turno})`,
+                        op: ops,
+                        alvo: alvoCuteList.includes(nomeOspite) ? "Chiuso o Irregolare" : "Regolare",
+                        diuresi: "Fisiologica",
+                        igiene: descAttivita.join(', ') || "Cure igieniche quotidiane",
+                        idratazione: nutrizioneList.includes(nomeOspite) ? "Assistita / Gelificata" : "Adeguata",
+                        note: noteSpecifiche || "Interventi di routine eseguiti con successo"
+                    };
+
+                    // Lettura e aggiornamento atomico del fascicolo
+                    const dRef = doc(db, "cartelle_cliniche", nomeOspite);
+                    // Usiamo un approccio diretto unshift se caricato in memoria o un setDoc merge
+                    let clinData = window.dbClinicaMemoria?.[nomeOspite] || {};
+                    if (!clinData.assistenza) clinData.assistenza = [];
+                    clinData.assistenza.unshift(entryAssistenza);
+
+                    await setDoc(dRef, { assistenza: clinData.assistenza }, { merge: true });
+                } catch (err) {
+                    console.warn(`Errore propagazione cartella per ${nomeOspite}:`, err);
+                }
+            }
+
+            // Reset del form
+            document.querySelectorAll('.guest-chip.selected').forEach(c => c.classList.remove('selected'));
+            window.noteIndividualiBuffer = [];
+            window.renderNoteIndividualiList();
+            document.getElementById('consegnaNoteGenerali').value = '';
+            window.pulisciFirma();
+
+            window.showToast(`✅ Consegna registrata e propagata su ${tuttiOspitiCoinvolti.size} cartelle cliniche!`);
+        };
+
+        // RENDERING TIMELINE CONSEGNE
+        window.renderHandoverList = () => {
+            const container = document.getElementById('handoverTimelineList');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const filterDate = document.getElementById('filterDateHandover')?.value || '';
+
+            let list = window.dbConsegne.filter(c => {
+                if (filterDate && c.data !== filterDate) return false;
+                return true;
+            }).sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
+
+            if (list.length === 0) {
+                container.innerHTML = '<p style="color:#64748b; padding:15px; text-align:center;">Nessuna consegna registrata per il periodo selezionato.</p>';
+                return;
+            }
+
+            list.forEach(c => {
+                let shiftClass = c.turno === 'MATTINA' ? 'shift-mattina' : (c.turno === 'POMERIGGIO' ? 'shift-pomeriggio' : 'shift-notte');
+                
+                let docceHtml = (c.docce || []).map(o => `<span class="tag-pill" style="border-color:#b45309; color:#92400e;">🚿 ${o}</span>`).join(' ') || '<em style="color:#94a3b8; font-size:0.8em;">Nessuna</em>';
+                let igieneHtml = (c.igieneLetto || []).map(o => `<span class="tag-pill" style="border-color:#ea580c; color:#c2410c;">🧽 ${o}</span>`).join(' ') || '<em style="color:#94a3b8; font-size:0.8em;">Nessuna</em>';
+                let movHtml = (c.movimento || []).map(o => `<span class="tag-pill" style="border-color:#0284c7; color:#0369a1;">🚶 ${o}</span>`).join(' ') || '<em style="color:#94a3b8; font-size:0.8em;">Nessuno</em>';
+                let postHtml = (c.posture || []).map(o => `<span class="tag-pill" style="border-color:#8b5cf6; color:#6d28d9;">🔄 ${o}</span>`).join(' ') || '<em style="color:#94a3b8; font-size:0.8em;">Nessuno</em>';
+                let nutrHtml = (c.nutrizione || []).map(o => `<span class="tag-pill" style="border-color:#059669; color:#15803d;">🥣 ${o}</span>`).join(' ') || '<em style="color:#94a3b8; font-size:0.8em;">Nessuno</em>';
+                let cuteHtml = (c.alvoCute || []).map(o => `<span class="tag-pill" style="border-color:#e11d48; color:#be123c;">⚠️ ${o}</span>`).join(' ') || '<em style="color:#94a3b8; font-size:0.8em;">Nessuna</em>';
+
+                let noteIndHtml = '';
+                (c.noteIndividuali || []).forEach(n => {
+                    noteIndHtml += `<div style="font-size:0.85em; margin-bottom:3px;"><strong>• ${n.ospite} (${n.gravita}):</strong> ${n.testo}</div>`;
+                });
+
+                container.innerHTML += `
+                    <div class="handover-entry">
+                        <div class="handover-top">
+                            <div>
+                                <span class="badge-shift ${shiftClass}">TURNO ${c.turno}</span>
+                                <strong style="font-size:1.05em; margin-left:8px;">${window.formatDateSafe(c.data)}</strong>
+                                <span style="color:#64748b; font-size:0.85em; margin-left:8px;">Operatori: <strong>${c.operatori}</strong></span>
+                            </div>
+                            <span style="font-size:0.85em; font-weight:bold; color:${c.statoGenerale==='CALMO'?'#166534':(c.statoGenerale==='IMPEGNATIVO'?'#b45309':'#991b1b')}">
+                                Stato Reparto: ${c.statoGenerale}
+                            </span>
+                        </div>
+
+                        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:10px; margin-bottom:10px; font-size:0.88em;">
+                            <div><strong>🚿 Docce Eseguite (${(c.docce||[]).length}):</strong><br>${docceHtml}</div>
+                            <div><strong>🧽 Igiene a Letto (${(c.igieneLetto||[]).length}):</strong><br>${igieneHtml}</div>
+                            <div><strong>🚶 Mobilizzazione & Passo (${(c.movimento||[]).length}):</strong><br>${movHtml}</div>
+                            <div><strong>🔄 Cambi Posturali (${(c.posture||[]).length}):</strong><br>${postHtml}</div>
+                            <div><strong>🥣 Nutrizione/Idratazione (${(c.nutrizione||[]).length}):</strong><br>${nutrHtml}</div>
+                            <div><strong>⚠️ Alvo/Cute Segnalati (${(c.alvoCute||[]).length}):</strong><br>${cuteHtml}</div>
+                        </div>
+
+                        ${noteIndHtml ? `<div style="background:#f8fafc; border:1px solid #cbd5e1; padding:8px; border-radius:4px; margin-bottom:10px;"><strong>Note Individuali Ospiti:</strong><br>${noteIndHtml}</div>` : ''}
+
+                        ${c.noteGenerali ? `<div style="background:#fffbeb; border:1px solid #fde68a; padding:8px; border-radius:4px; font-size:0.9em; margin-bottom:8px;"><strong>Note di Consegna:</strong> ${c.noteGenerali}</div>` : ''}
+
+                        <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.8em; color:#64748b; border-top:1px dashed #cbd5e1; padding-top:6px;">
+                            <span>Registrato da: <strong>${c.registratoDa}</strong></span>
+                            ${c.firmaB64 ? `<img src="${c.firmaB64}" style="max-height:30px; border:1px solid #ddd; background:#fff; border-radius:3px;">` : '<em>Firma apposta</em>'}
+                        </div>
+                    </div>`;
+            });
+        };
+
+        // STAMPA CONSEGNE DI OGGI (A4)
+        window.stampaFoglioConsegneOggi = () => {
+            const todayStr = new Date().toISOString().split('T')[0];
+            const consegneOggi = window.dbConsegne.filter(c => c.data === todayStr);
+
+            let rows = "";
+            consegneOggi.forEach(c => {
+                rows += `
+                    <div style="border:1px solid #000; padding:10px; margin-bottom:12px; page-break-inside:avoid;">
+                        <div style="display:flex; justify-content:space-between; border-bottom:1px solid #000; padding-bottom:4px; margin-bottom:6px;">
+                            <strong>TURNO: ${c.turno} - Data: ${window.formatDateSafe(c.data)}</strong>
+                            <span>Operatori O.S.S.: <strong>${c.operatori}</strong></span>
+                        </div>
+                        <p style="margin:4px 0;"><strong>Docce:</strong> ${(c.docce||[]).join(', ')||'Nessuna'}</p>
+                        <p style="margin:4px 0;"><strong>Mobilizzazioni:</strong> ${(c.movimento||[]).join(', ')||'Nessuna'}</p>
+                        <p style="margin:4px 0;"><strong>Cambi Posturali:</strong> ${(c.posture||[]).join(', ')||'Nessuno'}</p>
+                        <p style="margin:4px 0;"><strong>Segnalazioni Alvo/Cute:</strong> ${(c.alvoCute||[]).join(', ')||'Nessuna'}</p>
+                        <p style="margin:4px 0;"><strong>Note di Consegna:</strong> ${c.noteGenerali || 'Regolare'}</p>
+                    </div>`;
+            });
+
+            const html = `
+                <div style="text-align:center; border-bottom:2px solid #000; padding-bottom:8px; margin-bottom:15px;">
+                    <h2 style="margin:0;">NUOVA VILLA SILVANA - RESIDENZA PROTETTA</h2>
+                    <h3 style="margin:4px 0;">FOGLIO DI PASSAGGIO CONSEGNE O.S.S. DEL ${window.formatDateSafe(todayStr)}</h3>
+                </div>
+                ${rows || '<p>Nessuna consegna registrata nella data odierna.</p>'}
+                <div style="margin-top:25px; text-align:right; font-size:9pt;">Estratto da NVS Masterpiece il ${window.getTimestamp()}</div>
+            `;
+
+            document.getElementById('printArea').innerHTML = html;
+            setTimeout(() => window.print(), 300);
+        };
+
+        // LISTENERS REALTIME FIRESTORE
+        window.dbClinicaMemoria = {};
+        onSnapshot(collection(db, "ospiti"), snap => {
+            window.dbOspiti = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            window.popolaChipsOspiti();
+        });
+
+        onSnapshot(collection(db, "cartelle_cliniche"), snap => {
+            snap.forEach(d => { window.dbClinicaMemoria[d.id] = d.data(); });
+        });
+
+        onSnapshot(collection(db, "consegne_oss"), snap => {
+            window.dbConsegne = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            window.renderHandoverList();
+        });
+
+        window.onload = () => {
+            document.getElementById('currentOpBadge').innerText = `👤 ${window.activeOperator} (${window.activeOperatorQualifica})`;
+            document.getElementById('consegnaData').value = new Date().toISOString().split('T')[0];
+            document.getElementById('consegnaOperatori').value = window.activeOperator;
+        };
+    </script>
+</body>
+</html>
