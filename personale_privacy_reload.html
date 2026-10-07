@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Senior Care S.r.l. / Reload S.p.A. - Atto di Nomina & Istruzioni Privacy (Art. 29 GDPR)</title>
+
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --surface: #ffffff;
+            --primary: #0f766e;
+            --primary-dark: #0f766e;
+            --reload-color: #0369a1;
+            --text-dark: #0f172a;
+            --text-muted: #475569;
+            --border: #cbd5e1;
+            --danger: #e11d48;
+            --warning: #d97706;
+            --success: #059669;
+            --dir-color: #4f46e5;
+            --radius: 8px;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0; padding: 0;
+            background: var(--bg-body);
+            color: var(--text-dark);
+            font-size: 13.5px;
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--reload-color);
+            position: sticky; top: 0; z-index: 1000;
+        }
+        .topbar-brand { font-size: 1.1em; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+        .nav-btn {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.25);
+            color: #ffffff;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.85em;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .nav-btn:hover { background: rgba(255,255,255,0.25); }
+
+        .container {
+            max-width: 1100px;
+            width: 95%;
+            margin: 20px auto;
+            flex: 1;
+        }
+
+        .card-contract {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+
+        .header-contract {
+            border-bottom: 2px solid var(--reload-color);
+            padding-bottom: 14px;
+            margin-bottom: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .clause-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid var(--reload-color);
+            padding: 12px 14px;
+            border-radius: 4px;
+            margin-bottom: 14px;
+            font-size: 0.92em;
+        }
+        .clause-box.alert-law { border-left-color: var(--danger); background: #fff1f2; }
+        .clause-box.alert-tech { border-left-color: var(--warning); background: #fffbeb; }
+
+        .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .form-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+
+        .form-field { margin-bottom: 10px; }
+        .form-field label { display: block; font-size: 0.82em; font-weight: 700; color: #334155; margin-bottom: 4px; }
+        input[type="text"], input[type="date"], select {
+            width: 100%;
+            padding: 9px 12px;
+            font-size: 0.95em;
+            border: 1.5px solid var(--border);
+            border-radius: 6px;
+            background: #ffffff;
+            font-family: inherit;
+        }
+        input:focus, select:focus { border-color: var(--reload-color); outline: none; background: #f0f9ff; }
+
+        .signature-section {
+            background: #ffffff;
+            border: 2px dashed #94a3b8;
+            border-radius: 6px;
+            padding: 14px;
+            text-align: center;
+            margin-top: 15px;
+        }
+        .signature-pad {
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            background: #f8fafc;
+            touch-action: none;
+            width: 100%;
+            max-width: 620px;
+            height: 160px;
+            display: block;
+            margin: 0 auto;
+            cursor: crosshair;
+        }
+
+        .btn-full {
+            width: 100%;
+            padding: 13px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 800;
+            color: #ffffff;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: opacity 0.15s;
+        }
+        .btn-full:active { transform: translateY(1px); }
+
+        .badge-status { padding: 4px 8px; border-radius: 4px; font-size: 0.78em; font-weight: 800; white-space: nowrap; }
+        .bs-signed { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .bs-pending { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+        /* TABELLA ARCHIVIO NOMINE */
+        .archive-table { width: 100%; border-collapse: collapse; font-size: 0.85em; background: #ffffff; margin-top: 10px; }
+        .archive-table th, .archive-table td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; vertical-align: middle; }
+        .archive-table th { background-color: #0f172a; color: white; font-weight: 700; text-transform: uppercase; font-size: 0.76em; }
+        .archive-table tr:nth-child(even) { background-color: #f8fafc; }
+        .archive-table tr:hover { background-color: #f1f5f9; }
+
+        .btn-table-print {
+            background: var(--reload-color);
+            color: #ffffff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-table-print:hover { opacity: 0.9; }
+
+        #toast-box {
+            position: fixed; bottom: 20px; right: 20px;
+            background: #0f172a; color: #ffffff;
+            padding: 12px 20px; border-radius: 6px; font-weight: 700;
+            z-index: 100000; opacity: 0; transition: opacity 0.2s; pointer-events: none;
+        }
+        #toast-box.show { opacity: 1; }
+
+        /* STAMPA A4 */
+        #printArea { display: none; }
+        @media print {
+            body * { visibility: hidden; }
+            #printArea, #printArea * { visibility: visible; }
+            #printArea {
+                display: block !important; position: absolute; left: 0; top: 0; width: 100%;
+                background: white !important; color: black !important; padding: 25px;
+                box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            }
+            .print-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 8.5pt; }
+            .print-table th, .print-table td { border: 1px solid #94a3b8; padding: 5px 8px; text-align: left; vertical-align: top; }
+            .print-table th { background: #f1f5f9 !important; font-weight: bold; }
+        }
+    </style>
+</head>
+<body>
+    <div id="toast-box"></div>
+    <div id="printArea"></div>
+
+    <div class="topbar">
+        <div class="topbar-brand">
+            <span>⚖️ Senior Care S.r.l. & Reload S.p.A. - Portale Nomina & Istruzioni Operatori (Art. 29 GDPR)</span>
+        </div>
+        <div style="display:flex; gap:10px;">
+            <button class="nav-btn" onclick="window.history.back()">⬅ Torna al Gestionale</button>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <div class="card-contract" style="border-top: 5px solid var(--reload-color);">
+            
+            <div class="header-contract">
+                <div>
+                    <h2 style="margin:0; color:var(--primary); font-size:1.4em;">ATTO DI DESIGNAZIONE A SOGGETTO AUTORIZZATO AL TRATTAMENTO DEI DATI</h2>
+                    <h3 style="margin:4px 0 0 0; color:var(--reload-color); font-size:1.05em;">
+                        PERSONALE IN REGIME DI APPALTO FORNITO DA RELOAD S.P.A. (ROMA)
+                    </h3>
+                    <small style="color:var(--text-muted);">
+                        Ai sensi dell'Art. 29 del Regolamento (UE) 2016/679 (GDPR) e dell'Art. 2-quaterdecies del D.Lgs. 196/2003 novellato dal D.Lgs. 101/2018
+                    </small>
+                </div>
+                <div id="statusBadgeContainer">
+                    <span class="badge-status bs-pending">🔴 Nomina Non Sottoscritta</span>
+                </div>
+            </div>
+
+            <!-- SELEZIONE DELL'OPERATORE DA CENSIMENTO FIRESTORE -->
+            <div class="clause-box">
+                <div class="form-grid-3">
+                    <div class="form-field">
+                        <label>👤 Seleziona Operatore Sanitario / Dipendente Reload S.p.A. *</label>
+                        <select id="selOperatore" onchange="window.selezionaOperatoreChange()" style="font-weight:bold; color:var(--reload-color);">
+                            <option value="">-- Seleziona il tuo Profilo --</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label>Figura Professionale Riconosciuta *</label>
+                        <input type="text" id="txtQualifica" readonly style="background:#f1f5f9; font-weight:bold;">
+                    </div>
+                    <div class="form-field">
+                        <label>Codice Fiscale Operatore</label>
+                        <input type="text" id="txtCodFiscaleOp" placeholder="Inserisci CF Operatore" style="text-transform:uppercase;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUADRO GIURIDICO SUL CONTRATTO DI APPALTO -->
+            <div class="clause-box">
+                <strong>QUADRO CONTRATTUALE E DI CONTITOLARITÀ / RESPONSABILITÀ:</strong><br>
+                Premesso che la Società <strong>Senior Care S.r.l.</strong> (P.IVA 03982400545), in qualità di Titolare del Trattamento presso la struttura <em>Nuova Villa Silvana</em>, ha stipulato con la Società <strong>Reload S.p.A.</strong> (con sede in Roma), fornitrice del personale socio-sanitario, regolare Contratto di Appalto di Servizi e Accordo sul Trattamento dei Dati (DPA ex Art. 28 GDPR);<br>
+                Considerato che il lavoratore sottoscrivente, impiegato in forza del predetto appalto da Reload S.p.A., accede materialmente ai sistemi informativi, alle cartelle cliniche e ai locali di degenza di Senior Care S.r.l.;<br>
+                Tutto ciò premesso, <strong>Senior Care S.r.l. designa formalmente il lavoratore quale "Soggetto Autorizzato"</strong>, subordinando l'accesso ai dati personali e sanitari all'accettazione e osservanza del seguente disciplinare.
+            </div>
+
+            <!-- ARTICOLATO DEL DISCIPLINARE OPERATIVO -->
+            <div class="clause-box alert-law">
+                <h4 style="margin:0 0 8px 0; color:var(--danger); font-size:1em;">Articolo 1 - Obbligo di Riservatezza & Segreto Professionale Inderogabile</h4>
+                <p style="margin:0 0 6px 0;">
+                    Il lavoratore assume l'obbligo formale di mantenere la più rigorosa riservatezza su qualsivoglia informazione o dato relativo allo stato di salute (patologie, diagnosi, terapie, condizioni cognitive), alle abitudini di vita o alla situazione economico-familiare degli ospiti residenti presso Nuova Villa Silvana, di cui venga a conoscenza nell'espletamento delle mansioni assegnate da Reload S.p.A.
+                </p>
+                <p style="margin:0; font-weight:bold;">
+                    Tale vincolo ha efficacia permanente e resta pienamente valido anche dopo l'eventuale cessazione, revoca o interruzione del contratto di lavoro con Reload S.p.A. o dell'appalto presso la struttura.
+                </p>
+            </div>
+
+            <div class="clause-box">
+                <h4 style="margin:0 0 8px 0; color:var(--primary); font-size:1em;">Articolo 2 - Segregazione delle Funzioni & Principio di Necessità (Need-to-Know)</h4>
+                <p style="margin:0 0 6px 0;">Il lavoratore si impegna a utilizzare il gestionale e i tablet touch esclusivamente entro il profilo abilitato per la propria qualifica professionale:</p>
+                <ul style="margin:0; padding-left:20px;">
+                    <li><strong>Personale Infermieristico:</strong> Somministrazione farmaci, compilazione diari, medicazione lesioni e scarico tempestivo e contestuale degli stupefacenti DPR 309/90 dall'armadio di reparto.</li>
+                    <li><strong>Operatori Socio-Sanitari (O.S.S.):</strong> Registrazione parametri vitali al letto, compilazione diario assistenziale (alvo, diuresi, igiene, idratazione) e consegne di turno. <em>È fatto assoluto divieto all'OSS di consultare o alterare piani farmacologici e diagnosi mediche riservate.</em></li>
+                    <li><strong>Addetti ai Servizi Generali (Cucina/Pulizie):</strong> Compilazione esclusiva dell'autocontrollo HACCP; divieto assoluto di consultazione di elenchi degenti e schede sanitarie.</li>
+                </ul>
+            </div>
+
+            <div class="clause-box alert-tech">
+                <h4 style="margin:0 0 8px 0; color:var(--warning); font-size:1em;">Articolo 3 - Tracciamento Tecnologico delle Operazioni (Audit Trail ex Art. 4 L. 300/1970)</h4>
+                <p style="margin:0 0 6px 0;">
+                    In ossequio ai Provvedimenti del Garante Privacy sul Dossier Sanitario Aziendale e all'Art. 4 della Legge 300/1970 (Statuto dei Lavoratori), il lavoratore prende atto che l'accesso ai terminali desktop e ai tablet di corsia genera la registrazione automatica, cronologica e inalterabile (Audit Trail) di ciascuna transazione clinica (timestamp a millisecondo, operatore loggato, qualifica, degente e atto terapeutico/assistenziale eseguito).
+                </p>
+                <p style="margin:0; font-style:italic;">
+                    Tale tracciamento è imposto dalle linee guida sanitarie regionali per la sicurezza del paziente, la prevenzione del rischio clinico e la validità medico-legale delle cure.
+                </p>
+            </div>
+
+            <div class="clause-box alert-law">
+                <h4 style="margin:0 0 8px 0; color:var(--danger); font-size:1em;">Articolo 4 - Disciplinare Dispositivi Mobili (Tablet 10/11") e Credenziali</h4>
+                <ol style="margin:0; padding-left:20px;">
+                    <li><strong>Custodia del PIN:</strong> Il PIN numerico personale di sblocco è strettamente individuale, segreto e non cedibile a colleghi. È vietato operare sotto l'account di un altro operatore.</li>
+                    <li><strong>Blocco Schermo:</strong> Durante il giro letti, posizionare il tablet in modo da impedire la visione a persone estranee o visitatori; bloccare lo schermo prima di allontanarsi dal carrello.</li>
+                    <li><strong>Divieto Assoluto Smartphone Privati:</strong> È rigorosamente proibito fotografare ospiti, lesioni cutanee o documenti con telefoni personali. I rilievi fotografici clinici possono avvenire unicamente mediante il modulo protetto del tablet di reparto.</li>
+                </ol>
+            </div>
+
+            <!-- DICHIARAZIONE DI ACCETTAZIONE -->
+            <div style="background:#f1f5f9; border:2px solid var(--border); padding:16px; border-radius:6px; margin-bottom:16px;">
+                <label style="display:flex; align-items:flex-start; gap:10px; font-weight:bold; cursor:pointer;">
+                    <input type="checkbox" id="chkAccettazioneTotale" style="transform:scale(1.3); margin-top:3px;">
+                    <span style="font-size:0.95em;">
+                        Il sottoscritto lavoratore, dipendente/somministrato da Reload S.p.A. in servizio presso Nuova Villa Silvana (Senior Care S.r.l.), dichiara di aver letto, compreso e accettato integralmente il presente atto di nomina, impegnandosi all'osservanza scrupolosa delle istruzioni operative e del segreto professionale.
+                    </span>
+                </label>
+            </div>
+
+            <!-- CANVAS FIRMA DIGITALE -->
+            <div class="signature-section">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <strong style="color:var(--reload-color);">Firma Grafica del Lavoratore (Reload S.p.A.) - [Touch / Mouse]:</strong>
+                    <button class="nav-btn" style="background:#64748b; padding:4px 10px; font-size:0.75em;" onclick="window.clearSignature()">🔄 Pulisci Firma</button>
+                </div>
+                <canvas id="canvasFirmaLavoratore" class="signature-pad" width="620" height="160"></canvas>
+                <small style="color:var(--text-muted); display:block; margin-top:6px;">
+                    Apponi la tua firma all'interno del riquadro tratteggiato prima di confermare.
+                </small>
+            </div>
+
+            <div style="display:flex; gap:12px; margin-top:20px; flex-wrap:wrap;">
+                <button class="btn-full" style="background:var(--success); flex:2;" onclick="window.salvaNominaLavoratore()">
+                    ✍️ Sottoscrivi Atto di Nomina & Abilita Profilo
+                </button>
+                <button class="btn-full" style="background:#475569; flex:1;" onclick="window.stampaNominaA4()">
+                    🖨️ Stampa Atto Corrente A4
+                </button>
+            </div>
+
+            <!-- ========================================================================= -->
+            <!-- NUOVA SEZIONE: ARCHIVIO E TABELLA NOMINE SOTTOSCRITTE (RICHIAMABILE) -->
+            <!-- ========================================================================= -->
+            <div style="margin-top:30px; border-top: 2px dashed #cbd5e1; padding-top: 20px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+                    <button id="btnToggleArchivio" class="nav-btn" style="background:#0f766e; color:#fff; font-size:0.95em; padding:10px 18px;" onclick="window.toggleArchivioNomine()">
+                        📂 Mostra Archivio Nomine Firmate (<span id="lblCountArchivio">0</span>) ▾
+                    </button>
+                    <button id="btnPrintRegistroCompleto" class="nav-btn" style="background:#334155; color:#fff; display:none;" onclick="window.stampaRegistroGeneraleA4()">
+                        🖨️ Stampa Registro Generale Nomine A4
+                    </button>
+                </div>
+
+                <div id="boxArchivioNomine" style="display:none; background:#ffffff; border:1px solid var(--border); border-radius:var(--radius); padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <span style="font-weight:bold; color:var(--reload-color); font-size:0.95em;">
+                            📋 Registro Ufficiale Nomine Personale in Appalto (Reload S.p.A. ➔ Senior Care S.r.l.)
+                        </span>
+                        <input type="text" id="filtroArchivioInput" placeholder="🔍 Cerca per nome, qualifica o CF..." oninput="window.renderTabellaArchivio()" style="max-width:280px; padding:6px 10px; font-size:0.85em;">
+                    </div>
+                    
+                    <div style="overflow-x:auto;">
+                        <table class="archive-table" id="tableArchivioNomine">
+                            <thead>
+                                <tr>
+                                    <th style="width:145px;">Data e Ora Firma</th>
+                                    <th>Operatore Sottoscrittore</th>
+                                    <th style="width:130px;">Qualifica</th>
+                                    <th style="width:140px;">Codice Fiscale</th>
+                                    <th style="width:110px;">Versione Atto</th>
+                                    <th style="width:85px; text-align:center;">Firma</th>
+                                    <th style="width:110px; text-align:center;">Azioni</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td colspan="7" style="text-align:center; padding:16px; color:#64748b;">Caricamento archivio nomine in corso...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- SCRIPT FIREBASE & GESTIONE SOTTOSCRIZIONE / ARCHIVIO -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, doc, updateDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = { 
+            apiKey: "AIzaSyAc0fIlfds4Gne5m3qpH25uacK4NeR6TzM", 
+            authDomain: "gestione-visite-b445b.firebaseapp.com", 
+            projectId: "gestione-visite-b445b", 
+            storageBucket: "gestione-visite-b445b.firebasestorage.app", 
+            messagingSenderId: "720937824810", 
+            appId: "1:720937824810:web:b04b60d1d66bb8f4040953" 
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.dbOperatori = [];
+        window.selectedOpObj = null;
+
+        window.showToast = (m) => {
+            const t = document.getElementById('toast-box');
+            t.innerText = m; t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2500);
+        };
+
+        window.getTimestamp = () => {
+            const n = new Date();
+            return `${n.toLocaleDateString('it-IT')} alle ${n.toLocaleTimeString('it-IT', {hour:'2-digit',minute:'2-digit',second:'2-digit'})}`;
+        };
+
+        // CANVAS FIRMA TOUCH/MOUSE
+        const canvas = document.getElementById('canvasFirmaLavoratore');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+
+        ctx.lineWidth = 2.6;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.strokeStyle = '#0f172a';
+
+        const getPos = (e) => {
+            const r = canvas.getBoundingClientRect();
+            let cx = e.touches ? e.touches[0].clientX : e.clientX;
+            let cy = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: (cx - r.left) * (canvas.width / r.width),
+                y: (cy - r.top) * (canvas.height / r.height)
+            };
+        };
+
+        canvas.addEventListener('mousedown', (e)=>{ isDrawing=true; let p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); });
+        canvas.addEventListener('mousemove', (e)=>{ if(!isDrawing) return; let p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); });
+        window.addEventListener('mouseup', ()=>isDrawing=false);
+
+        canvas.addEventListener('touchstart', (e)=>{ isDrawing=true; let p=getPos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); e.preventDefault(); }, {passive:false});
+        canvas.addEventListener('touchmove', (e)=>{ if(!isDrawing) return; let p=getPos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); e.preventDefault(); }, {passive:false});
+        canvas.addEventListener('touchend', ()=>isDrawing=false);
+
+        window.clearSignature = () => { ctx.clearRect(0, 0, canvas.width, canvas.height); };
+        window.isCanvasBlank = () => {
+            const pixelBuffer = new Uint32Array(ctx.getImageData(0, 0, canvas.width, canvas.height).data.buffer);
+            return !pixelBuffer.some(color => color !== 0);
+        };
+
+        // GESTIONE VISIBILITÀ PANNELLO ARCHIVIO
+        window.toggleArchivioNomine = () => {
+            const box = document.getElementById('boxArchivioNomine');
+            const btn = document.getElementById('btnToggleArchivio');
+            const btnPrintAll = document.getElementById('btnPrintRegistroCompleto');
+            const isHidden = (box.style.display === 'none' || box.style.display === '');
+
+            if(isHidden) {
+                box.style.display = 'block';
+                btnPrintAll.style.display = 'inline-flex';
+                btn.innerHTML = `📂 Nascondi Archivio Nomine Firmate (<span id="lblCountArchivio">${window.dbOperatori.filter(o => o.nominaReload && o.nominaReload.stato === 'SOTTOSCRITTO').length}</span>) ▴`;
+                window.renderTabellaArchivio();
+            } else {
+                box.style.display = 'none';
+                btnPrintAll.style.display = 'none';
+                btn.innerHTML = `📂 Mostra Archivio Nomine Firmate (<span id="lblCountArchivio">${window.dbOperatori.filter(o => o.nominaReload && o.nominaReload.stato === 'SOTTOSCRITTO').length}</span>) ▾`;
+            }
+        };
+
+        // RENDERING TABELLA ARCHIVIO NOMINE
+        window.renderTabellaArchivio = () => {
+            const tbody = document.querySelector('#tableArchivioNomine tbody');
+            const search = (document.getElementById('filtroArchivioInput')?.value || '').toLowerCase().trim();
+            if(!tbody) return;
+
+            const firmati = window.dbOperatori.filter(o => o && o.nominaReload && o.nominaReload.stato === 'SOTTOSCRITTO');
+            document.getElementById('lblCountArchivio').innerText = firmati.length;
+
+            let filtrati = firmati;
+            if(search) {
+                filtrati = filtrati.filter(o => {
+                    const nr = o.nominaReload || {};
+                    return (o.name || '').toLowerCase().includes(search) ||
+                           (o.qualifica || '').toLowerCase().includes(search) ||
+                           (nr.cf || '').toLowerCase().includes(search);
+                });
+            }
+
+            if(filtrati.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:16px; color:#64748b;">Nessun atto di nomina firmato trovato.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = '';
+            filtrati.forEach(op => {
+                const nr = op.nominaReload || {};
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${nr.dataSottoscrizione || '-'}</strong></td>
+                        <td><strong style="color:#0f172a; font-size:1.02em;">${op.name}</strong></td>
+                        <td><span style="color:#0f766e; font-weight:700;">${op.qualifica || 'Operatore'}</span></td>
+                        <td><code>${nr.cf || op.cf || '-'}</code></td>
+                        <td><small style="color:#64748b; font-weight:bold;">${nr.versioneDisciplinare || 'v2.0'}</small></td>
+                        <td style="text-align:center;">
+                            ${nr.firmaB64 ? `<img src="${nr.firmaB64}" style="max-height:26px; border:1px solid #cbd5e1; border-radius:3px; background:#fff;" title="Firma acquisita">` : '✓'}
+                        </td>
+                        <td style="text-align:center;">
+                            <button class="btn-table-print" onclick="window.stampaNominaSingola('${op.id}')">
+                                🖨️ Stampa A4
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        };
+
+        // POPOLAMENTO MENU OPERATORI IN CIMA
+        window.renderSelectOperatori = () => {
+            const sel = document.getElementById('selOperatore');
+            const curVal = sel.value;
+            sel.innerHTML = '<option value="">-- Seleziona il tuo Profilo --</option>';
+
+            const vOps = window.dbOperatori.filter(o => o && o.name && o.name !== "Admin");
+            vOps.sort((a,b) => a.name.localeCompare(b.name));
+
+            vOps.forEach(op => {
+                const isSigned = !!(op.nominaReload && op.nominaReload.stato === "SOTTOSCRITTO");
+                const icon = isSigned ? "🟢" : "🔴";
+                sel.innerHTML += `<option value="${op.id}">${icon} ${op.name} (${op.qualifica || 'Operatore'})</option>`;
+            });
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const opParam = urlParams.get('op');
+            if(opParam) {
+                sel.value = opParam;
+            } else if(curVal) {
+                sel.value = curVal;
+            }
+            window.selezionaOperatoreChange();
+            window.renderTabellaArchivio();
+        };
+
+        window.selezionaOperatoreChange = () => {
+            const selId = document.getElementById('selOperatore').value;
+            const op = window.dbOperatori.find(o => o.id === selId);
+            window.selectedOpObj = op;
+
+            window.clearSignature();
+            document.getElementById('chkAccettazioneTotale').checked = false;
+
+            if(!op) {
+                document.getElementById('txtQualifica').value = '';
+                document.getElementById('txtCodFiscaleOp').value = '';
+                document.getElementById('statusBadgeContainer').innerHTML = '<span class="badge-status bs-pending">🔴 Seleziona Operatore</span>';
+                return;
+            }
+
+            document.getElementById('txtQualifica').value = op.qualifica || 'Operatore Sanitario';
+            document.getElementById('txtCodFiscaleOp').value = (op.nominaReload && op.nominaReload.cf) ? op.nominaReload.cf : (op.cf || '');
+
+            const nr = op.nominaReload || {};
+            if(nr.stato === "SOTTOSCRITTO") {
+                document.getElementById('statusBadgeContainer').innerHTML = `<span class="badge-status bs-signed">🟢 Nomina Sottoscritta il ${nr.dataSottoscrizione || '-'}</span>`;
+                document.getElementById('chkAccettazioneTotale').checked = true;
+
+                if(nr.firmaB64) {
+                    const img = new Image();
+                    img.onload = () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    img.src = nr.firmaB64;
+                }
+            } else {
+                document.getElementById('statusBadgeContainer').innerHTML = '<span class="badge-status bs-pending">🔴 Nomina Non Sottoscritta</span>';
+            }
+        };
+
+        // SALVATAGGIO NOMINA IN FIRESTORE
+        window.salvaNominaLavoratore = async () => {
+            const op = window.selectedOpObj;
+            if(!op) return window.showToast("⚠️ Seleziona prima il tuo nominativo!");
+
+            if(!document.getElementById('chkAccettazioneTotale').checked) {
+                return window.showToast("⚠️ Devi spuntare la casella di accettazione del disciplinare!");
+            }
+
+            if(window.isCanvasBlank()) {
+                return window.showToast("⚠️ È necessario apporre la firma grafica nel riquadro!");
+            }
+
+            const cf = document.getElementById('txtCodFiscaleOp').value.trim().toUpperCase();
+            const payloadNomina = {
+                stato: "SOTTOSCRITTO",
+                versioneDisciplinare: "v2.0_RELOAD_APPALTO_2026",
+                societaFornitrice: "Reload S.p.A. (Roma)",
+                committenteTitolare: "Senior Care S.r.l. (Nuova Villa Silvana)",
+                qualifica: op.qualifica || "Operatore",
+                cf: cf,
+                dataSottoscrizione: window.getTimestamp(),
+                timestamp: Date.now(),
+                firmaB64: canvas.toDataURL('image/png'),
+                userDevice: navigator.userAgent
+            };
+
+            try {
+                await updateDoc(doc(db, "operatori", op.id), {
+                    nominaReload: payloadNomina,
+                    privacyFirmata: true
+                });
+
+                await addDoc(collection(db, "audit_trail"), {
+                    timestamp: Date.now(),
+                    dataOraStr: window.getTimestamp(),
+                    operatore: op.name,
+                    qualifica: op.qualifica,
+                    categoria: "PAI",
+                    azione: "SOTTOSCRIZIONE_NOMINA_APPALTO_RELOAD",
+                    ospite: "Personale Reload S.p.A.",
+                    dettaglio: `Lavoratore in appalto ${op.name} (${op.qualifica}) ha sottoscritto formalmente l'Atto di Nomina a Soggetto Autorizzato ex Art. 29 GDPR per Reload S.p.A. / Senior Care S.r.l.`
+                });
+
+                window.showToast("✅ Atto di Nomina sottoscritto con successo!");
+                
+                const urlParams = new URLSearchParams(window.location.search);
+                if(urlParams.get('gateway') === '1') {
+                    setTimeout(() => { window.location.href = 'index_2.html'; }, 1200);
+                } else {
+                    window.selezionaOperatoreChange();
+                    window.renderTabellaArchivio();
+                }
+
+            } catch(err) {
+                console.error("Errore salvataggio nomina:", err);
+                window.showToast("❌ Errore durante il salvataggio");
+            }
+        };
+
+        // STAMPA SINGOLA NOMINA DALLA TABELLA ARCHIVIO
+        window.stampaNominaSingola = (opId) => {
+            const op = window.dbOperatori.find(o => o.id === opId);
+            if(!op) return window.showToast("Operatore non trovato");
+            window.generaStampaAttoA4(op);
+        };
+
+        window.stampaNominaA4 = () => {
+            const op = window.selectedOpObj;
+            if(!op) return window.showToast("⚠️ Seleziona prima un operatore!");
+            window.generaStampaAttoA4(op);
+        };
+
+        // GENERAZIONE ATTO A4 PER LA STAMPA
+        window.generaStampaAttoA4 = (op) => {
+            const nr = op.nominaReload || {};
+            if(!nr.firmaB64) {
+                return window.showToast("⚠️ Questo operatore non ha ancora una firma registrata!");
+            }
+
+            const html = `
+                <div style="border-bottom:2px solid #0369a1; padding-bottom:8px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div>
+                        <h2 style="margin:0; color:#0f766e; font-size:15pt;">SENIOR CARE S.R.L.</h2>
+                        <p style="margin:2px 0; font-size:8pt; color:#475569;">
+                            Residenza Protetta "Nuova Villa Silvana" | P.IVA: 03982400545<br>
+                            Sede Legale: Loc. Molinaccio, 25 - 06049 Spoleto (PG)
+                        </p>
+                    </div>
+                    <div style="text-align:right;">
+                        <h3 style="margin:0; font-size:11pt; color:#0369a1;">RELOAD S.P.A. (ROMA)</h3>
+                        <small style="font-size:7.5pt; color:#64748b;">Società Appaltatrice Servizi Socio-Sanitari</small>
+                    </div>
+                </div>
+
+                <div style="text-align:center; margin:14px 0 10px 0;">
+                    <h3 style="margin:0; font-size:12pt; text-transform:uppercase; color:#0f172a;">
+                        ATTO DI NOMINA E ISTRUZIONI A SOGGETTO AUTORIZZATO AL TRATTAMENTO DEI DATI
+                    </h3>
+                    <small style="font-size:8pt; color:#64748b;">(Art. 29 Regolamento UE 2016/679 & Art. 2-quaterdecies D.Lgs. 196/2003 novellato)</small>
+                </div>
+
+                <table class="print-table">
+                    <tr>
+                        <td style="width:50%;">Nominativo Lavoratore: <strong style="font-size:10pt;">${op.name}</strong></td>
+                        <td>Qualifica Professionale: <strong>${op.qualifica || 'Operatore'}</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Codice Fiscale: <strong>${nr.cf || op.cf || '-'}</strong></td>
+                        <td>Datore di Lavoro (Appaltatore): <strong>Reload S.p.A. (Roma)</strong></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            Struttura Assegnata: <strong>Nuova Villa Silvana (Senior Care S.r.l.)</strong> in forza di Contratto di Appalto di Servizi Sanitario-Assistenziali.
+                        </td>
+                    </tr>
+                </table>
+
+                <h4 style="margin:10px 0 3px 0; color:#0369a1; font-size:9pt;">1. Quadro Giuridico & Ambito di Autorizzazione</h4>
+                <p style="font-size:7.8pt; text-align:justify; margin:0 0 6px 0;">
+                    Senior Care S.r.l., in qualità di Titolare del Trattamento, e Reload S.p.A., Responsabile Esterno del Trattamento ex Art. 28 GDPR, designano il lavoratore sopra identificato quale "Soggetto Autorizzato" alle operazioni di trattamento dei dati personali e delle categorie particolari di dati (sanitari, diagnostici e terapeutici) degli ospiti della struttura residenziale.
+                </p>
+
+                <h4 style="margin:8px 0 3px 0; color:#0369a1; font-size:9pt;">2. Istruzioni Operative & Segreto Professionale Inderogabile</h4>
+                <p style="font-size:7.8pt; text-align:justify; margin:0 0 6px 0;">
+                    Il lavoratore si impegna a osservare il più rigoroso segreto d'ufficio e professionale in merito allo stato di salute, terapie e vicende private dei residenti, con validità permanente anche dopo l'eventuale conclusione del rapporto con Reload S.p.A. o dell'assegnazione presso la struttura. È vincolato al rispetto della segregazione delle mansioni (Need-to-Know), a non consultare cartelle non attinenti al proprio turno e a non comunicare dati a terzi non autorizzati.
+                </p>
+
+                <h4 style="margin:8px 0 3px 0; color:#0369a1; font-size:9pt;">3. Tracciabilità Operativa (Audit Trail ex Art. 4 Legge 300/1970)</h4>
+                <p style="font-size:7.8pt; text-align:justify; margin:0 0 6px 0;">
+                    Il lavoratore prende atto che ciascun accesso ai terminali o ai tablet di corsia genera la registrazione automatica, inalterabile e certificata nei log di sistema (Audit Trail) dell'operazione clinica o assistenziale eseguita (somministrazione farmaci, scarico stupefacenti DPR 309/90, parametri vitali, note diarie), finalizzata alla sicurezza delle cure e ai requisiti di accreditamento sanitario.
+                </p>
+
+                <h4 style="margin:8px 0 3px 0; color:#0369a1; font-size:9pt;">4. Sicurezza Dispositivi e Credenziali</h4>
+                <p style="font-size:7.8pt; text-align:justify; margin:0 0 10px 0;">
+                    Il lavoratore si obbliga a custodire il proprio PIN di accesso, con divieto assoluto di cessione o scambio di credenziali con colleghi, a bloccare lo schermo durante il lavoro al letto del paziente e a non acquisire rilievi fotografici con apparati cellulari personali.
+                </p>
+
+                <div style="margin-top:20px; border-top:1.5px solid #0369a1; padding-top:10px; display:flex; justify-content:space-between; align-items:flex-end;">
+                    <div style="font-size:7.8pt; line-height:1.4;">
+                        Data e Ora di Perfezionamento Atto: <strong>${nr.dataSottoscrizione || window.getTimestamp()}</strong><br>
+                        Versione Disciplinare: <strong>${nr.versioneDisciplinare || 'v2.0'}</strong><br>
+                        Impronta Digitale Transazione: <em>Archiviata su Audit Trail Senior Care S.r.l.</em>
+                    </div>
+                    <div style="text-align:center;">
+                        <span style="font-size:7.5pt; color:#475569; display:block; margin-bottom:3px;">Firma Grafica del Lavoratore (Reload S.p.A.):</span>
+                        <img src="${nr.firmaB64}" style="max-height:55px; border-bottom:1px solid #000; padding-bottom:2px;">
+                        <span style="font-size:7.5pt; display:block; margin-top:2px;">(${op.name})</span>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('printArea').innerHTML = html;
+            setTimeout(() => window.print(), 250);
+        };
+
+        // STAMPA REGISTRO COMPLETO TABELLARE DI TUTTE LE NOMINE (ISPEZIONI ASL/NAS)
+        window.stampaRegistroGeneraleA4 = () => {
+            const firmati = window.dbOperatori.filter(o => o && o.nominaReload && o.nominaReload.stato === 'SOTTOSCRITTO');
+            if(firmati.length === 0) return window.showToast("Nessuna nomina firmata da stampare");
+
+            let rows = '';
+            firmati.forEach((op, i) => {
+                const nr = op.nominaReload || {};
+                rows += `
+                    <tr>
+                        <td style="text-align:center;">${i+1}</td>
+                        <td><strong>${op.name}</strong></td>
+                        <td>${op.qualifica || 'Operatore'}</td>
+                        <td>${nr.cf || op.cf || '-'}</td>
+                        <td>${nr.dataSottoscrizione || '-'}</td>
+                        <td>${nr.versioneDisciplinare || 'v2.0'}</td>
+                        <td style="text-align:center;">
+                            ${nr.firmaB64 ? `<img src="${nr.firmaB64}" style="max-height:22px;">` : '✓ Firmato'}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            const html = `
+                <div style="border-bottom:2px solid #0369a1; padding-bottom:8px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <h2 style="margin:0; color:#0f766e; font-size:14pt;">SENIOR CARE S.R.L. - NUOVA VILLA SILVANA</h2>
+                        <p style="margin:2px 0; font-size:8pt; color:#475569;">P.IVA 03982400545 | Loc. Molinaccio, 25 - Spoleto (PG)</p>
+                    </div>
+                    <div style="text-align:right;">
+                        <h3 style="margin:0; font-size:10pt; color:#0369a1;">REGISTRO SOGGETTI AUTORIZZATI AL TRATTAMENTO (ART. 29 GDPR)</h3>
+                        <small style="font-size:7.5pt;">Personale Fornito in Appalto da <strong>Reload S.p.A. (Roma)</strong></small>
+                    </div>
+                </div>
+
+                <div style="font-size:8pt; margin-bottom:10px;">
+                    Data di Estrazione: <strong>${window.getTimestamp()}</strong> | Totale Lavoratori Registrati e Conformi: <strong>${firmati.length}</strong>
+                </div>
+
+                <table class="print-table">
+                    <thead>
+                        <tr style="background:#f1f5f9;">
+                            <th style="width:30px; text-align:center;">N°</th>
+                            <th>Lavoratore Designato</th>
+                            <th>Qualifica Sanitaria</th>
+                            <th>Codice Fiscale</th>
+                            <th>Data e Ora Sottoscrizione</th>
+                            <th>Versione</th>
+                            <th style="text-align:center;">Firma</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rows}
+                    </tbody>
+                </table>
+
+                <div style="margin-top:30px; display:flex; justify-content:space-between; font-size:8pt; page-break-inside:avoid;">
+                    <div>Certificazione di conformità del Titolare del Trattamento</div>
+                    <div style="text-align:center;">
+                        Firma Senior Care S.r.l. / Direzione Sanitaria:<br><br>
+                        ____________________________________________________
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('printArea').innerHTML = html;
+            setTimeout(() => window.print(), 250);
+        };
+
+        // REAL-TIME LISTENER OPERATORI
+        onSnapshot(collection(db, "operatori"), snap => {
+            window.dbOperatori = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            window.renderSelectOperatori();
+        });
+
+        window.onload = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if(urlParams.get('gateway') === '1') {
+                window.showToast("⚠️ Primo Accesso: È richiesta la sottoscrizione dell'Atto di Nomina Reload S.p.A.");
+            }
+        };
+    </script>
+</body>
+</html>

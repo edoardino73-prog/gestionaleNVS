@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Senior Care S.r.l. - Registro Audit Forense & Controllo Accessi (GDPR)</title>
+
+    <style>
+        :root {
+            --bg-color: #f1f5f9;
+            --box-bg: #ffffff;
+            --primary-color: #0f766e;
+            --secondary-color: #115e59;
+            --dir-color: #4f46e5;
+            --text-main: #0f172a;
+            --text-light: #475569;
+            --border-color: #cbd5e1;
+            --error-color: #e11d48;
+            --warning-color: #d97706;
+            --success-color: #059669;
+            --radius: 8px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0; padding: 0;
+            color: var(--text-main);
+            font-size: 13px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        #accessDeniedScreen {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #0f172a;
+            color: white;
+            z-index: 99999;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 24px;
+        }
+
+        .navbar {
+            background: var(--dir-color);
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #3730a3;
+            position: sticky; top: 0; z-index: 1000;
+        }
+        .navbar-brand { font-weight: 800; font-size: 1.15em; display: flex; align-items: center; gap: 10px; }
+        .nav-btn {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 6px 14px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.88em;
+            display: inline-flex; align-items: center; gap: 5px;
+        }
+        .nav-btn:hover { background: rgba(255,255,255,0.25); }
+        .current-op-badge { background: #fff; color: var(--dir-color); padding: 5px 12px; border-radius: 4px; font-weight: bold; font-size: 0.85em; }
+
+        .container { max-width: 1480px; width: 96%; margin: 15px auto; flex-grow: 1; }
+
+        .card {
+            background: var(--box-bg);
+            padding: 18px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 18px;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            border-bottom: 2px solid var(--dir-color);
+            padding-bottom: 8px;
+            flex-wrap: wrap; gap: 10px;
+        }
+        .card-header h3 { margin: 0; color: var(--dir-color); font-size: 1.1em; text-transform: uppercase; }
+
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px; }
+        .metric-card {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-left: 5px solid var(--dir-color);
+            border-radius: var(--radius);
+            padding: 12px 14px;
+            text-align: center;
+        }
+        .metric-card h2 { margin: 0; font-size: 1.7em; color: var(--dir-color); }
+        .metric-card small { color: var(--text-light); text-transform: uppercase; font-weight: 700; font-size: 0.76em; }
+
+        .filter-box {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 12px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 10px;
+            align-items: flex-end;
+            margin-bottom: 15px;
+        }
+        .filter-group label { display: block; font-weight: 700; font-size: 0.8em; margin-bottom: 4px; color: var(--text-main); }
+        .filter-group select, .filter-group input {
+            width: 100%; padding: 8px 10px; border: 1.5px solid #94a3b8; border-radius: 6px; font-family: inherit; font-size: 0.9em;
+        }
+        .filter-group select:focus, .filter-group input:focus { border-color: var(--dir-color); outline: none; background: #eef2ff; }
+
+        .audit-table { width: 100%; border-collapse: collapse; font-size: 0.86em; background: #ffffff; }
+        .audit-table th, .audit-table td { border: 1px solid var(--border-color); padding: 8px 10px; text-align: left; vertical-align: middle; }
+        .audit-table th { background-color: var(--dir-color); color: white; font-weight: 700; text-transform: uppercase; font-size: 0.78em; }
+        .audit-table tr:nth-child(even) { background-color: #f8fafc; }
+        .audit-table tr:hover { background-color: #f1f5f9; }
+
+        .badge-cat { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: 800; white-space: nowrap; }
+        .cat-login { background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc; }
+        .cat-med { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .cat-inf { background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
+        .cat-oss { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .cat-309 { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .cat-admin { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+        .cat-alert { background: #ffe4e6; color: #be123c; border: 1px solid #fecdd3; }
+
+        .btn-action { color: white; border: none; padding: 8px 14px; border-radius: var(--radius); font-weight: 700; cursor: pointer; font-size: 0.85em; transition: 0.15s; display: inline-flex; align-items: center; gap: 5px; }
+        .btn-primary { background: var(--dir-color); }
+        .btn-doc { background: #475569; }
+
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 40000; }
+        .toast { background: var(--text-main); color: #fff; padding: 12px 20px; border-radius: 4px; font-weight: bold; margin-top: 10px; opacity: 0; transition: opacity 0.3s; }
+        .toast.show { opacity: 1; }
+
+        #printArea { display: none; }
+        @media print {
+            body * { visibility: hidden; }
+            #printArea, #printArea * { visibility: visible; }
+            #printArea {
+                display: block !important; position: absolute; left: 0; top: 0; width: 100%;
+                background: white !important; color: black !important; padding: 25px; box-sizing: border-box;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            }
+            .print-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 8pt; }
+            .print-table th, .print-table td { border: 1px solid #94a3b8; padding: 5px 6px; text-align: left; }
+            .print-table th { background: #f1f5f9 !important; font-weight: bold; }
+        }
+    </style>
+</head>
+<body>
+    <div id="toast-container"></div>
+    <div id="printArea"></div>
+
+    <div id="accessDeniedScreen">
+        <h1 style="font-size:2.2em; margin-bottom:10px;">🔒 Area Riservata Direzione & DPO</h1>
+        <p style="font-size:1.05em; color:#cbd5e1; max-width:520px; margin-bottom:20px;">
+            L'accesso al <strong>Registro Forense delle Attività e Controllo Accessi (GDPR)</strong> è consentito unicamente all'<strong>Ufficio Amministrazione</strong> e al <strong>Responsabile della Protezione Dati</strong>.
+        </p>
+        <button class="nav-btn" style="padding:10px 20px; font-size:1em; background:var(--primary-color);" onclick="window.location.href='index.html'">⬅ Torna alla Home Reparto</button>
+    </div>
+
+    <div class="navbar">
+        <div class="navbar-brand">
+            <span>🛡️ Senior Care S.r.l. - Registro Audit Forense & Controllo Accessi (GDPR)</span>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+            <span class="current-op-badge" id="currentOpBadge">👤 Op</span>
+            <button class="nav-btn" onclick="window.location.href='amministrazione_rette.html'">💼 Rette & Spese ↗</button>
+            <button class="nav-btn" onclick="window.location.href='privacy_consenso.html'">✍️ Consensi Privacy ↗</button>
+            <button class="nav-btn" onclick="window.location.href='index.html'">🏠 Home Desktop</button>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <h2 id="kpi-tot-eventi">0</h2>
+                <small>Totale Movimenti Unificati</small>
+            </div>
+            <div class="metric-card" style="border-left-color: #0369a1;">
+                <h2 id="kpi-tot-login" style="color:#0369a1;">0</h2>
+                <small>Sessioni & Accessi PIN</small>
+            </div>
+            <div class="metric-card" style="border-left-color: #3730a3;">
+                <h2 id="kpi-tot-terapie" style="color:#3730a3;">0</h2>
+                <small>Somministrazioni Farmaci</small>
+            </div>
+            <div class="metric-card" style="border-left-color: #991b1b;">
+                <h2 id="kpi-tot-stupefacenti" style="color:#991b1b;">0</h2>
+                <small>Scarichi DPR 309/90</small>
+            </div>
+            <div class="metric-card" style="border-left-color: #166534;">
+                <h2 id="kpi-tot-clinici" style="color:#166534;">0</h2>
+                <small>Parametri & Diari Clinici</small>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>📜 Registro Unico di Tracciabilità, Log di Accesso e Operazioni di Reparto</h3>
+                <div style="display:flex; gap:8px;">
+                    <button class="btn-action btn-doc" onclick="window.stampaVerbaleAudit()">🖨️ Stampa Verbale Ispezione A4</button>
+                    <button class="btn-action btn-primary" onclick="window.esportaAuditCSV()">📥 Esporta Log (CSV)</button>
+                </div>
+            </div>
+
+            <!-- FILTRI DI RICERCA -->
+            <div class="filter-box">
+                <div class="filter-group" style="flex: 1.5;">
+                    <label>👤 Seleziona Profilo di Accesso (Operatore) *</label>
+                    <select id="filterOperatore" onchange="window.applicaFiltriAudit()" style="font-weight:bold; color:var(--dir-color);">
+                        <option value="ALL">-- Tutti i Profili / Operatori Censiti --</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>📁 Categoria Movimento</label>
+                    <select id="filterAzione" onchange="window.applicaFiltriAudit()">
+                        <option value="ALL">Tutte le categorie</option>
+                        <option value="LOGIN">🔑 Accesso / Login PIN</option>
+                        <option value="TERAPIA">💊 Terapia & Somministrazioni</option>
+                        <option value="DPR309">🔒 Stupefacenti DPR 309/90</option>
+                        <option value="PARAMETRI">❤️ Parametri Vitali</option>
+                        <option value="DIARIO">📝 Diari (Med / Inf / OSS)</option>
+                        <option value="CONSEGNE">📢 Consegne Turno & Assistenza</option>
+                        <option value="PRESIDI">📦 Presidi & Forniture ASL</option>
+                        <option value="CUP">📅 CUP & Trasporti</option>
+                        <option value="RISCHIO">⚠️ Rischio & Contenzioni</option>
+                        <option value="PAI">📋 P.A.I. & Consensi Privacy</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>🛏️ Ospite Coinvolto</label>
+                    <select id="filterOspite" onchange="window.applicaFiltriAudit()">
+                        <option value="ALL">Tutti gli ospiti</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>📅 Data Da</label>
+                    <input type="date" id="filterDataDa" onchange="window.applicaFiltriAudit()">
+                </div>
+
+                <div class="filter-group">
+                    <label>📅 Data A</label>
+                    <input type="date" id="filterDataA" onchange="window.applicaFiltriAudit()">
+                </div>
+
+                <div class="filter-group" style="flex:0.6;">
+                    <button class="btn-action btn-doc" style="width:100%; justify-content:center;" onclick="window.resetFiltriAudit()">Reset</button>
+                </div>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:0.85em; color:var(--text-light);">
+                <span id="lblFiltroAttivo">Aggregazione forense attiva su tutti i moduli del gestionale</span>
+                <span id="badgeRecordCount" style="font-weight:bold; color:var(--dir-color); background:#ede9fe; padding:3px 8px; border-radius:4px;">Record trovati: 0</span>
+            </div>
+
+            <div style="overflow-x:auto;">
+                <table class="audit-table" id="tableAuditForense">
+                    <thead>
+                        <tr>
+                            <th style="width:145px;">Data e Ora Esatta</th>
+                            <th style="width:160px;">Operatore / Profilo</th>
+                            <th style="width:120px;">Qualifica Ruolo</th>
+                            <th style="width:150px;">Categoria Movimento</th>
+                            <th style="width:160px;">Ospite Coinvolto</th>
+                            <th>Dettaglio Forense dell'Operazione Eseguita</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="6" style="text-align:center; padding:20px; color:#64748b;">Caricamento e aggregazione registri in corso...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SCRIPT FIREBASE CON PARSER UNIVERSALE E BLOCCHI DI SICUREZZA -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = { 
+            apiKey: "AIzaSyAc0fIlfds4Gne5m3qpH25uacK4NeR6TzM", 
+            authDomain: "gestione-visite-b445b.firebaseapp.com", 
+            projectId: "gestione-visite-b445b", 
+            storageBucket: "gestione-visite-b445b.firebasestorage.app", 
+            messagingSenderId: "720937824810", 
+            appId: "1:720937824810:web:b04b60d1d66bb8f4040953" 
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.dbAudit = [];
+        window.dbOperatori = [];
+        window.dbOspiti = [];
+        window.rawClinica = {};
+        window.rawConsegne = [];
+        window.rawPresidi = [];
+        window.rawCup = [];
+        window.rawContenzioni = [];
+        window.rawRischio = [];
+        window.rawNativeAudit = [];
+
+        window.activeOperator = sessionStorage.getItem("activeOperator") || localStorage.getItem("activeOperator") || "Amministrazione";
+        window.activeOperatorRole = sessionStorage.getItem("activeRole") || localStorage.getItem("activeRole") || "user";
+        window.activeOperatorQualifica = sessionStorage.getItem("activeQualifica") || localStorage.getItem("activeQualifica") || "Amministrazione";
+
+        window.showToast = (m) => { 
+            const c=document.getElementById('toast-container'); const t=document.createElement('div'); t.className='toast'; t.innerText=m; c.appendChild(t); 
+            setTimeout(()=>t.classList.add('show'),10); setTimeout(()=>{t.classList.remove('show'); setTimeout(()=>t.remove(),300);},3000); 
+        };
+
+        // PARSER UNIVERSALE DELLE DATE: NON VA MAI IN CRASH CON QUALSIASI FORMATO
+        window.parseToTimestampSafe = (val) => {
+            if (val === null || val === undefined) return 0;
+            if (typeof val === 'number') return val;
+            
+            // Oggetto Timestamp nativo di Firestore o Date
+            if (typeof val === 'object') {
+                if (typeof val.toDate === 'function') return val.toDate().getTime();
+                if (val.seconds) return val.seconds * 1000;
+                if (val instanceof Date) return val.getTime();
+            }
+
+            // Stringhe
+            if (typeof val === 'string') {
+                try {
+                    let s = val.replace(' alle ', ' ').replace(' ore ', ' ').trim();
+                    let parts = s.split(' ');
+                    if (parts.length >= 2) {
+                        let dp = parts[0].split(/[\/\-]/);
+                        let tp = parts[1].split(':');
+                        if (dp.length === 3 && tp.length >= 2) {
+                            let y = parseInt(dp[2], 10);
+                            let m = parseInt(dp[1], 10) - 1;
+                            let d = parseInt(dp[0], 10);
+                            let hr = parseInt(tp[0], 10);
+                            let min = parseInt(tp[1], 10);
+                            let sec = tp[2] ? parseInt(tp[2], 10) : 0;
+                            let dt = new Date(y, m, d, hr, min, sec);
+                            if (!isNaN(dt.getTime())) return dt.getTime();
+                        }
+                    }
+                    let t = new Date(val).getTime();
+                    return isNaN(t) ? 0 : t;
+                } catch(e) {
+                    return 0;
+                }
+            }
+            return 0;
+        };
+
+        window.formatTimestampToString = (ts, fallbackStr) => {
+            if (ts && ts > 0) {
+                const d = new Date(ts);
+                return `${d.toLocaleDateString('it-IT')} alle ${d.toLocaleTimeString('it-IT', {hour:'2-digit', minute:'2-digit', second:'2-digit'})}`;
+            }
+            return fallbackStr || '-';
+        };
+
+        window.verificaAccesso = () => {
+            const q = (window.activeOperatorQualifica || "").trim();
+            const r = (window.activeOperatorRole || "").trim();
+            if (q !== "Amministrazione" && r !== "admin") {
+                document.getElementById('accessDeniedScreen').style.display = 'flex';
+                return false;
+            }
+            return true;
+        };
+
+        // MOTORE DI AGGREGAZIONE FORENSE MULTI-COLLEZIONE ROBUSTO
+        window.ricostruisciRegistroAuditUnificato = () => {
+            const unificati = [];
+            const dedupSet = new Set();
+
+            const pushSafe = (item) => {
+                const ts = item.timestamp || 0;
+                // Chiave di deduplicazione per evitare doppi record tra audit_trail e cartella
+                const dedupKey = `${ts}_${item.operatore}_${item.azione}_${item.ospite}`.toLowerCase().replace(/[^a-z0-9]/g, '');
+                if (!dedupSet.has(dedupKey)) {
+                    dedupSet.add(dedupKey);
+                    unificati.push(item);
+                }
+            };
+
+            // 1. Log Nativi da collezione `audit_trail` (Accessi Login, Revoche, Consensi)
+            try {
+                window.rawNativeAudit.forEach(a => {
+                    const ts = window.parseToTimestampSafe(a.timestamp || a.dataOraStr || a.data);
+                    pushSafe({
+                        timestamp: ts,
+                        dataOraStr: a.dataOraStr || window.formatTimestampToString(ts, a.data),
+                        operatore: a.operatore || 'Operatore',
+                        qualifica: a.qualifica || 'Operatore',
+                        categoria: (a.categoria || 'LOGIN').toUpperCase(),
+                        azione: a.azione || 'Accesso Registrato',
+                        ospite: a.ospite || 'Postazione Sistema',
+                        dettaglio: a.dettaglio || '-'
+                    });
+                });
+            } catch(e) { console.warn("Errore parsing native audit:", e); }
+
+            // 2. Estrazione dati da tutte le Cartelle Cliniche
+            try {
+                Object.keys(window.rawClinica).forEach(guestName => {
+                    const c = window.rawClinica[guestName] || {};
+
+                    // A. Audit Trail Storico interno alla cartella
+                    (c.auditTrail || []).forEach(a => {
+                        const ts = window.parseToTimestampSafe(a.timestamp || a.data);
+                        pushSafe({
+                            timestamp: ts,
+                            dataOraStr: a.data || window.formatTimestampToString(ts),
+                            operatore: a.operatore || 'Operatore',
+                            qualifica: a.qualifica || 'Sanitario',
+                            categoria: (a.azione && a.azione.includes('DPR309')) ? 'DPR309' : 'TERAPIA',
+                            azione: a.azione || 'Operazione Clinica',
+                            ospite: guestName,
+                            dettaglio: a.dettaglio || '-'
+                        });
+                    });
+
+                    // B. Parametri Vitali
+                    (c.vitals || []).forEach(v => {
+                        const ts = window.parseToTimestampSafe(v.date);
+                        pushSafe({
+                            timestamp: ts,
+                            dataOraStr: v.date || window.formatTimestampToString(ts),
+                            operatore: v.op || 'Operatore',
+                            qualifica: 'Sanitario/OSS',
+                            categoria: 'PARAMETRI',
+                            azione: 'Rilevazione Parametri Vitali',
+                            ospite: guestName,
+                            dettaglio: `P.A.: <strong>${v.pa || '-'}</strong> | F.C.: <strong>${v.fc || '-'}</strong> bpm | SpO2: <strong>${v.spo2 ? v.spo2+'%' : '-'}</strong> | T.C.: <strong>${v.tc ? v.tc+'°C' : '-'}</strong> | Glicemia: <strong>${v.gli || '-'}</strong> | Dolore NRS: <strong>${v.nrs || '-'}</strong>`
+                        });
+                    });
+
+                    // C. Diari Medici e Infermieristici
+                    (c.diarioClinico || []).forEach(d => {
+                        const ts = window.parseToTimestampSafe(d.data);
+                        const isMed = (d.tipo || '').includes('Medico');
+                        pushSafe({
+                            timestamp: ts,
+                            dataOraStr: d.data || window.formatTimestampToString(ts),
+                            operatore: d.op || 'Sanitario',
+                            qualifica: isMed ? 'Medico' : 'Infermiere',
+                            categoria: 'DIARIO',
+                            azione: isMed ? 'Referto Medico' : 'Consegna Infermieristica',
+                            ospite: guestName,
+                            dettaglio: `<strong>${d.tipo || 'Nota'}:</strong> ${d.testo || '-'}`
+                        });
+                    });
+
+                    // D. Schede Assistenza OSS
+                    (c.assistenza || []).forEach(o => {
+                        const ts = window.parseToTimestampSafe(o.date);
+                        pushSafe({
+                            timestamp: ts,
+                            dataOraStr: o.date || window.formatTimestampToString(ts),
+                            operatore: o.op || 'Operatore OSS',
+                            qualifica: 'OSS',
+                            categoria: 'DIARIO',
+                            azione: 'Scheda Assistenza OSS',
+                            ospite: guestName,
+                            dettaglio: `Alvo: <strong>${o.alvo || '-'}</strong> | Diuresi: <strong>${o.diuresi || '-'}</strong> | Igiene: <strong>${o.igiene || '-'}</strong> | Idratazione: <strong>${o.idratazione ? o.idratazione+' ml' : '-'}</strong> ${o.note ? ' - <em>Note: '+o.note+'</em>' : ''}`
+                        });
+                    });
+
+                    // E. Somministrazioni Terapia Farmacologica & Stupefacenti
+                    (c.terapiaList || []).forEach(t => {
+                        if (t && t.signatures) {
+                            Object.keys(t.signatures).forEach(sk => {
+                                const sig = t.signatures[sk];
+                                if (!sig) return;
+                                const opName = (typeof sig === 'object' && sig.op) ? sig.op : (typeof sig === 'string' ? sig : 'Infermiere');
+                                const timeStr = (typeof sig === 'object' && sig.time) ? sig.time : '08:00';
+                                const parts = sk.split('_');
+                                const dIt = (parts[0] || '').split('-').reverse().join('/');
+                                const slot = parts[1] || 'Orario';
+                                const dataStrComp = `${dIt} alle ${timeStr}`;
+                                const ts = window.parseToTimestampSafe(dataStrComp);
+                                const isNarc = !!(sig && sig.narcoticId);
+
+                                pushSafe({
+                                    timestamp: ts,
+                                    dataOraStr: dataStrComp,
+                                    operatore: opName,
+                                    qualifica: 'Infermiere',
+                                    categoria: isNarc ? 'DPR309' : 'TERAPIA',
+                                    azione: isNarc ? 'Scarico Stupefacente DPR 309' : 'Somministrazione Terapia',
+                                    ospite: guestName,
+                                    dettaglio: `Farmaco: <strong>${t.farmaco || 'Terapia'}</strong> (${slot}) - Posologia: ${t.posologia || '1 dose'} ${isNarc ? ' [Scaricata dose da armadio]' : ''}`
+                                });
+                            });
+                        }
+                    });
+
+                    // F. Firme Multidisciplinari PAI
+                    ['Med', 'Inf', 'Oss'].forEach(r => {
+                        const fStr = c['paiFirma' + r + 'Date'];
+                        if (fStr) {
+                            const ts = window.parseToTimestampSafe(fStr);
+                            pushSafe({
+                                timestamp: ts,
+                                dataOraStr: fStr,
+                                operatore: fStr.split(' il ')[0] || 'Sanitario',
+                                qualifica: r === 'Med' ? 'Medico' : (r === 'Inf' ? 'Infermiere' : 'OSS'),
+                                categoria: 'PAI',
+                                azione: 'Firma Multidisciplinare P.A.I.',
+                                ospite: guestName,
+                                dettaglio: `Sottoscrizione Progetto Assistenziale Individualizzato per il ruolo: <strong>${r === 'Med' ? 'Medico Curante' : (r === 'Inf' ? 'Infermiere' : 'OSS')}</strong>`
+                            });
+                        }
+                    });
+
+                    // G. Consenso Legale e Privacy
+                    if (c.consensoLegale && c.consensoLegale.firmaB64) {
+                        const ts = c.consensoLegale.tsEpoch || window.parseToTimestampSafe(c.consensoLegale.tsAcquisizione);
+                        pushSafe({
+                            timestamp: ts,
+                            dataOraStr: c.consensoLegale.tsAcquisizione || c.consensoLegale.dataAttoStr || window.formatTimestampToString(ts),
+                            operatore: c.consensoLegale.attestanteNome || 'Operatore',
+                            qualifica: c.consensoLegale.attestanteQualifica || 'Sanitario',
+                            categoria: 'PAI',
+                            azione: 'Sottoscrizione Consenso Legale L. 219',
+                            ospite: guestName,
+                            dettaglio: `Atto sottoscritto da: <strong>${c.consensoLegale.statoGiuridico || 'CAPACE'}</strong> (${c.consensoLegale.legaleNome || guestName}) - Foto: ${c.consensoLegale.consensoFoto || 'N/D'}`
+                        });
+                    }
+
+                    // H. Foto Lesioni da Decubito
+                    (c.fotoLesioni || []).forEach(fl => {
+                        const ts = window.parseToTimestampSafe(fl.data);
+                        pushSafe({
+                            timestamp: ts,
+                            dataOraStr: fl.data || window.formatTimestampToString(ts),
+                            operatore: fl.op || 'Operatore',
+                            qualifica: 'Infermiere',
+                            categoria: 'PAI',
+                            azione: 'Acquisizione Foto Lesione Cutanea',
+                            ospite: guestName,
+                            dettaglio: `Foto lesione: <strong>${fl.sede || 'Sede'}</strong> (${fl.stadio || '-'}) | Medicazione: ${fl.medicazione || '-'}`
+                        });
+                    });
+                });
+            } catch(e) { console.warn("Errore parsing cartelle cliniche:", e); }
+
+            // 3. Consegne di Turno
+            try {
+                window.rawConsegne.forEach(cg => {
+                    const ts = window.parseToTimestampSafe(cg.date);
+                    pushSafe({
+                        timestamp: ts,
+                        dataOraStr: cg.date || window.formatTimestampToString(ts),
+                        operatore: cg.op || 'Operatore',
+                        qualifica: cg.tipo || 'Reparto',
+                        categoria: 'CONSEGNE',
+                        azione: 'Passaggio Consegne di Turno',
+                        ospite: (cg.presentiNelTurno && cg.presentiNelTurno.length > 0) ? `Staff (${cg.presentiNelTurno.length} op)` : 'Reparto Generale',
+                        dettaglio: `<strong>[${cg.turno || 'Turno'}]:</strong> ${cg.oggetto || ''} - ${cg.testo || ''}`
+                    });
+                });
+            } catch(e) { console.warn("Errore parsing consegne:", e); }
+
+            // 4. Presidi ASL
+            try {
+                window.rawPresidi.forEach(p => {
+                    const ts = window.parseToTimestampSafe(p.ts || p.dataInizio);
+                    pushSafe({
+                        timestamp: ts,
+                        dataOraStr: p.ts || p.dataInizio || window.formatTimestampToString(ts),
+                        operatore: p.op || 'Sanitario',
+                        qualifica: 'Infermiere/Medico',
+                        categoria: 'PRESIDI',
+                        azione: 'Registrazione Piano Presidi ASL',
+                        ospite: p.ospite || '-',
+                        dettaglio: `Dispositivo: <strong>${p.categoria || ''}</strong> (${p.descrizione || ''}) - Fabbisogno: ${p.fabbisogno || '-'} | Scadenza: ${p.dataScadenza || '-'}`
+                    });
+                });
+            } catch(e) { console.warn("Errore parsing presidi:", e); }
+
+            // 5. CUP e Trasporti
+            try {
+                window.rawCup.forEach(cp => {
+                    const dStr = `${cp.data} ore ${cp.time || '09:00'}`;
+                    const ts = window.parseToTimestampSafe(cp.ts || dStr);
+                    pushSafe({
+                        timestamp: ts,
+                        dataOraStr: cp.ts || dStr,
+                        operatore: cp.op || 'Sanitario',
+                        qualifica: 'Sanitario',
+                        categoria: 'CUP',
+                        azione: 'Prenotazione Visita Specialistica CUP',
+                        ospite: cp.guest || '-',
+                        dettaglio: `Prestazione: <strong>${cp.type || ''}</strong> presso ${cp.luogo || 'Ospedale'} - Trasporto: <strong>${cp.transport || 'Mezzo proprio'}</strong>`
+                    });
+                });
+            } catch(e) { console.warn("Errore parsing CUP:", e); }
+
+            // 6. Contenzioni Fisiche e Incident Reporting
+            try {
+                window.rawContenzioni.forEach(ct => {
+                    const ts = window.parseToTimestampSafe(ct.ts || ct.dataInizio);
+                    pushSafe({
+                        timestamp: ts,
+                        dataOraStr: ct.ts || ct.dataInizio || window.formatTimestampToString(ts),
+                        operatore: ct.opPrescrizione || 'Medico',
+                        qualifica: 'Medico/Infermiere',
+                        categoria: 'RISCHIO',
+                        azione: ct.stato === 'ATTIVA' ? 'Prescrizione Contenzione Fisica' : 'Revoca Contenzione Fisica',
+                        ospite: ct.ospite || '-',
+                        dettaglio: `Presidio: <strong>${ct.tipo || ''}</strong> (${ct.cadenza || 'Controllo 2h'}) - Motivo: <em>${ct.motivo || '-'}</em>`
+                    });
+                });
+
+                window.rawRischio.forEach(r => {
+                    const rStr = `${r.data} ore ${r.ora || '12:00'}`;
+                    const ts = window.parseToTimestampSafe(r.ts || rStr);
+                    pushSafe({
+                        timestamp: ts,
+                        dataOraStr: r.ts || rStr,
+                        operatore: r.op || 'Operatore',
+                        qualifica: 'Reparto',
+                        categoria: 'RISCHIO',
+                        azione: 'Segnalazione Incident Reporting (Caduta/Evento)',
+                        ospite: r.ospite || '-',
+                        dettaglio: `Evento: <strong>${r.tipo || ''}</strong> (Gravità: ${r.gravita || ''}) presso ${r.luogo || 'Reparto'}: <em>${r.din || '-'}</em>`
+                    });
+                });
+            } catch(e) { console.warn("Errore parsing rischio/contenzioni:", e); }
+
+            // Ordina decrescente (i più recenti in cima)
+            unificati.sort((a,b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+            window.dbAudit = unificati;
+            window.calcolaKpiAudit();
+            window.applicaFiltriAudit();
+        };
+
+        window.popolaFiltriSelect = () => {
+            const selOp = document.getElementById('filterOperatore');
+            const selOsp = document.getElementById('filterOspite');
+            if (!selOp || !selOsp) return;
+
+            const curOp = selOp.value;
+            const curOsp = selOsp.value;
+
+            // Raccoglie tutti gli operatori distinti (censiti + storici)
+            const operatoriSet = new Set();
+            (window.dbOperatori || []).forEach(o => { if (o && o.name) operatoriSet.add(o.name.trim()); });
+            window.dbAudit.forEach(a => { if (a && a.operatore && a.operatore !== 'Operatore') operatoriSet.add(a.operatore.trim()); });
+
+            selOp.innerHTML = '<option value="ALL">-- Tutti i Profili / Operatori Censiti --</option>';
+            Array.from(operatoriSet).sort().forEach(nome => {
+                const opObj = window.dbOperatori.find(o => o.name === nome);
+                selOp.innerHTML += `<option value="${nome}">${nome} (${opObj ? opObj.qualifica : 'Operatore'})</option>`;
+            });
+            if (curOp) selOp.value = curOp;
+
+            // Ospiti
+            selOsp.innerHTML = '<option value="ALL">-- Tutti gli Ospiti Residenti --</option>';
+            const listaOsp = [...window.dbOspiti].filter(g => !g.decesso && !g.dimissione).sort((a,b) => (a.name||'').localeCompare(b.name||''));
+            listaOsp.forEach(g => {
+                selOsp.innerHTML += `<option value="${g.name}">${g.name} (St. ${g.room||'-'})</option>`;
+            });
+            if (curOsp) selOsp.value = curOsp;
+        };
+
+        window.applicaFiltriAudit = () => {
+            const tb = document.querySelector('#tableAuditForense tbody');
+            if(!tb) return;
+
+            const fOp = document.getElementById('filterOperatore').value;
+            const fAz = document.getElementById('filterAzione').value;
+            const fOsp = document.getElementById('filterOspite').value;
+            const fDa = document.getElementById('filterDataDa').value;
+            const fA = document.getElementById('filterDataA').value;
+
+            let filtrati = [...window.dbAudit];
+
+            if (fOp !== 'ALL') {
+                filtrati = filtrati.filter(e => (e.operatore || '').toLowerCase().includes(fOp.toLowerCase()));
+            }
+
+            if (fAz !== 'ALL') {
+                filtrati = filtrati.filter(e => (e.categoria || '').toUpperCase() === fAz.toUpperCase());
+            }
+
+            if (fOsp !== 'ALL') {
+                filtrati = filtrati.filter(e => (e.ospite || '').toLowerCase().includes(fOsp.toLowerCase()));
+            }
+
+            if (fDa) {
+                const msDa = new Date(fDa + 'T00:00:00').getTime();
+                filtrati = filtrati.filter(e => (e.timestamp || 0) >= msDa);
+            }
+            if (fA) {
+                const msA = new Date(fA + 'T23:59:59').getTime();
+                filtrati = filtrati.filter(e => (e.timestamp || 0) <= msA);
+            }
+
+            document.getElementById('badgeRecordCount').innerText = `Record trovati: ${filtrati.length}`;
+            document.getElementById('lblFiltroAttivo').innerText = fOp !== 'ALL' 
+                ? `Mostrando tutti i movimenti di: ${fOp}` 
+                : 'Mostrando tutti i movimenti registrati nel sistema';
+
+            if(filtrati.length === 0) {
+                tb.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:25px; color:#64748b;">Nessun movimento trovato per i filtri selezionati.</td></tr>';
+                return;
+            }
+
+            tb.innerHTML = '';
+            filtrati.forEach(ev => {
+                const badgeInfo = window.getBadgeCategoria(ev.categoria || 'SISTEMA');
+                tb.innerHTML += `
+                    <tr>
+                        <td><strong>${ev.dataOraStr || '-'}</strong></td>
+                        <td><strong style="color:var(--text-main); font-size:1.02em;">${ev.operatore || 'Anonimo'}</strong></td>
+                        <td><span style="color:#475569; font-weight:600;">${ev.qualifica || 'Operatore'}</span></td>
+                        <td><span class="badge-cat ${badgeInfo.classe}">${badgeInfo.icona} ${ev.azione || ev.categoria}</span></td>
+                        <td><strong>${ev.ospite || '-'}</strong></td>
+                        <td style="line-height:1.45;">${ev.dettaglio || '-'}</td>
+                    </tr>`;
+            });
+        };
+
+        window.getBadgeCategoria = (cat) => {
+            const c = (cat || '').toUpperCase();
+            switch(c) {
+                case 'LOGIN': return { classe: 'cat-login', icona: '🔑' };
+                case 'TERAPIA': return { classe: 'cat-inf', icona: '💊' };
+                case 'DPR309': return { classe: 'cat-309', icona: '🔒' };
+                case 'PARAMETRI': return { classe: 'cat-med', icona: '❤️' };
+                case 'DIARIO': return { classe: 'cat-oss', icona: '📝' };
+                case 'CONSEGNE': return { classe: 'cat-oss', icona: '📢' };
+                case 'PRESIDI': return { classe: 'cat-admin', icona: '📦' };
+                case 'CUP': return { classe: 'cat-login', icona: '📅' };
+                case 'RISCHIO': return { classe: 'cat-alert', icona: '⚠️' };
+                case 'PAI': return { classe: 'cat-admin', icona: '📋' };
+                default: return { classe: 'cat-login', icona: '⚙️' };
+            }
+        };
+
+        window.resetFiltriAudit = () => {
+            document.getElementById('filterOperatore').value = 'ALL';
+            document.getElementById('filterAzione').value = 'ALL';
+            document.getElementById('filterOspite').value = 'ALL';
+            document.getElementById('filterDataDa').value = '';
+            document.getElementById('filterDataA').value = '';
+            window.applicaFiltriAudit();
+        };
+
+        window.calcolaKpiAudit = () => {
+            let tot = window.dbAudit.length;
+            let login = 0; let terapie = 0; let narc = 0; let clinici = 0;
+
+            window.dbAudit.forEach(e => {
+                const c = (e.categoria || '').toUpperCase();
+                if(c === 'LOGIN') login++;
+                else if(c === 'TERAPIA') terapie++;
+                else if(c === 'DPR309') narc++;
+                else if(c === 'PARAMETRI' || c === 'DIARIO') clinici++;
+            });
+
+            document.getElementById('kpi-tot-eventi').innerText = tot;
+            document.getElementById('kpi-tot-login').innerText = login;
+            document.getElementById('kpi-tot-terapie').innerText = terapie;
+            document.getElementById('kpi-tot-stupefacenti').innerText = narc;
+            document.getElementById('kpi-tot-clinici').innerText = clinici;
+        };
+
+        window.stampaVerbaleAudit = () => {
+            const fOp = document.getElementById('filterOperatore').value;
+            const tbRows = document.querySelectorAll('#tableAuditForense tbody tr');
+
+            let rowsHtml = '';
+            tbRows.forEach(r => { rowsHtml += `<tr>${r.innerHTML}</tr>`; });
+
+            const html = `
+                <div style="border-bottom:2px solid #3730a3; padding-bottom:12px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <h1 style="margin:0; font-size:16pt; color:#3730a3;">SENIOR CARE S.R.L. - NUOVA VILLA SILVANA</h1>
+                        <p style="margin:2px 0; font-size:9pt; color:#475569;">Residenza Protetta per Anziani | P.IVA: 03982400545 | Spoleto / Terni</p>
+                    </div>
+                    <div style="text-align:right;">
+                        <h3 style="margin:0; font-size:11pt; color:#0f172a;">VERBALE DI ISPEZIONE AUDIT TRAIL FORENSE</h3>
+                        <small>Estratto di conformità <strong>GDPR 2016/679 (Artt. 30 e 32)</strong></small>
+                    </div>
+                </div>
+
+                <div style="border:1px solid #cbd5e1; background:#f8fafc; padding:10px 14px; border-radius:4px; margin-bottom:14px; font-size:8.5pt;">
+                    Oggetto di Ispezione: Profilo Operativo <strong>${fOp !== 'ALL' ? fOp : 'Tutti i profili censiti'}</strong><br>
+                    Data Estrazione: <strong>${new Date().toLocaleString('it-IT')}</strong> | Incaricato: <strong>${window.activeOperator} (${window.activeOperatorQualifica})</strong><br>
+                    Finalità: Verifica periodica degli accessi ai dati sanitari dei pazienti e integrità registrazioni.
+                </div>
+
+                <table class="print-table">
+                    <thead>
+                        <tr style="background:#f1f5f9;">
+                            <th style="width:120px;">Data e Ora</th>
+                            <th style="width:120px;">Operatore</th>
+                            <th style="width:90px;">Qualifica</th>
+                            <th style="width:110px;">Azione</th>
+                            <th style="width:120px;">Ospite</th>
+                            <th>Dettaglio dell'Operazione Tracciata</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rowsHtml}
+                    </tbody>
+                </table>
+
+                <div style="margin-top:35px; display:flex; justify-content:space-between; font-size:8.5pt; page-break-inside:avoid;">
+                    <div>Certificazione di conformità registro informatico inalterabile</div>
+                    <div style="text-align:center;">
+                        Firma Titolare del Trattamento / DPO:<br><br>
+                        ____________________________________________________
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('printArea').innerHTML = html;
+            setTimeout(() => window.print(), 250);
+        };
+
+        window.esportaAuditCSV = () => {
+            if(window.dbAudit.length === 0) return window.showToast("Nessun record da esportare");
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Data e Ora,Operatore,Qualifica,Categoria,Azione,Ospite,Dettaglio\n";
+
+            window.dbAudit.forEach(r => {
+                const riga = [
+                    `"${r.dataOraStr || ''}"`,
+                    `"${r.operatore || ''}"`,
+                    `"${r.qualifica || ''}"`,
+                    `"${r.categoria || ''}"`,
+                    `"${r.azione || ''}"`,
+                    `"${r.ospite || ''}"`,
+                    `"${(r.dettaglio || '').replace(/<[^>]*>?/gm, '').replace(/"/g, '""')}"`
+                ].join(",");
+                csvContent += riga + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `audit_trail_privacy_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.showToast("📥 File CSV generato con successo!");
+        };
+
+        // REAL-TIME LISTENERS DI TUTTE LE COLLEZIONI DI REPARTO
+        onSnapshot(collection(db, "operatori"), snap => {
+            window.dbOperatori = snap.docs.map(d=>({id:d.id, ...d.data()}));
+            window.popolaFiltriSelect();
+        });
+
+        onSnapshot(collection(db, "ospiti"), snap => {
+            window.dbOspiti = snap.docs.map(d=>({id:d.id, ...d.data()}));
+            window.popolaFiltriSelect();
+        });
+
+        onSnapshot(collection(db, "cartelle_cliniche"), snap => {
+            window.rawClinica = {};
+            snap.forEach(d => { window.rawClinica[d.id] = d.data(); });
+            window.ricostruisciRegistroAuditUnificato();
+            window.popolaFiltriSelect();
+        });
+
+        onSnapshot(collection(db, "consegne"), snap => {
+            window.rawConsegne = snap.docs.map(d=>({id:d.id, ...d.data()}));
+            window.ricostruisciRegistroAuditUnificato();
+        });
+
+        onSnapshot(collection(db, "presidi"), snap => {
+            window.rawPresidi = snap.docs.map(d=>({id:d.id, ...d.data()}));
+            window.ricostruisciRegistroAuditUnificato();
+        });
+
+        onSnapshot(collection(db, "cup"), snap => {
+            window.rawCup = snap.docs.map(d=>({id:d.id, ...d.data()}));
+            window.ricostruisciRegistroAuditUnificato();
+        });
+
+        onSnapshot(collection(db, "contenzioni"), snap => {
+            window.rawContenzioni = snap.docs.map(d=>({id:d.id, ...d.data()}));
+            window.ricostruisciRegistroAuditUnificato();
+        });
+
+        onSnapshot(collection(db, "rischio"), snap => {
+            window.rawRischio = snap.docs.map(d=>({id:d.id, ...d.data()}));
+            window.ricostruisciRegistroAuditUnificato();
+        });
+
+        onSnapshot(collection(db, "audit_trail"), snap => {
+            window.rawNativeAudit = snap.docs.map(d=>({id:d.id, ...d.data()}));
+            window.ricostruisciRegistroAuditUnificato();
+        });
+
+        window.onload = () => {
+            if(!window.verificaAccesso()) return;
+            document.getElementById('currentOpBadge').innerText = `👤 ${window.activeOperator} (${window.activeOperatorQualifica})`;
+        };
+    </script>
+</body>
+</html>
