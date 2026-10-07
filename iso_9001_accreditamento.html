@@ -3,206 +3,220 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NVS Masterpiece - Direzione Sanitaria, ISO 9001 & Accreditamento Umbria</title>
+    <title>Senior Care S.r.l. - Sistema Qualità ISO 9001:2015 & Accreditamento Istituzionale</title>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
         :root {
-            --bg-color: #f1f5f9;         
+            --bg-color: #f1f5f9;
             --box-bg: #ffffff;
-            --primary-color: #0d9488; 
-            --secondary-color: #0f766e;  
+            --primary: #0f766e;
+            --primary-dark: #115e59;
+            --reload-color: #0369a1;
+            --iso-gold: #b45309;
+            --iso-gold-bg: #fef3c7;
             --text-main: #0f172a;
             --text-light: #475569;
-            --input-bg: #ffffff;
-            --border-color: #cbd5e1;     
-            --error-color: #e11d48; 
-            --warning-color: #d97706; 
-            --success-color: #059669; 
-            --dir-color: #4f46e5;
-            --terapia-color: #0284c7; 
-            
-            --base-font-size: 14px;      
-            --radius: 6px;               
-            --transition: all 0.2s ease;
+            --border-color: #cbd5e1;
+            --danger: #e11d48;
+            --warning: #d97706;
+            --success: #059669;
+            --radius: 8px;
         }
 
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: var(--bg-color); 
-            margin: 0; 
-            padding: 0; 
-            color: var(--text-main); 
-            font-size: var(--base-font-size); 
-            display: flex; 
-            flex-direction: column; 
-            min-height: 100vh; 
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0; padding: 0;
+            color: var(--text-main);
+            font-size: 13px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
-        body[data-qualifica="OSS"] .restrict-oss { display: none !important; }
-
-        /* NAVBAR PRINCIPALE */
-        #top-nav-container { position: sticky; top: 0; z-index: 1000; width: 100%; display: flex; flex-direction: column; flex-shrink: 0; }
-        .navbar { background: var(--dir-color); color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid #3730a3; }
-        .navbar-brand { font-weight: bold; font-size: 1.1em; display: flex; align-items: center; gap: 12px; }
-        .nav-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 6px 14px; border-radius: var(--radius); cursor: pointer; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; font-size: 0.88em; }
-        .nav-btn:hover { background: rgba(255,255,255,0.25); }
-        .current-op-badge { background: #ffffff; color: var(--dir-color); padding: 4px 10px; border-radius: 4px; font-size: 0.85em; font-weight: bold; }
-
-        /* MENU AD INCASTRO A SCHEDE */
-        .app-menu { 
-            display: flex; 
-            flex-wrap: wrap; 
-            background: #cbd5e1; 
-            padding: 6px 12px; 
-            gap: 4px; 
-            border-bottom: 2px solid var(--dir-color);
+        .navbar {
+            background: #0f172a;
+            color: white;
+            padding: 10px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--iso-gold);
+            position: sticky; top: 0; z-index: 1000;
         }
-        .menu-tab { 
-            padding: 6px 11px; 
-            background: #e2e8f0; 
-            border: 1px solid #94a3b8; 
-            border-radius: 4px; 
-            color: var(--text-light); 
-            font-weight: 600; 
-            font-size: 0.78rem; 
-            cursor: pointer; 
-            white-space: nowrap; 
-            flex: 1 0 auto; 
-            text-align: center;
+        .navbar-brand { font-weight: 800; font-size: 1.15em; display: flex; align-items: center; gap: 10px; }
+        .nav-btn {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.25);
+            color: white;
+            padding: 6px 14px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.88em;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .nav-btn:hover { background: rgba(255,255,255,0.22); }
+
+        .iso-nav-tabs {
+            background: #cbd5e1;
+            padding: 6px 16px;
+            display: flex;
+            gap: 6px;
+            border-bottom: 2px solid var(--primary);
+            flex-wrap: wrap;
+        }
+        .iso-tab-btn {
+            padding: 8px 16px;
+            background: #e2e8f0;
+            border: 1px solid #94a3b8;
+            border-radius: 6px;
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 0.86em;
+            cursor: pointer;
             transition: all 0.15s ease;
         }
-        .menu-tab:hover { background: #f1f5f9; border-color: var(--dir-color); }
-        .menu-tab.active { 
-            background: var(--box-bg); 
-            color: var(--dir-color); 
-            border-color: var(--dir-color); 
-            border-bottom: 2px solid var(--dir-color);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
-            font-weight: bold; 
+        .iso-tab-btn:hover { background: #f8fafc; border-color: var(--primary); }
+        .iso-tab-btn.active {
+            background: #ffffff;
+            color: var(--primary);
+            border-color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.06);
         }
 
-        /* CONTENITORE CENTRALE */
-        .container { max-width: 1420px; width: 96%; margin: 15px auto; flex-grow: 1; }
-        .workspace { display: none; }
-        .workspace.active { display: block; }
+        .container { max-width: 1440px; width: 95%; margin: 16px auto; flex-grow: 1; }
 
-        /* CARD */
-        .card { background: var(--box-bg); padding: 20px; border-radius: var(--radius); border: 1px solid var(--border-color); box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid var(--dir-color); padding-bottom: 8px; flex-wrap: wrap; gap:10px; }
-        .card-header h3 { margin: 0; color: var(--dir-color); font-size: 1.1em; text-transform: uppercase; }
+        .banner-iso {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: #ffffff;
+            padding: 16px 20px;
+            border-radius: var(--radius);
+            border-left: 6px solid var(--iso-gold);
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .banner-iso h2 { margin: 0 0 2px 0; font-size: 1.3em; color: #fef08a; }
+        .banner-iso p { margin: 0; font-size: 0.86em; color: #cbd5e1; }
 
-        /* METRICHE KPI */
-        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .metric-card { background: var(--box-bg); padding: 15px; border-radius: var(--radius); border: 1px solid var(--border-color); text-align: center; border-left: 5px solid var(--dir-color); }
-        .metric-card h2 { margin: 0; font-size: 2.1em; color: var(--dir-color); }
-
-        /* STILI SPECIFICI MODULO CUSTOMER SATISFACTION */
-        .csat-kpi-card {
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 12px 10px;
-            text-align: center;
+        .card-quality {
+            background: var(--box-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 18px;
+            margin-bottom: 18px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .card-header {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap; gap: 8px;
         }
-        .csat-kpi-title {
-            font-size: 0.72em;
-            font-weight: 800;
-            color: #475569;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            line-height: 1.25;
-            margin-bottom: 6px;
-            height: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
+        .card-header h3 { margin: 0; color: var(--primary); font-size: 1.1em; display: flex; align-items: center; gap: 8px; }
+
+        .iso-clause-desc {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-left: 4px solid var(--iso-gold);
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            font-size: 0.86em;
+            color: #334155;
+            line-height: 1.4;
         }
-        .csat-kpi-value {
-            font-size: 1.85em;
-            font-weight: 800;
-            color: #0f172a;
-            margin: 0;
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
         }
-        .csat-global-card {
-            background: #ffffff;
-            border: 2px solid #10b981;
-            border-radius: 8px;
-            padding: 12px 10px;
+        .metric-card {
+            background: var(--box-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 14px;
             text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.15);
+            border-left: 5px solid var(--primary);
         }
-        .csat-global-title {
-            font-size: 0.75em;
-            font-weight: 800;
-            color: #047857;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-        }
-        .csat-global-value {
-            font-size: 1.85em;
-            font-weight: 800;
-            color: #059669;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
+        .metric-card h3 { margin: 0 0 4px 0; font-size: 0.78em; text-transform: uppercase; color: var(--text-light); }
+        .metric-card .val { font-size: 1.85em; font-weight: 800; line-height: 1.1; margin: 2px 0; }
+        .metric-card .sub { font-size: 0.75em; color: var(--text-light); }
 
-        /* PULSANTI */
-        .btn-primary, .btn-success, .btn-danger, .btn-warning, .btn-doc, .btn-outline { color: white; border: none; padding: 8px 14px; border-radius: var(--radius); font-weight: 600; cursor: pointer; font-size: 0.88em; transition: 0.15s; }
-        .btn-primary { background: var(--dir-color); }
-        .btn-success { background: var(--success-color); }
-        .btn-danger { background: var(--error-color); }
-        .btn-warning { background: var(--warning-color); }
+        .quality-table { width: 100%; border-collapse: collapse; font-size: 0.85em; background: #ffffff; }
+        .quality-table th, .quality-table td { border: 1px solid var(--border-color); padding: 7px 9px; text-align: left; vertical-align: middle; }
+        .quality-table th { background-color: #0f172a; color: white; font-weight: 700; text-transform: uppercase; font-size: 0.74em; }
+        .quality-table tr:nth-child(even) { background-color: #f8fafc; }
+        .quality-table tr:hover { background-color: #f1f5f9; }
+
+        .badge-kpi { display: inline-flex; align-items: center; gap: 4px; padding: 2px 7px; border-radius: 4px; font-size: 0.74em; font-weight: 800; }
+        .bk-ok { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+        .bk-warn { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+        .form-grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 10px; }
+        .form-field label { display: block; font-weight: 700; font-size: 0.8em; margin-bottom: 3px; color: var(--text-main); }
+        input, select, textarea { width: 100%; padding: 8px; border: 1.5px solid var(--border-color); border-radius: 6px; font-family: inherit; font-size: 0.9em; box-sizing: border-box; }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); outline: none; background: #f0fdfa; }
+
+        .btn-action { color: white; border: none; padding: 7px 14px; border-radius: var(--radius); font-weight: 700; cursor: pointer; font-size: 0.84em; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; }
+        .btn-primary { background: var(--primary); }
         .btn-doc { background: #475569; }
-        .btn-outline { background: transparent; border: 2px solid var(--dir-color); color: var(--dir-color); }
+        .btn-gold { background: var(--iso-gold); }
+        .btn-danger { background: var(--danger); }
 
-        /* FORM */
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 0.85em; color: var(--text-main); }
-        input[type="text"], input[type="number"], input[type="date"], select, textarea { width: 100%; padding: 8px; border: 1px solid #94a3b8; border-radius: 4px; box-sizing: border-box; background-color: var(--input-bg); color: var(--text-main); font-family: inherit; font-size: 0.92em; }
-        input:focus, select:focus, textarea:focus { border-color: var(--dir-color); outline: none; background-color: #f5f3ff; }
-
-        /* TABELLE */
-        .data-table { width: 100%; border-collapse: collapse; font-size: 0.88em; background: #ffffff; }
-        .data-table th, .data-table td { border: 1px solid var(--border-color); padding: 9px 10px; text-align: left; vertical-align: middle; }
-        .data-table th { background-color: var(--dir-color); color: white; font-weight: normal; text-transform: uppercase; font-size: 0.82em; }
-        .data-table tr:nth-child(even) { background-color: #f8fafc; }
-
-        /* BADGE STATO */
-        .badge-status { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 4px; font-size: 0.78em; font-weight: bold; }
-        .status-ok { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
-        .status-warn { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
-        .status-err { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.85);
+            z-index: 50000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .modal-card {
+            background: #ffffff;
+            color: var(--text-main);
+            border-radius: var(--radius);
+            max-width: 540px;
+            width: 100%;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.4);
+            position: relative;
+        }
 
         #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 40000; }
         .toast { background: var(--text-main); color: #fff; padding: 12px 20px; border-radius: 4px; font-weight: bold; margin-top: 10px; opacity: 0; transition: opacity 0.3s; }
         .toast.show { opacity: 1; }
 
-        /* MODALE QR CODE */
-        #qrModal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:36000; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; }
-
-        /* STAMPE PDF/A4 */
         #printArea { display: none; }
         @media print {
             body * { visibility: hidden; }
             #printArea, #printArea * { visibility: visible; }
-            #printArea { display: block !important; position: absolute; left: 0; top: 0; width: 100%; background: white !important; color: black !important; padding: 25px; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Arial, sans-serif; }
-            .print-header { text-align: center; border-bottom: 2px solid #4f46e5; padding-bottom: 12px; margin-bottom: 20px; }
-            .print-header h1 { margin: 0; font-size: 18pt; color: #4f46e5; }
-            .print-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 9pt; }
-            .print-table th, .print-table td { border: 1px solid #94a3b8; padding: 6px 8px; text-align: left; }
+            #printArea {
+                display: block !important; position: absolute; left: 0; top: 0; width: 100%;
+                background: white !important; color: black !important; padding: 25px; box-sizing: border-box;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            }
+            .print-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 8pt; }
+            .print-table th, .print-table td { border: 1px solid #94a3b8; padding: 5px 6px; text-align: left; }
             .print-table th { background: #f1f5f9 !important; font-weight: bold; }
         }
     </style>
@@ -211,562 +225,513 @@
     <div id="toast-container"></div>
     <div id="printArea"></div>
 
-    <!-- MODALE MOSTRA QR CODE COLLEGATO DIRETTAMENTE A GOOGLE MODULI -->
-    <div id="qrModal" onclick="this.style.display='none'">
-        <div style="background:#fff; border-radius:10px; max-width:440px; width:100%; padding:25px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.4);" onclick="event.stopPropagation()">
-            <h3 style="margin:0 0 6px 0; color:#0f766e;">📱 Rilevamento via QR Code (Google Moduli)</h3>
-            <p style="margin:0 0 15px 0; font-size:0.85em; color:#64748b;">Inquadra con lo smartphone per compilare il modulo ufficiale di soddisfazione:</p>
-            
-            <div style="background:#f8fafc; border:1px solid #cbd5e1; padding:15px; border-radius:8px; display:inline-block; margin-bottom:15px;">
-                <img id="qrCodeImg" src="" alt="QR Code Google Modulo" style="width:230px; height:230px; display:block;">
+    <!-- MODALE LOCANDINA QR CODE CUSTOMER SATISFACTION (DIRETTO SU FIREBASE) -->
+    <div id="modalQrLocandina" class="modal-overlay">
+        <div class="modal-card">
+            <h3 style="margin:0 0 6px 0; color:var(--primary); font-size:1.3em;">📱 QR Code Customer Satisfaction Diretto</h3>
+            <p style="margin:0 0 16px 0; font-size:0.86em; color:var(--text-light);">
+                Punta alla scheda mobile interna di Nuova Villa Silvana (ISO 9001 § 9.1.2)
+            </p>
+
+            <div style="background:#f8fafc; border:2px dashed #cbd5e1; border-radius:8px; padding:18px; margin-bottom:16px;">
+                <div id="qrcodeBox" style="display:flex; justify-content:center; margin-bottom:12px;"></div>
+                <strong style="color:var(--text-main); display:block; font-size:0.95em;">Inquadra per compilare direttamente da smartphone</strong>
+                <small style="color:var(--reload-color); display:block; margin-top:6px; word-break:break-all; font-weight:bold;" id="qrTargetUrlTxt"></small>
             </div>
 
-            <div style="margin-bottom:15px;">
-                <a id="qrDirectLink" href="#" target="_blank" style="color:#0284c7; font-weight:bold; font-size:0.85em; text-decoration:none;">🔗 Apri Google Modulo nel Browser ↗</a>
-            </div>
-
-            <div style="display:flex; justify-content:center; gap:10px;">
-                <button class="btn-success" onclick="window.stampaCartelloQR()">🖨️ Stampa Cartello Reception (A4)</button>
-                <button class="btn-doc" onclick="document.getElementById('qrModal').style.display='none'">Chiudi</button>
+            <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+                <button class="btn-action btn-gold" onclick="window.stampaLocandinaQrA4()">
+                    🖨️ Stampa Locandina Reception A4
+                </button>
+                <button class="btn-action btn-primary" onclick="window.copiaLinkQuestionario()">
+                    🔗 Copia Link Diretto
+                </button>
+                <button class="btn-action btn-doc" onclick="document.getElementById('modalQrLocandina').style.display='none'">
+                    Chiudi ✕
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- NAVBAR TOP -->
-    <div id="top-nav-container">
+    <!-- VISTA MOBILE STANDALONE DA SMARTPHONE (ATTIVATA CON ?survey=1) -->
+    <div id="publicSurveyView" style="display:none; max-width:620px; width:92%; margin:24px auto; background:#ffffff; border-radius:12px; padding:24px; box-shadow:0 8px 30px rgba(0,0,0,0.12); border-top:6px solid var(--primary);">
+        <div style="text-align:center; border-bottom:2px solid #e2e8f0; padding-bottom:14px; margin-bottom:16px;">
+            <img src="logo.png" alt="Nuova Villa Silvana" style="height:55px; object-fit:contain; margin-bottom:6px;">
+            <h2 style="margin:0; color:var(--primary); font-size:1.35em;">NUOVA VILLA SILVANA</h2>
+            <p style="margin:4px 0 0 0; font-size:0.9em; color:var(--text-light);">Senior Care S.r.l. • Questionario di Valutazione Qualità</p>
+        </div>
+
+        <p style="font-size:0.88em; color:#334155; line-height:1.45; margin-bottom:16px;">
+            Gentile Familiare o Ospite, la tua valutazione è fondamentale per il monitoraggio della qualità e il miglioramento continuo delle cure erogate. Assegna da 1 a 5 stelle a ciascun servizio.
+        </p>
+
+        <div id="surveyFormFields" style="display:flex; flex-direction:column; gap:12px; margin-bottom:18px;">
+            <div class="form-field">
+                <label>Chi compila il questionario? *</label>
+                <select id="pubTipoCompilatore">
+                    <option value="Familiare / AdS">Familiare / Amministratore di Sostegno</option>
+                    <option value="Ospite Residente">Ospite Residente</option>
+                    <option value="Caregiver / Visitatore">Caregiver / Visitatore</option>
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label>Ospite di riferimento (o compila in forma Anonima):</label>
+                <input type="text" id="pubOspite" placeholder="Lascia vuoto per restare anonimo">
+            </div>
+
+            <div class="form-field">
+                <label>1. Assistenza Sanitaria, Medica & OSS *</label>
+                <select id="pubVotoAss">
+                    <option value="5">⭐⭐⭐⭐⭐ 5 - Eccellente</option>
+                    <option value="4" selected>⭐⭐⭐⭐ 4 - Molto Buono</option>
+                    <option value="3">⭐⭐⭐ 3 - Sufficiente</option>
+                    <option value="2">⭐⭐ 2 - Scarso</option>
+                    <option value="1">⭐ 1 - Pessimo</option>
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label>2. Servizio Vitto & Qualità dei Pasti *</label>
+                <select id="pubVotoVitto">
+                    <option value="5">⭐⭐⭐⭐⭐ 5 - Eccellente</option>
+                    <option value="4" selected>⭐⭐⭐⭐ 4 - Molto Buono</option>
+                    <option value="3">⭐⭐⭐ 3 - Sufficiente</option>
+                    <option value="2">⭐⭐ 2 - Scarso</option>
+                    <option value="1">⭐ 1 - Pessimo</option>
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label>3. Pulizia Ambienti, Camere & Comfort *</label>
+                <select id="pubVotoComfort">
+                    <option value="5">⭐⭐⭐⭐⭐ 5 - Eccellente</option>
+                    <option value="4" selected>⭐⭐⭐⭐ 4 - Molto Buono</option>
+                    <option value="3">⭐⭐⭐ 3 - Sufficiente</option>
+                    <option value="2">⭐⭐ 2 - Scarso</option>
+                    <option value="1">⭐ 1 - Pessimo</option>
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label>4. Attività Ricreative & Animazione *</label>
+                <select id="pubVotoAni">
+                    <option value="5">⭐⭐⭐⭐⭐ 5 - Eccellente</option>
+                    <option value="4" selected>⭐⭐⭐⭐ 4 - Molto Buono</option>
+                    <option value="3">⭐⭐⭐ 3 - Sufficiente</option>
+                    <option value="2">⭐⭐ 2 - Scarso</option>
+                    <option value="1">⭐ 1 - Pessimo</option>
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label>5. Cortesia, Disponibilità & Comunicazione Personale *</label>
+                <select id="pubVotoCor">
+                    <option value="5">⭐⭐⭐⭐⭐ 5 - Eccellente</option>
+                    <option value="4" selected>⭐⭐⭐⭐ 4 - Molto Buono</option>
+                    <option value="3">⭐⭐⭐ 3 - Sufficiente</option>
+                    <option value="2">⭐⭐ 2 - Scarso</option>
+                    <option value="1">⭐ 1 - Pessimo</option>
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label>Eventuali Suggerimenti, Elogi o Note:</label>
+                <textarea id="pubNote" rows="3" placeholder="Scrivi qui le tue impressioni o proposte di miglioramento..."></textarea>
+            </div>
+
+            <button id="btnInviaSurvey" class="btn-action btn-primary" style="width:100%; padding:14px; font-size:1.05em; justify-content:center; margin-top:8px;" onclick="window.inviaSurveyDaSmartphone()">
+                🚀 Invia Valutazione
+            </button>
+        </div>
+
+        <div id="pubSuccessBox" style="display:none; text-align:center; padding:24px 16px; background:#f0fdf4; border:2px solid #86efac; border-radius:8px;">
+            <h3 style="color:#166534; margin:0 0 8px 0; font-size:1.3em;">🎉 Valutazione Inviata con Successo!</h3>
+            <p style="margin:0 0 12px 0; font-size:0.95em; color:#14532d;">
+                Grazie per il tuo tempo. Il tuo riscontro è stato acquisito immediatamente nel Sistema Qualità di Nuova Villa Silvana.
+            </p>
+            <small style="color:#15803d; font-weight:bold;">ISO 9001:2015 • Senior Care S.r.l.</small>
+        </div>
+    </div>
+
+    <!-- AREA DI AMMINISTRAZIONE DEL GESTIONALE -->
+    <div id="adminAppArea">
         <div class="navbar">
             <div class="navbar-brand">
-                <span>🏆 NVS Masterpiece [Direzione Sanitaria, ISO 9001 & Accreditamento Umbria]</span>
+                <span>🏆 NVS Masterpiece - Sistema Qualità ISO 9001:2015 & Accreditamento</span>
             </div>
             <div style="display:flex; gap:10px; align-items:center;">
-                <span class="current-op-badge" id="currentOpBadge">👤 Op</span>
-                <a href="haccp_sicurezza_dash.html" class="nav-btn" style="color:#a7f3d0; font-weight:bold;">🛡️ HACCP</a>
-                <a href="index.html" class="nav-btn">🏠 Torna al Reparto (Home)</a>
+                <a href="registro_audit_privacy.html" class="nav-btn" style="color:#c7d2fe;">🛡️ Audit Trail Live ↗</a>
+                <a href="personale_privacy_reload.html" class="nav-btn" style="color:#7dd3fc;">⚖️ Nomine Reload ↗</a>
+                <a href="privacy_consenso.html" class="nav-btn" style="color:#99f6e4;">✍️ Consensi Degenti ↗</a>
+                <a href="index_2.html" class="nav-btn">🏠 Desktop Reparto</a>
             </div>
         </div>
 
-        <!-- MENU MODULI AD INCASTRO -->
-        <div class="app-menu">
-            <button class="menu-tab" onclick="window.switchTab('kpi', this)">📊 Cruscotto Generale</button>
-            <button class="menu-tab" onclick="window.switchTab('checklist', this)">📋 Checklist D.G.R. Umbria</button>
-            <button class="menu-tab" onclick="window.switchTab('personale', this)">⏱️ Minutaggio & Personale (4.1)</button>
-            <button class="menu-tab" onclick="window.switchTab('pai', this)">📋 Monitoraggio PAI & BINA (2.2)</button>
-            <button class="menu-tab" onclick="window.switchTab('rischio', this)">⚠️ Rischio Clinico & CAPA (6.3)</button>
-            <button class="menu-tab" onclick="window.switchTab('procedure', this)">📁 Procedure Operative POS</button>
-            <button class="menu-tab" onclick="window.switchTab('audit', this)">🔍 Audit Interni & Fornitori</button>
-            <button class="menu-tab" onclick="window.switchTab('asset', this)">🛠️ Elettromedicali CEI 62-5</button>
-            <button class="menu-tab active" onclick="window.switchTab('reclami', this)" style="color:#047857; font-weight:bold;">⭐ Satisfaction (Moduli) & Reclami</button>
-            <button class="menu-tab" onclick="window.switchTab('stampe', this)">📑 Generatore Fascicolo USL</button>
+        <div class="iso-nav-tabs">
+            <button class="iso-tab-btn active" id="tabBtnChecklist" onclick="window.switchIsoTab('checklist')">
+                📋 Checklist Accreditamento (Regione Umbria)
+            </button>
+            <button class="iso-tab-btn" id="tabBtnCustomer" onclick="window.switchIsoTab('customer')">
+                ⭐ Customer Satisfaction (Ospiti & Familiari)
+            </button>
+            <button class="iso-tab-btn" id="tabBtnPrivacy" onclick="window.switchIsoTab('privacy')">
+                🛡️ Privacy, Nomine Reload & Cogenza (ISO 8.4 & 7.5)
+            </button>
+            <button class="iso-tab-btn" id="tabBtnNC" onclick="window.switchIsoTab('nc')">
+                ⚠️ Registro Non Conformità & CAPA (ISO 10.2)
+            </button>
         </div>
-    </div>
 
-    <div class="container">
-        
-        <!-- 1. WORKSPACE: CRUSCOTTO GENERALE & DATI STRUTTURA -->
-        <div id="ws-kpi" class="workspace">
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <h2 id="kpi-copertura-pai">0%</h2>
-                    <span style="font-size:0.8em; text-transform:uppercase; color:var(--text-light);">Copertura P.A.I. Validi</span>
+        <div class="container">
+
+            <div class="banner-iso">
+                <div>
+                    <h2>SENIOR CARE S.R.L. • RESIDENZA PROTETTA NUOVA VILLA SILVANA</h2>
+                    <p id="lblBannerSub">Sistema di Gestione Qualità e Verifiche di Accreditamento Istituzionale</p>
                 </div>
-                <div class="metric-card" style="border-left-color: var(--success-color);">
-                    <h2 id="kpi-minutaggio-oss" style="color:var(--success-color);">0 m/die</h2>
-                    <span style="font-size:0.8em; text-transform:uppercase; color:var(--text-light);">Assistenza OSS / Ospite</span>
-                </div>
-                <div class="metric-card" style="border-left-color: var(--warning-color);">
-                    <h2 id="kpi-contenzioni-rate" style="color:var(--warning-color);">0%</h2>
-                    <span style="font-size:0.8em; text-transform:uppercase; color:var(--text-light);">Tasso Contenzioni Attive</span>
-                </div>
-                <div class="metric-card" style="border-left-color: var(--error-color);">
-                    <h2 id="kpi-nc-aperte" style="color:var(--error-color);">0</h2>
-                    <span style="font-size:0.8em; text-transform:uppercase; color:var(--text-light);">Non Conformità / Reclami Aperti</span>
+                <div style="display:flex; gap:8px;">
+                    <button class="btn-action btn-gold" id="btnStampaTabAttiva" onclick="window.stampaTabCorrente()">
+                        🖨️ Stampa Report di Sezione A4
+                    </button>
                 </div>
             </div>
 
-            <div class="card" style="border-top:4px solid var(--dir-color);">
-                <div class="card-header">
-                    <h3>🏛️ Dati Istituzionali Struttura & Parametri di Accreditamento (USL Umbria 2)</h3>
-                </div>
-                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:12px;">
-                    <div class="form-group" style="margin:0;">
-                        <label>Ragione Sociale Struttura</label>
-                        <input type="text" id="isoRagioneSociale" readonly style="background:#f8fafc; font-weight:bold;">
-                    </div>
-                    <div class="form-group" style="margin:0;">
-                        <label>Partita IVA / Codice Fiscale</label>
-                        <input type="text" id="isoPiva" readonly style="background:#f8fafc;">
-                    </div>
-                    <div class="form-group" style="margin:0;">
-                        <label>Codice Accreditamento Regionale</label>
-                        <input type="text" id="isoCodAccreditamento" readonly style="background:#f8fafc; color:var(--dir-color); font-weight:bold;">
-                    </div>
-                    <div class="form-group" style="margin:0;">
-                        <label>Direttore Sanitario Responsabile</label>
-                        <input type="text" id="isoDirSanitario" readonly style="background:#f8fafc; font-weight:bold;">
-                    </div>
-                </div>
-                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px; margin-bottom:15px;">
-                    <div class="form-group" style="margin:0;">
-                        <label>Posti Letto Totali Autorizzati</label>
-                        <input type="number" id="isoPostiAutorizzati" value="40" onchange="window.aggiornaIndicatoriSintesi()">
-                    </div>
-                    <div class="form-group" style="margin:0;">
-                        <label>Posti Letto Accreditati USL</label>
-                        <input type="number" id="isoPostiAccreditati" value="40" onchange="window.aggiornaIndicatoriSintesi()">
-                    </div>
-                    <div class="form-group" style="margin:0;">
-                        <label>Posti Letto Attualmente Occupati</label>
-                        <input type="text" id="isoPostiOccupati" readonly style="background:#f8fafc; font-weight:bold;">
-                    </div>
-                    <div class="form-group" style="margin:0;">
-                        <label>Tasso di Saturazione (%)</label>
-                        <input type="text" id="isoTassoSaturazione" readonly style="background:#f8fafc; font-weight:bold; color:var(--success-color);">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 2. WORKSPACE: CHECKLIST COMPLETA ACCREDITAMENTO REGIONE UMBRIA -->
-        <div id="ws-checklist" class="workspace">
-            <div class="card" style="border-top:4px solid var(--primary-color);">
-                <div class="card-header">
-                    <h3>📋 Griglia di Autovalutazione Requisiti Specifici (Checklist D.G.R. Umbria - R.P.)</h3>
-                    <button class="btn-success" onclick="window.salvaTuttaChecklist()">💾 Salva Stato Checklist</button>
-                </div>
-                <p style="color:var(--text-light); font-size:0.9em; margin-top:0;">
-                    Tutti i criteri e requisiti di verifica previsti dalla normativa regionale per il mantenimento dell'accreditamento istituzionale.
-                </p>
-
-                <div style="overflow-x:auto;">
-                    <table class="data-table" id="tableChecklistDGR">
-                        <thead>
-                            <tr>
-                                <th style="width:10%;">Cod. Req.</th>
-                                <th style="width:20%;">Ambito Normativo</th>
-                                <th style="width:35%;">Criterio di Verifica / Evidenza Richiesta</th>
-                                <th style="width:15%;">Stato Conformità</th>
-                                <th style="width:20%;">Note / Riferimento Documentale</th>
-                            </tr>
-                        </thead>
-                        <tbody id="checklistBody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- 3. WORKSPACE: MINUTAGGIO ASSISTENZIALE & PERSONALE -->
-        <div id="ws-personale" class="workspace">
-            <div class="card" style="border-top:4px solid var(--success-color);">
-                <div class="card-header">
-                    <h3 style="color:var(--success-color);">⏱️ Verifica Minutaggio Assistenziale per Ospite (D.G.R. Umbria)</h3>
-                    <button class="btn-doc" onclick="window.stampaSezione('personale')">🖨️ Stampa Prospetto Personale</button>
-                </div>
-                
-                <p style="color:var(--text-light); font-size:0.9em; margin-top:0;">
-                    Il sistema calcola in tempo reale i minuti effettivi per ospite/die confrontandoli con gli standard minimi di legge.
-                </p>
-
-                <div style="overflow-x:auto; margin-bottom:20px;">
-                    <table class="data-table" id="tableMinutaggi">
-                        <thead>
-                            <tr>
-                                <th>Figura Professionale</th>
-                                <th>Operatori in Organico</th>
-                                <th>Ore Settimanali Totali</th>
-                                <th>Minuti Effettivi / Ospite / Die</th>
-                                <th>Standard Minimo D.G.R. Umbria</th>
-                                <th>Conformità</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>🧻 O.S.S. (Operatore Socio Sanitario)</strong></td>
-                                <td id="cntOssStaff">0</td>
-                                <td><input type="number" id="oreSettOss" value="672" style="width:100px; padding:4px;" onchange="window.calcolaMinutaggi()"> ore</td>
-                                <td><strong id="minutiOssEffettivi" style="color:var(--success-color); font-size:1.1em;">-</strong></td>
-                                <td>≥ 120 min / die</td>
-                                <td><span id="badgeOssConf" class="badge-status status-ok">🟢 CONFORME</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>💉 Infermiere Professionale</strong></td>
-                                <td id="cntInfStaff">0</td>
-                                <td><input type="number" id="oreSettInf" value="168" style="width:100px; padding:4px;" onchange="window.calcolaMinutaggi()"> ore</td>
-                                <td><strong id="minutiInfEffettivi" style="color:var(--terapia-color); font-size:1.1em;">-</strong></td>
-                                <td>≥ 25 min / die</td>
-                                <td><span id="badgeInfConf" class="badge-status status-ok">🟢 CONFORME</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>🏃‍♂️ Fisioterapista / Riabilitazione</strong></td>
-                                <td id="cntFisioStaff">0</td>
-                                <td><input type="number" id="oreSettFisio" value="48" style="width:100px; padding:4px;" onchange="window.calcolaMinutaggi()"> ore</td>
-                                <td><strong id="minutiFisioEffettivi" style="color:#0f766e; font-size:1.1em;">-</strong></td>
-                                <td>≥ 10 min / die</td>
-                                <td><span id="badgeFisioConf" class="badge-status status-ok">🟢 CONFORME</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="card-header" style="border-bottom-color:#16a34a; margin-top:20px;">
-                    <h3 style="color:#166534;">🎓 Scadenzario Formazione Continua, ECM & Sicurezza Staff (Req. 4.2)</h3>
-                </div>
-                <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:12px; border-radius:6px; margin-bottom:12px;">
-                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px;">
-                        <div class="form-group" style="margin:0;"><label>Operatore</label><select id="formazOp"></select></div>
-                        <div class="form-group" style="margin:0;"><label>Corso / Attestato</label>
-                            <select id="formazCorso">
-                                <option value="BLSD - Rianimazione & Defibrillazione">BLSD & Defibrillazione</option>
-                                <option value="Prevenzione Infezioni ICA & Rischio Biologico">Prevenzione Infezioni ICA</option>
-                                <option value="Movimentazione Manuale Carichi (81/08)">Movimentazione Manuale Carichi</option>
-                                <option value="Antincendio Rischio Elevato">Antincendio Rischio Elevato</option>
-                                <option value="Privacy GDPR & Riservatezza Dati Sanitari">Privacy GDPR & Fascicolo Sanitario</option>
-                            </select>
-                        </div>
-                        <div class="form-group" style="margin:0;"><label>Data Scadenza Attestato</label><input type="date" id="formazScadenza"></div>
-                        <div style="display:flex; align-items:flex-end;">
-                            <button class="btn-success" style="width:100%;" onclick="window.salvaFormazioneStaff()">Registra Corso</button>
-                        </div>
-                    </div>
-                </div>
-                <div style="overflow-x:auto;">
-                    <table class="data-table" id="tableFormazione">
-                        <thead><tr><th>Stato</th><th>Operatore</th><th>Corso di Formazione</th><th>Scadenza Attestato</th><th class="restrict-oss">Azione</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- 4. WORKSPACE: MONITORAGGIO P.A.I. & BINA -->
-        <div id="ws-pai" class="workspace">
-            <div class="card" style="border-top:4px solid var(--primary-color);">
-                <div class="card-header">
-                    <h3>📋 Monitoraggio P.A.I. & Valutazione Multidimensionale B.I.N.A. (Req. 2.2)</h3>
-                    <button class="btn-doc" onclick="window.stampaSezione('pai')">🖨️ Stampa Tabulato PAI</button>
-                </div>
-                <p style="color:var(--text-light); font-size:0.9em; margin-top:0;">
-                    Il Progetto Assistenziale Individualizzato deve essere redatto entro 30 giorni dall'ingresso e rivalutato obbligatoriamente ogni 6 o 12 mesi.
-                </p>
-
-                <div style="overflow-x:auto;">
-                    <table class="data-table" id="tablePaiMonitor">
-                        <thead>
-                            <tr>
-                                <th>Stato PAI</th>
-                                <th>Ospite</th>
-                                <th>Data Ingresso</th>
-                                <th>Ultima Redazione PAI</th>
-                                <th>Prossima Rivalutazione</th>
-                                <th>Livello B.I.N.A.</th>
-                                <th>Braden (Decubito)</th>
-                                <th>Barthel (Autonomia)</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- 5. WORKSPACE: RISK MANAGEMENT & CAPA -->
-        <div id="ws-rischio" class="workspace">
-            <div class="card" style="border-top:4px solid var(--error-color);">
-                <div class="card-header">
-                    <h3 style="color:var(--error-color);">⚠️ Gestione del Rischio Clinico, Incident Reporting & CAPA (Req. 6.3)</h3>
-                    <button class="btn-doc" onclick="window.stampaSezione('rischio')">🖨️ Stampa Report Rischio Clinico</button>
-                </div>
-
+            <!-- TAB 1: CHECKLIST ACCREDITAMENTO REGIONALE -->
+            <div id="viewChecklist" class="iso-view">
                 <div class="metrics-grid">
-                    <div class="metric-card" style="border-left-color:var(--error-color);">
-                        <h2 id="kpi-cadute-tot" style="color:var(--error-color);">0</h2>
-                        <span style="font-size:0.8em; text-transform:uppercase;">Cadute Segnalate</span>
+                    <div class="metric-card" style="border-left-color: var(--primary);">
+                        <h3>Indice di Conformità Accreditamento</h3>
+                        <div class="val" id="kpiAccreditoPerc" style="color:var(--primary);">0%</div>
+                        <div class="sub" id="kpiAccreditoRatio">0 su 0 Requisiti Soddisfatti</div>
                     </div>
-                    <div class="metric-card" style="border-left-color:var(--warning-color);">
-                        <h2 id="kpi-errori-terapia" style="color:var(--warning-color);">0</h2>
-                        <span style="font-size:0.8em; text-transform:uppercase;">Errori Terapia / Farmaci</span>
+                    <div class="metric-card" style="border-left-color: var(--success);">
+                        <h3>Requisiti Conformi</h3>
+                        <div class="val" id="kpiAccreditoOk" style="color:var(--success);">0</div>
+                        <div class="sub">Standard Pienamente Operativi</div>
                     </div>
-                    <div class="metric-card" style="border-left-color:var(--primary-color);">
-                        <h2 id="kpi-ica-tot" style="color:var(--primary-color);">0</h2>
-                        <span style="font-size:0.8em; text-transform:uppercase;">Infezioni ICA Rilevate</span>
+                    <div class="metric-card" style="border-left-color: var(--warning);">
+                        <h3>In Adeguamento / Monitoraggio</h3>
+                        <div class="val" id="kpiAccreditoWarn" style="color:var(--warning);">0</div>
+                        <div class="sub">Piani di Miglioramento Attivi</div>
                     </div>
-                    <div class="metric-card" style="border-left-color:var(--dir-color);">
-                        <h2 id="kpi-contenzioni-count" style="color:var(--dir-color);">0</h2>
-                        <span style="font-size:0.8em; text-transform:uppercase;">Contenzioni Attive</span>
-                    </div>
-                </div>
-
-                <h4 style="margin:15px 0 8px 0; color:var(--text-main);">Registro Non Conformità & Azioni Correttive / Preventive (CAPA)</h4>
-                <div style="background:#fff1f2; border:1px solid #fecdd3; padding:12px; border-radius:6px; margin-bottom:12px;">
-                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:10px;">
-                        <div class="form-group" style="margin:0;"><label>Origine / Tipo Evento</label><input type="text" id="ncOrigine" placeholder="Es. Caduta notturna camera 14"></div>
-                        <div class="form-group" style="margin:0;"><label>Causa Radice (Root Cause)</label><input type="text" id="ncCausa" placeholder="Es. Disorientamento acuto, scivolamento"></div>
-                        <div class="form-group" style="margin:0;"><label>Azione Correttiva / Preventiva (CAPA)</label><input type="text" id="ncAzione" placeholder="Es. Sensore letto, spondina, rivalutazione medica"></div>
-                        <div style="display:flex; align-items:flex-end;">
-                            <button class="btn-danger" style="width:100%;" onclick="window.salvaCapa()">Registra CAPA</button>
-                        </div>
+                    <div class="metric-card" style="border-left-color: var(--danger);">
+                        <h3>Non Conformità Rilevate</h3>
+                        <div class="val" id="kpiAccreditoCritici" style="color:var(--danger);">0</div>
+                        <div class="sub">Azioni Correttive Obbligatorie</div>
                     </div>
                 </div>
 
-                <div style="overflow-x:auto;">
-                    <table class="data-table" id="tableCapa">
-                        <thead><tr><th>Stato</th><th>Data</th><th>Origine Evento</th><th>Causa Radice</th><th>Azione Correttiva Intrapresa</th><th>Op</th><th class="restrict-oss">Azione</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
+                <div class="card-quality">
+                    <div class="card-header">
+                        <h3>📋 Requisiti Generali e Specifici di Accreditamento (D.G.R. Umbria)</h3>
+                        <button class="btn-action btn-primary" onclick="window.salvaChecklistAccreditamento()">
+                            💾 Salva Stato Checklist
+                        </button>
+                    </div>
+                    <div class="iso-clause-desc">
+                        Verifica periodica dei requisiti strutturali, tecnologici, organizzativi e di processo applicabili alle Residenze Protette per anziani non autosufficienti della Regione Umbria.
+                    </div>
+
+                    <div style="overflow-x:auto;">
+                        <table class="quality-table" id="tableChecklistAccredito">
+                            <thead>
+                                <tr>
+                                    <th style="width:130px;">Area / Categoria</th>
+                                    <th>Requisito Normativo & Standard Regionale</th>
+                                    <th style="width:160px;">Stato di Conformità</th>
+                                    <th style="width:260px;">Evidenze Oggettive & Note Operative</th>
+                                    <th style="width:130px;">Data Verifica</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- 6. WORKSPACE: PROCEDURE OPERATIVE STANDARD (POS) -->
-        <div id="ws-procedure" class="workspace">
-            <div class="card" style="border-top:4px solid var(--dir-color);">
-                <div class="card-header">
-                    <h3 style="color:var(--dir-color);">📁 Registro Procedure Operative Standard (POS) & Protocolli (ISO 9001 cl. 7.5)</h3>
-                </div>
-                
-                <div style="background:#f8fafc; border:1px solid #cbd5e1; padding:12px; border-radius:6px; margin-bottom:12px;">
-                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px;">
-                        <div class="form-group" style="margin:0;"><label>Codice Protocollo</label><input type="text" id="posCodice" placeholder="Es. POS-CLI-01"></div>
-                        <div class="form-group" style="margin:0;"><label>Titolo Procedura / Protocollo</label><input type="text" id="posTitolo" placeholder="Es. Procedura Prevenzione Cadute"></div>
-                        <div class="form-group" style="margin:0;"><label>Rev. n°</label><input type="text" id="posRev" placeholder="Rev. 02"></div>
-                        <div class="form-group" style="margin:0;"><label>Data Approvazione</label><input type="date" id="posData"></div>
-                        <div style="display:flex; align-items:flex-end;">
-                            <button class="btn-primary" style="width:100%;" onclick="window.salvaProcedura()">Archivia POS</button>
-                        </div>
+            <!-- TAB 2: CUSTOMER SATISFACTION -->
+            <div id="viewCustomer" class="iso-view" style="display:none;">
+                <div class="metrics-grid">
+                    <div class="metric-card" style="border-left-color: var(--primary);">
+                        <h3>Indice di Gradimento Globale</h3>
+                        <div class="val" id="kpiCsMediaTot" style="color:var(--primary);">0.0 / 5</div>
+                        <div class="sub" id="kpiCsTotQuestionari">0 Questionari Elaborati</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #0284c7;">
+                        <h3>Assistenza Sanitaria & OSS</h3>
+                        <div class="val" id="kpiCsMediaAss" style="color:#0284c7;">0.0</div>
+                        <div class="sub">Valutazione Personale di Cura</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #d97706;">
+                        <h3>Servizio Pasti & Ristorazione</h3>
+                        <div class="val" id="kpiCsMediaVitto" style="color:#d97706;">0.0</div>
+                        <div class="sub">Gradimento Menu & Diete</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #10b981;">
+                        <h3>Comfort Alberghiero & Pulizia</h3>
+                        <div class="val" id="kpiCsMediaComfort" style="color:#10b981;">0.0</div>
+                        <div class="sub">Igiene Ambienti & Camere</div>
                     </div>
                 </div>
 
-                <div style="overflow-x:auto;">
-                    <table class="data-table" id="tableProcedure">
-                        <thead><tr><th>Codice</th><th>Titolo Procedura Operativa</th><th>Revisione</th><th>Data Approvazione</th><th>Responsabile</th><th class="restrict-oss">Azione</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+                <div class="card-quality">
+                    <div class="card-header">
+                        <h3>➕ Registra Nuovo Questionario di Customer Satisfaction</h3>
+                        <button class="btn-action btn-gold" onclick="window.apriLocandinaQrModal()">
+                            📱 Genera QR Code Smartphone (Locandina Familiari)
+                        </button>
+                    </div>
 
-        <!-- 7. WORKSPACE: AUDIT INTERNI & QUALIFICA FORNITORI -->
-        <div id="ws-audit" class="workspace">
-            <div class="card" style="border-top:4px solid var(--primary-color);">
-                <div class="card-header">
-                    <h3>🔍 Audit Interni della Qualità & Valutazione Fornitori Critici (ISO 9001 cl. 8.4 - 9.2)</h3>
-                </div>
+                    <div class="iso-clause-desc">
+                        I questionari possono essere acquisiti direttamente dai visitatori inquadrando il <strong>QR Code con lo smartphone</strong> (i dati confluiscono istantaneamente nella tabella sottostante), oppure inseriti manualmente dalla reception.
+                    </div>
 
-                <h4 style="margin:5px 0 8px 0; color:var(--primary-color);">Verifiche Ispettive Interne Programmate (Audit)</h4>
-                <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:12px; border-radius:6px; margin-bottom:12px;">
-                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px;">
-                        <div class="form-group" style="margin:0;"><label>Processo / Area Auditata</label><input type="text" id="auditArea" placeholder="Es. Gestione Farmaci e Carrello"></div>
-                        <div class="form-group" style="margin:0;"><label>Auditor Incaricato</label><input type="text" id="auditAuditor" placeholder="Nome Auditor Qualità"></div>
-                        <div class="form-group" style="margin:0;"><label>Esito</label>
-                            <select id="auditEsito">
-                                <option value="CONFORME">🟢 Conforme (Nessun rilievo)</option>
-                                <option value="OSSERVAZIONE">🟡 Con Osservazioni</option>
-                                <option value="NON CONFORME">🔴 Non Conforme</option>
+                    <div class="form-grid-3">
+                        <div class="form-field">
+                            <label>Data Rilevazione *</label>
+                            <input type="date" id="csData">
+                        </div>
+                        <div class="form-field">
+                            <label>Compilatore *</label>
+                            <select id="csTipoCompilatore">
+                                <option value="Familiare / AdS">Familiare / Amministratore di Sostegno</option>
+                                <option value="Ospite Residente">Ospite Residente Diretto</option>
+                                <option value="Visitatore / Caregiver">Caregiver Esterno / Visitatore</option>
                             </select>
                         </div>
-                        <div class="form-group" style="margin:0;"><label>Data Audit</label><input type="date" id="auditData"></div>
-                        <div style="display:flex; align-items:flex-end;"><button class="btn-success" style="width:100%;" onclick="window.salvaAudit()">Registra Audit</button></div>
-                    </div>
-                </div>
-                <table class="data-table" id="tableAudit" style="margin-bottom:25px;">
-                    <thead><tr><th>Esito</th><th>Data</th><th>Area Auditata</th><th>Auditor</th><th class="restrict-oss">Azione</th></tr></thead>
-                    <tbody></tbody>
-                </table>
-
-                <h4 style="margin:10px 0 8px 0; color:var(--dir-color);">Pagella e Qualifica Fornitori Critici</h4>
-                <div style="background:#f8fafc; border:1px solid #cbd5e1; padding:12px; border-radius:6px; margin-bottom:12px;">
-                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px;">
-                        <div class="form-group" style="margin:0;"><label>Fornitore</label><input type="text" id="fornRif" placeholder="Es. Servizio Ristorazione Pasti"></div>
-                        <div class="form-group" style="margin:0;"><label>Servizio Erogato</label><input type="text" id="fornServizio" placeholder="Pasti veicolati / Lavanderia"></div>
-                        <div class="form-group" style="margin:0;"><label>Valutazione Qualità</label>
-                            <select id="fornRating">
-                                <option value="A - Ottimo (100%)">A - Ottimo (100%)</option>
-                                <option value="B - Buono (80%)">B - Buono (80%)</option>
-                                <option value="C - Con Riserva (60%)">C - Con Riserva (60%)</option>
+                        <div class="form-field">
+                            <label>Ospite di Riferimento (Opzionale / Anonimo)</label>
+                            <select id="csSelOspite">
+                                <option value="Anonimo">-- Scheda Anonima --</option>
                             </select>
                         </div>
-                        <div style="display:flex; align-items:flex-end;"><button class="btn-primary" style="width:100%;" onclick="window.salvaFornitore()">Qualifica Fornitore</button></div>
                     </div>
-                </div>
-                <table class="data-table" id="tableFornitori">
-                    <thead><tr><th>Rating</th><th>Fornitore</th><th>Servizio</th><th>Ultima Valutazione</th><th class="restrict-oss">Azione</th></tr></thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
 
-        <!-- 8. WORKSPACE: ASSET ELETTROMEDICALI & CEI 62-5 -->
-        <div id="ws-asset" class="workspace">
-            <div class="card" style="border-top:4px solid var(--terapia-color);">
-                <div class="card-header">
-                    <h3 style="color:var(--terapia-color);">🛠️ Registro Apparecchiature Elettromedicali & Verifiche CEI 62-5 (Req. 3.2)</h3>
-                </div>
-
-                <div style="background:#f0f9ff; border:1px solid #bae6fd; padding:12px; border-radius:6px; margin-bottom:12px;">
-                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px;">
-                        <div class="form-group" style="margin:0;"><label>Matricola *</label><input type="text" id="assetId" placeholder="Es. SOLLEVATORE-01"></div>
-                        <div class="form-group" style="margin:0;"><label>Tipologia *</label>
-                            <select id="assetTipo">
-                                <option value="Sollevatore Elettrico Mobile">Sollevatore Elettrico Mobile</option>
-                                <option value="Letto Articolato Elettrico 3 Snodi">Letto Articolato Elettrico</option>
-                                <option value="Defibrillatore DAE Semiautomatico">Defibrillatore DAE</option>
-                                <option value="Concentratore di Ossigeno 10L">Concentratore di Ossigeno</option>
-                                <option value="Aspiratore Chirurgico Portatile">Aspiratore Chirurgico</option>
+                    <div class="form-grid-3">
+                        <div class="form-field">
+                            <label>1. Assistenza Sanitaria & Cura della Persona (1-5)</label>
+                            <select id="csVotoAssistenza">
+                                <option value="5">⭐⭐⭐⭐⭐ 5 - Eccellente</option>
+                                <option value="4" selected>⭐⭐⭐⭐ 4 - Buono</option>
+                                <option value="3">⭐⭐⭐ 3 - Sufficiente</option>
+                                <option value="2">⭐⭐ 2 - Scarso</option>
+                                <option value="1">⭐ 1 - Pessimo</option>
                             </select>
                         </div>
-                        <div class="form-group" style="margin:0;"><label>Collocazione</label><input type="text" id="assetReparto" placeholder="Piano 1 / Infermeria"></div>
-                        <div class="form-group" style="margin:0;"><label>Scadenza Verifica CEI 62-5 *</label><input type="date" id="assetScadenza"></div>
-                        <div style="display:flex; align-items:flex-end;">
-                            <button class="btn-primary" style="background:var(--terapia-color); width:100%;" onclick="window.salvaAsset()">Archivia Asset</button>
+                        <div class="form-field">
+                            <label>2. Servizio Vitto & Qualità Pasti (1-5)</label>
+                            <select id="csVotoVitto">
+                                <option value="5">⭐⭐⭐⭐⭐ 5 - Eccellente</option>
+                                <option value="4" selected>⭐⭐⭐⭐ 4 - Buono</option>
+                                <option value="3">⭐⭐⭐ 3 - Sufficiente</option>
+                                <option value="2">⭐⭐ 2 - Scarso</option>
+                                <option value="1">⭐ 1 - Pessimo</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label>3. Pulizia Ambienti & Comfort Alberghiero (1-5)</label>
+                            <select id="csVotoComfort">
+                                <option value="5">⭐⭐⭐⭐⭐ 5 - Eccellente</option>
+                                <option value="4" selected>⭐⭐⭐⭐ 4 - Buono</option>
+                                <option value="3">⭐⭐⭐ 3 - Sufficiente</option>
+                                <option value="2">⭐⭐ 2 - Scarso</option>
+                                <option value="1">⭐ 1 - Pessimo</option>
+                            </select>
                         </div>
                     </div>
-                </div>
 
-                <div style="overflow-x:auto;">
-                    <table class="data-table" id="tableAsset">
-                        <thead><tr><th>Stato</th><th>Matricola</th><th>Tipologia</th><th>Reparto</th><th>Scadenza Verifica</th><th>Esito</th><th class="restrict-oss">Azione</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+                    <div class="form-grid-3">
+                        <div class="form-field">
+                            <label>4. Attività Ricreative & Animazione (1-5)</label>
+                            <select id="csVotoAnimazione">
+                                <option value="5">⭐⭐⭐⭐⭐ 5 - Eccellente</option>
+                                <option value="4" selected>⭐⭐⭐⭐ 4 - Buono</option>
+                                <option value="3">⭐⭐⭐ 3 - Sufficiente</option>
+                                <option value="2">⭐⭐ 2 - Scarso</option>
+                                <option value="1">⭐ 1 - Pessimo</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label>5. Cortesia & Comunicazione del Personale (1-5)</label>
+                            <select id="csVotoCortesia">
+                                <option value="5">⭐⭐⭐⭐⭐ 5 - Eccellente</option>
+                                <option value="4" selected>⭐⭐⭐⭐ 4 - Buono</option>
+                                <option value="3">⭐⭐⭐ 3 - Sufficiente</option>
+                                <option value="2">⭐⭐ 2 - Scarso</option>
+                                <option value="1">⭐ 1 - Pessimo</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label>Note, Elogi o Segnalazioni di Miglioramento</label>
+                            <input type="text" id="csNote" placeholder="Eventuali annotazioni...">
+                        </div>
+                    </div>
 
-        <!-- 9. WORKSPACE: CUSTOMER SATISFACTION (GOOGLE MODULI & QR) & RECLAMI -->
-        <div id="ws-reclami" class="workspace active">
-            
-            <!-- BLOCCO CUSTOMER SATISFACTION COLLEGATO DIRETTAMENTE A GOOGLE MODULI E FOGLI -->
-            <div class="card" style="border-top:4px solid #059669; border-radius:8px;">
-                <div class="card-header" style="border-bottom:none; margin-bottom:12px; padding-bottom:0;">
-                    <h3 style="color:#047857; font-size:1.2em; display:flex; align-items:center; gap:8px;">
-                        ⭐ Customer Satisfaction (Moduli)
-                    </h3>
-                    <div style="display:flex; gap:8px; align-items:center;">
-                        <button class="btn-success" style="padding:6px 12px; font-size:0.9em; background:#059669;" onclick="window.aggiornaDatiCSAT(true)" title="Ricarica Risposte da Google Fogli">🔄</button>
-                        <button class="btn-doc" style="background:#334155; padding:6px 14px; font-size:0.85em; display:flex; align-items:center; gap:6px; font-weight:bold;" onclick="window.apriModalQR()">
-                            🖵 Mostra QR
+                    <div style="display:flex; justify-content:flex-end;">
+                        <button class="btn-action btn-primary" onclick="window.salvaQuestionarioCs()">
+                            💾 Salva Questionario Manuale
                         </button>
                     </div>
                 </div>
 
-                <!-- 5 MINI CARD CATEGORIE + 1 CARD MEDIA GLOBALE -->
-                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap:12px; margin-bottom:20px;">
-                    <div class="csat-kpi-card">
-                        <div class="csat-kpi-title">🥩 QUALITA' DEL ...</div>
-                        <div class="csat-kpi-value" id="csat-val-cibo">3.0</div>
+                <div class="card-quality">
+                    <div class="card-header">
+                        <h3>📊 Registro Storico Indagini di Gradimento</h3>
                     </div>
-                    <div class="csat-kpi-card">
-                        <div class="csat-kpi-title">🧹 PULIZIA ED ...</div>
-                        <div class="csat-kpi-value" id="csat-val-pulizia">3.0</div>
+                    <div style="overflow-x:auto;">
+                        <table class="quality-table" id="tableStoricoCs">
+                            <thead>
+                                <tr>
+                                    <th style="width:110px;">Data</th>
+                                    <th style="width:150px;">Compilatore</th>
+                                    <th style="width:140px;">Ospite Rif.</th>
+                                    <th style="width:70px; text-align:center;">Cura</th>
+                                    <th style="width:70px; text-align:center;">Vitto</th>
+                                    <th style="width:70px; text-align:center;">Pulizia</th>
+                                    <th style="width:70px; text-align:center;">Animaz.</th>
+                                    <th style="width:70px; text-align:center;">Cortesia</th>
+                                    <th style="width:85px; text-align:center;">Media</th>
+                                    <th>Canale & Note</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
-                    <div class="csat-kpi-card">
-                        <div class="csat-kpi-title">🤝 CORTESIA E DI...</div>
-                        <div class="csat-kpi-value" id="csat-val-cortesia">3.0</div>
-                    </div>
-                    <div class="csat-kpi-card">
-                        <div class="csat-kpi-title">🎭 ATTIVITA' RIC...</div>
-                        <div class="csat-kpi-value" id="csat-val-attivita">3.0</div>
-                    </div>
-                    <div class="csat-kpi-card">
-                        <div class="csat-kpi-title">🏡 VALUTAZIONE G...</div>
-                        <div class="csat-kpi-value" id="csat-val-generale">3.0</div>
-                    </div>
-                    <div class="csat-global-card">
-                        <div class="csat-global-title">MEDIA GLOBALE</div>
-                        <div class="csat-global-value">★ <span id="csat-val-globale">3.0</span></div>
-                    </div>
-                </div>
-
-                <!-- GRAFICO LINEA / TREND TEMPORALE -->
-                <div style="position:relative; width:100%; height:230px; margin-bottom:22px; background:#fff; padding:6px; box-sizing:border-box;">
-                    <canvas id="csatTrendChart"></canvas>
-                </div>
-
-                <!-- TABELLA ULTIME VALUTAZIONI -->
-                <h4 style="margin:0 0 10px 0; color:#1e293b; font-size:1em; display:flex; align-items:center; gap:6px;">
-                    🕒 Ultime Valutazioni:
-                </h4>
-                <div style="overflow-x:auto;">
-                    <table class="data-table" id="tableCsatRecenti">
-                        <thead>
-                            <tr style="background:#059669;">
-                                <th style="background:#059669; color:#fff; font-weight:bold;">DATA</th>
-                                <th style="background:#059669; color:#fff; font-weight:bold; width:140px;">MEDIA</th>
-                                <th style="background:#059669; color:#fff; font-weight:bold;">COMMENTI / NOTE</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
                 </div>
             </div>
 
-            <!-- BLOCCO REGISTRO RECLAMI E RRP (CONFORME ISO 9001) -->
-            <div class="card" style="border-top:4px solid var(--warning-color); margin-top:20px;">
-                <div class="card-header">
-                    <h3 style="color:var(--warning-color);">⚖️ Registro Reclami Formali, Segnalazioni & Proposte (RRP)</h3>
+            <!-- TAB 3: PRIVACY & RELOAD -->
+            <div id="viewPrivacy" class="iso-view" style="display:none;">
+                <div class="metrics-grid">
+                    <div class="metric-card" style="border-left-color: var(--reload-color);">
+                        <h3>Controllo Fornitori (Reload S.p.A.)</h3>
+                        <div class="val" id="kpiReloadPerc" style="color:var(--reload-color);">0%</div>
+                        <div class="sub" id="kpiReloadRatio">0 su 0 Operatori Incaricati</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: var(--primary);">
+                        <h3>Consensi Informati Degenti (L. 219)</h3>
+                        <div class="val" id="kpiConsensiPerc" style="color:var(--primary);">0%</div>
+                        <div class="sub" id="kpiConsensiRatio">0 su 0 Fascicoli Formalizzati</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: #4f46e5;">
+                        <h3>Audit Trail & Log Immutabili</h3>
+                        <div class="val" id="kpiAuditTotale" style="color:#4f46e5;">0</div>
+                        <div class="sub">Transazioni Cliniche Tracciate</div>
+                    </div>
+                    <div class="metric-card" style="border-left-color: var(--danger);">
+                        <h3>Sorveglianza Tentativi Abusivi</h3>
+                        <div class="val" id="kpiAnomalieTot" style="color:var(--danger);">0</div>
+                        <div class="sub">PIN Errati Intercettati a Sistema</div>
+                    </div>
                 </div>
 
-                <div style="background:#fffbeb; border:1px solid #fde68a; padding:12px; border-radius:6px; margin-bottom:12px;">
-                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px;">
-                        <div class="form-group" style="margin:0;"><label>Segnalante (Ospite/Familiare)</label><input type="text" id="recSegnalante" placeholder="Es. Rossi Mario (Figlio)"></div>
-                        <div class="form-group" style="margin:0;"><label>Area Reclamo</label>
-                            <select id="recArea">
-                                <option value="Assistenza & Igiene">Assistenza & Igiene</option>
-                                <option value="Ristorazione & Dieta">Ristorazione & Dieta</option>
-                                <option value="Comfort / Pulizia">Comfort / Pulizia Camere</option>
-                                <option value="Animazione & Relazioni">Animazione & Relazioni</option>
-                                <option value="Comunicazione Sanitaria">Comunicazione Sanitaria</option>
+                <div class="card-quality">
+                    <div class="card-header">
+                        <h3>👥 Personale in Appalto: Reload S.p.A. (Roma) - ISO 9001 § 8.4</h3>
+                        <a href="personale_privacy_reload.html" class="btn-action btn-primary" style="font-size:0.8em; padding:5px 12px;">Apri Portale Nomine ↗</a>
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <table class="quality-table" id="tableIsoStaffReload">
+                            <thead>
+                                <tr>
+                                    <th>Lavoratore Reload S.p.A.</th>
+                                    <th style="width:140px;">Qualifica</th>
+                                    <th style="width:150px;">Codice Fiscale</th>
+                                    <th style="width:150px;">Stato Conformità</th>
+                                    <th style="width:160px;">Data Perfezionamento</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card-quality">
+                    <div class="card-header">
+                        <h3>📋 Informazioni Documentate & Consensi Degenti (L. 219/2017) - ISO 9001 § 7.5</h3>
+                        <a href="privacy_consenso.html" class="btn-action btn-doc" style="font-size:0.8em; padding:5px 12px;">Apri Fascicoli Consenso ↗</a>
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <table class="quality-table" id="tableIsoConsensiDegenti">
+                            <thead>
+                                <tr>
+                                    <th>Ospite Residente</th>
+                                    <th style="width:100px;">Stanza</th>
+                                    <th style="width:150px;">Codice Fiscale</th>
+                                    <th style="width:180px;">Sottoscrittore</th>
+                                    <th style="width:140px;">Stato Atto</th>
+                                    <th style="width:120px;">Foto Lesioni</th>
+                                    <th style="width:140px;">Data Firma</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: NON CONFORMITÀ & CAPA -->
+            <div id="viewNC" class="iso-view" style="display:none;">
+                <div class="card-quality">
+                    <div class="card-header">
+                        <h3>➕ Apertura Nuova Non Conformità / Reclamo (CAPA)</h3>
+                    </div>
+                    <div class="form-grid-3">
+                        <div class="form-field"><label>Data Rilevazione *</label><input type="date" id="ncData"></div>
+                        <div class="form-field">
+                            <label>Origine Segnalazione *</label>
+                            <select id="ncOrigine">
+                                <option value="Reclamo Familiare/Ospite">Reclamo Familiare/Ospite</option>
+                                <option value="Audit Interno SGQ">Audit Interno SGQ</option>
+                                <option value="Ispezione Ente / ASL">Ispezione Ente Terzo / ASL</option>
+                                <option value="Segnalazione Reparto / Personale">Segnalazione Reparto / Personale</option>
                             </select>
                         </div>
-                        <div class="form-group" style="margin:0;"><label>Descrizione Reclamo</label><input type="text" id="recDescrizione" placeholder="Dettaglio reclamo..."></div>
-                        <div class="form-group" style="margin:0;"><label>Risposta Fornita entro 30 gg</label><input type="text" id="recRisposta" placeholder="Azione intrapresa..."></div>
-                        <div style="display:flex; align-items:flex-end;">
-                            <button class="btn-warning" style="width:100%;" onclick="window.salvaReclamo()">Registra Reclamo</button>
-                        </div>
+                        <div class="form-field"><label>Responsabile Gestione *</label><input type="text" id="ncResp" placeholder="Es. Coord. Infermieristico / Dir. Sanitario"></div>
+                    </div>
+                    <div class="form-grid-3">
+                        <div class="form-field"><label>Descrizione della Non Conformità *</label><input type="text" id="ncDesc" placeholder="Oggetto del rilievo..."></div>
+                        <div class="form-field"><label>Causa Radice Individuata</label><input type="text" id="ncCausa" placeholder="Analisi cause..."></div>
+                        <div class="form-field"><label>Azione Correttiva / Trattamento</label><input type="text" id="ncAzione" placeholder="Azione intrapresa..."></div>
+                    </div>
+                    <div style="display:flex; justify-content:flex-end;">
+                        <button class="btn-action btn-danger" onclick="window.salvaNuovaNC()">
+                            ⚠️ Registra Non Conformità (ISO 10.2)
+                        </button>
                     </div>
                 </div>
 
-                <div style="overflow-x:auto;">
-                    <table class="data-table" id="tableReclami">
-                        <thead><tr><th>Stato</th><th>Data</th><th>Segnalante</th><th>Area</th><th>Descrizione</th><th>Risposta & Esito</th><th class="restrict-oss">Azione</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
+                <div class="card-quality">
+                    <div class="card-header">
+                        <h3>📋 Registro Non Conformità, Segnalazioni & Azioni Correttive</h3>
+                    </div>
+                    <div style="overflow-x:auto;">
+                        <table class="quality-table" id="tableRegistroNC">
+                            <thead>
+                                <tr>
+                                    <th style="width:100px;">Data</th>
+                                    <th style="width:160px;">Origine</th>
+                                    <th>Descrizione Non Conformità</th>
+                                    <th>Causa Radice</th>
+                                    <th>Azione Correttiva (CAPA)</th>
+                                    <th style="width:130px;">Responsabile</th>
+                                    <th style="width:110px; text-align:center;">Stato</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
         </div>
-
-        <!-- 10. WORKSPACE: GENERATORE FASCICOLO USL & ISO -->
-        <div id="ws-stampe" class="workspace">
-            <div class="card" style="border-top:4px solid var(--dir-color);">
-                <div class="card-header">
-                    <h3>📑 Generatore Fascicolo Ufficiale di Accreditamento (Per Commissione USL)</h3>
-                </div>
-                <p style="color:var(--text-light); font-size:0.92em; margin-top:0;">
-                    Genera ed esporta i report formali in PDF/A4 pronti per gli organi di vigilanza della Regione Umbria e per l'Ente di Certificazione ISO 9001.
-                </p>
-
-                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:15px; margin-top:15px;">
-                    <div style="background:#f8fafc; border:1px solid #cbd5e1; padding:15px; border-radius:6px; text-align:center;">
-                        <h4 style="margin:0 0 6px 0; color:var(--dir-color);">📑 Relazione Annuale Accreditamento USL</h4>
-                        <p style="font-size:0.83em; color:var(--text-light); margin:0 0 12px 0;">Prospetto presenze, minutaggi DGR, monitoraggio PAI e indicatori clinici.</p>
-                        <button class="btn-primary" style="width:100%;" onclick="window.stampaFascicoloAccreditamentoCompleto()">🖨️ Stampa Relazione Annuale USL</button>
-                    </div>
-
-                    <div style="background:#f8fafc; border:1px solid #cbd5e1; padding:15px; border-radius:6px; text-align:center;">
-                        <h4 style="margin:0 0 6px 0; color:var(--primary-color);">🏆 Verbale Riesame Direzione (ISO 9001)</h4>
-                        <p style="font-size:0.83em; color:var(--text-light); margin:0 0 12px 0;">Obiettivi della qualità, reclami, CSAT, CAPA, formazione e audit interni.</p>
-                        <button class="btn-primary" style="background:var(--primary-color); width:100%;" onclick="window.stampaVerbaleRiesameISO()">🖨️ Stampa Verbale Riesame ISO</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
 
-    <!-- SCRIPT FIREBASE E LOGICA TOTALE -->
+    <!-- SCRIPT FIREBASE & MOTORE QUALITÀ -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app-check.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, doc, setDoc, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = { 
             apiKey: "AIzaSyAc0fIlfds4Gne5m3qpH25uacK4NeR6TzM", 
@@ -777,620 +742,551 @@
             appId: "1:720937824810:web:b04b60d1d66bb8f4040953" 
         };
         const app = initializeApp(firebaseConfig);
-        try {
-            initializeAppCheck(app, { 
-                provider: new ReCaptchaEnterpriseProvider('6LdSQ5wtAAAAAKxlPkk0UBsfJK5gzJdn_NLJm6U3'), 
-                isTokenAutoRefreshEnabled: true 
-            });
-        } catch(e) { console.warn("AppCheck bypassato."); }
         const db = getFirestore(app);
 
-        // CONFIGURAZIONE GOOGLE MODULO & FOGLIO RISPOSTE
-        window.GOOGLE_FORM_ID = '1hRWyK6_LeJiryBBT66apopftMhot-1dkhlKBnl55t9A';
-        window.GOOGLE_SHEET_ID = '1_gZgl4ZjURkfJkXHC53WQB7YUjQp40SvXZzAjgK2a7g';
-        window.GOOGLE_FORM_URL = `https://docs.google.com/forms/d/${window.GOOGLE_FORM_ID}/viewform`;
+        window.dbOperatori = [];
+        window.dbOspiti = [];
+        window.dbClinica = {};
+        window.dbAudit = [];
+        window.dbCustomer = [];
+        window.dbNC = [];
+        window.currentTab = 'checklist';
+        window.qrInstance = null;
 
-        // DATASETS
-        window.dbOspiti = []; window.dbOperatori = []; window.dbClinica = {};
-        window.dbContenzioni = []; window.dbRischio = [];
-        window.dbAsset = []; window.dbReclami = []; window.dbFormazione = []; 
-        window.dbCapa = []; window.dbProcedure = []; window.dbAudit = []; window.dbFornitori = [];
-        window.dbChecklist = {};
-        window.csatChartInstance = null;
-
-        // DATI CACHED PREDEFINITI DI SICUREZZA (COINCIDENTI CON LO SCREENSHOT)
-        window.dbCsat = [
-            { data: '19/09/2026 2.10.10', cibo: 1, pulizia: 1, cortesia: 1, attivita: 1, generale: 1, media: 1.0, note: '-', ts: 1789783810000 },
-            { data: '19/09/2026 2.06.49', cibo: 5, pulizia: 5, cortesia: 5, attivita: 5, generale: 5, media: 5.0, note: '-', ts: 1789783609000 }
+        window.defaultChecklist = [
+            { id: "STR-01", cat: "Strutturale", desc: "Assenza barriere architettoniche, percorsi interni fruibili, ascensori e montalettighe a norma", stato: "CONFORME", note: "Ascensore collaudato regolarmente", data: "01/10/2026" },
+            { id: "STR-02", cat: "Strutturale", desc: "Camere di degenza con metratura conforme (singole min. 12mq, doppie min. 18mq) e servizi igienici assistiti", stato: "CONFORME", note: "Verifica planimetrica aggiornata", data: "01/10/2026" },
+            { id: "IMP-01", cat: "Impiantistico", desc: "Impianto di climatizzazione, riscaldamento e trattamento aria con sanificazione filtri periodica", stato: "CONFORME", note: "Registro manutenzione filtri presente", data: "05/10/2026" },
+            { id: "IMP-02", cat: "Impiantistico", desc: "Impianto di chiamata acustico-luminoso funzionante ad ogni posto letto e nei bagni assistiti", stato: "CONFORME", note: "Test sonoro effettuato trimestralmente", data: "02/10/2026" },
+            { id: "SIC-01", cat: "Sicurezza Lavoro", desc: "Documento Valutazione Rischi (DVR), CPI Antincendio e nomine RSPP / RLS / Addetti Emergenze", stato: "CONFORME", note: "CPI valido e prove evacuazione registrate", data: "15/09/2026" },
+            { id: "ORG-01", cat: "Organizzativo", desc: "Standard minutaggio assistenziale garantito (Rapporto Operatori/Ospiti rispettato per Infermieri e OSS)", stato: "CONFORME", note: "Turnistica con appalto Reload S.p.A. conforme", data: "01/10/2026" },
+            { id: "CLI-01", cat: "Clinico-Assistenziale", desc: "Cartella clinica integrata con Progetto Assistenziale Individualizzato (P.A.I.) redatto entro 30 gg", stato: "CONFORME", note: "Monitoraggio scadenze PAI attivo su gestionale", data: "06/10/2026" },
+            { id: "CLI-02", cat: "Clinico-Assistenziale", desc: "Procedura di gestione e custodia dei farmaci, armadio chiuso a chiave e registro stupefacenti DPR 309/90", stato: "CONFORME", note: "Doppia chiave e scarico contestuale digitale", data: "07/10/2026" },
+            { id: "ICA-01", cat: "Igiene & Sanità", desc: "Protocollo per la prevenzione delle Infezioni Correlate all'Assistenza (ICA) e sanificazione presidi", stato: "CONFORME", note: "Isolamenti tracciati in dashboard", data: "04/10/2026" },
+            { id: "PRI-01", cat: "Privacy & GDPR", desc: "Nomina formale del personale in appalto ex Art. 29 GDPR e tracciamento inalterabile degli accessi sanitari", stato: "CONFORME", note: "Attivo modulo Reload e regole immutabili Firestore", data: "07/10/2026" }
         ];
 
-        window.activeOperator = sessionStorage.getItem("activeOperator") || "Direzione Sanitaria";
+        window.dbChecklist = [...window.defaultChecklist];
 
-        window.showToast = (m) => { const c=document.getElementById('toast-container'); const t=document.createElement('div'); t.className='toast'; t.innerText=m; c.appendChild(t); setTimeout(()=>t.classList.add('show'),10); setTimeout(()=>{t.classList.remove('show'); setTimeout(()=>t.remove(),300);},3000); };
-        window.getTimestamp = () => { const n=new Date(); return `${n.toLocaleDateString('it-IT')} ore ${n.toLocaleTimeString('it-IT', {hour:'2-digit',minute:'2-digit'})}`; };
-        window.formatDateSafe = (d) => { if (!d) return '-'; if (typeof d === 'string' && d.includes('-')) return d.split('-').reverse().join('/'); return d; };
+        window.showToast = (m) => {
+            const c = document.getElementById('toast-container');
+            const t = document.createElement('div');
+            t.className = 'toast'; t.innerText = m; c.appendChild(t);
+            setTimeout(() => t.classList.add('show'), 10);
+            setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 3000);
+        };
 
-        window.switchTab = (tabId, btn) => {
-            document.querySelectorAll('.workspace, .menu-tab').forEach(e => e.classList.remove('active'));
-            const target = document.getElementById('ws-' + tabId);
-            if(target) target.classList.add('active');
-            if(btn) btn.classList.add('active');
-            if(tabId === 'reclami') {
-                setTimeout(() => window.aggiornaDatiCSAT(), 200);
+        // CONTROLLA SE LA PAGINA È APERTA DA SMARTPHONE VIA QR CODE (?survey=1)
+        window.controllaModalitaSurveyQr = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if(urlParams.get('survey') === '1') {
+                document.getElementById('adminAppArea').style.display = 'none';
+                document.getElementById('publicSurveyView').style.display = 'block';
+                document.body.style.backgroundColor = '#f8fafc';
+                return true;
+            }
+            return false;
+        };
+
+        // INVIO QUESTIONARIO DA SMARTPHONE (SCRITTURA DIRETTA SU FIRESTORE)
+        window.inviaSurveyDaSmartphone = async () => {
+            const btn = document.getElementById('btnInviaSurvey');
+            btn.disabled = true;
+            btn.innerText = "Invio in corso...";
+
+            const comp = document.getElementById('pubTipoCompilatore').value;
+            const osp = document.getElementById('pubOspite').value.trim() || 'Anonimo';
+            const vAss = parseInt(document.getElementById('pubVotoAss').value, 10);
+            const vVit = parseInt(document.getElementById('pubVotoVitto').value, 10);
+            const vCom = parseInt(document.getElementById('pubVotoComfort').value, 10);
+            const vAni = parseInt(document.getElementById('pubVotoAni').value, 10);
+            const vCor = parseInt(document.getElementById('pubVotoCor').value, 10);
+            const note = document.getElementById('pubNote').value.trim();
+
+            const media = parseFloat(((vAss + vVit + vCom + vAni + vCor) / 5).toFixed(1));
+
+            const payload = {
+                data: new Date().toISOString().slice(0,10),
+                compilatore: comp,
+                ospite: osp,
+                votoAssistenza: vAss,
+                votoVitto: vVit,
+                votoComfort: vCom,
+                votoAnimazione: vAni,
+                votoCortesia: vCor,
+                media: media,
+                note: note ? `[SMARTPHONE] ${note}` : `[SMARTPHONE]`,
+                canale: "QR_CODE_SMARTPHONE",
+                timestamp: Date.now()
+            };
+
+            try {
+                await addDoc(collection(db, "customer_satisfaction"), payload);
+                document.getElementById('surveyFormFields').style.display = 'none';
+                document.getElementById('pubSuccessBox').style.display = 'block';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch(e) {
+                console.error("Errore salvataggio survey:", e);
+                alert("Errore durante l'invio. Verifica la connessione.");
+                btn.disabled = false;
+                btn.innerText = "🚀 Invia Valutazione";
             }
         };
 
-        // ==========================================
-        // COLLEGAMENTO DIRETTO A GOOGLE MODULI & QR
-        // ==========================================
-        window.apriModalQR = () => {
-            const formUrl = window.GOOGLE_FORM_URL;
-            const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(formUrl)}`;
-            document.getElementById('qrCodeImg').src = qrApiUrl;
-            document.getElementById('qrDirectLink').href = formUrl;
-            document.getElementById('qrModal').style.display = 'flex';
+        // URL DIRETTO ALLA SCHEDA SURVEY INTERNA
+        window.ottieniUrlSurveyInterno = () => {
+            const loc = window.location;
+            return loc.protocol + '//' + loc.host + loc.pathname + '?survey=1';
         };
 
-        window.stampaCartelloQR = () => {
-            const formUrl = window.GOOGLE_FORM_URL;
-            const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=320x320&data=${encodeURIComponent(formUrl)}`;
-            const nomeStr = document.getElementById('isoRagioneSociale')?.value || 'NUOVA VILLA SILVANA S.R.L.';
+        // APERTURA MODALE QR CODE INTERNO
+        window.apriLocandinaQrModal = () => {
+            const modal = document.getElementById('modalQrLocandina');
+            modal.style.display = 'flex';
 
-            let html = `
-                <div style="text-align:center; font-family:'Segoe UI', sans-serif; padding:40px 25px;">
-                    <h1 style="color:#0f766e; margin:0; font-size:24pt; text-transform:uppercase;">${nomeStr}</h1>
-                    <h2 style="color:#334155; margin:8px 0 30px 0; font-size:15pt;">Residenza Protetta per Anziani</h2>
+            const surveyUrl = window.ottieniUrlSurveyInterno();
+            document.getElementById('qrTargetUrlTxt').innerText = surveyUrl;
+
+            const box = document.getElementById('qrcodeBox');
+            box.innerHTML = '';
+
+            if (typeof QRCode !== "undefined") {
+                window.qrInstance = new QRCode(box, {
+                    text: surveyUrl,
+                    width: 210,
+                    height: 210,
+                    colorDark : "#0f172a",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.H
+                });
+            } else {
+                box.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=210x210&data=${encodeURIComponent(surveyUrl)}" alt="QR Code Survey">`;
+            }
+        };
+
+        window.copiaLinkQuestionario = () => {
+            const surveyUrl = window.ottieniUrlSurveyInterno();
+            navigator.clipboard.writeText(surveyUrl).then(() => {
+                window.showToast("🔗 Link diretto copiato negli appunti!");
+            });
+        };
+
+        // STAMPA LOCANDINA A4 CON QR CODE PER RECEPTION
+        window.stampaLocandinaQrA4 = () => {
+            const surveyUrl = window.ottieniUrlSurveyInterno();
+            const qrImgUrl = `https://api.qrserver.com/v1/create-qr-code/?size=340x340&data=${encodeURIComponent(surveyUrl)}`;
+
+            const html = `
+                <div style="border:4px solid #0f766e; border-radius:12px; padding:35px 25px; text-align:center; max-width:680px; margin:20px auto; font-family:'Segoe UI', Tahoma, sans-serif;">
+                    <img src="logo.png" style="height:75px; object-fit:contain; margin-bottom:12px;">
+                    <h1 style="color:#0f766e; margin:0 0 6px 0; font-size:24pt; letter-spacing:1px;">NUOVA VILLA SILVANA</h1>
+                    <h3 style="color:#b45309; margin:0 0 18px 0; font-size:14pt; text-transform:uppercase;">LA TUA OPINIONE CONTA PER NOI</h3>
                     
-                    <div style="border:3px dashed #0f766e; border-radius:14px; padding:35px 25px; max-width:520px; margin:0 auto; background:#f0fdfa;">
-                        <h3 style="margin:0 0 12px 0; color:#0f766e; font-size:16pt;">⭐ QUESTIONARIO DI SODDISFAZIONE OSPITI & FAMILIARI</h3>
-                        <p style="font-size:11pt; color:#475569; margin-bottom:25px; line-height:1.4;">
-                            La tua opinione è preziosa per migliorare costantemente la qualità delle cure e dei servizi erogati nella nostra struttura.
-                        </p>
-                        
-                        <img src="${qrApiUrl}" style="width:260px; height:260px; border:4px solid #fff; box-shadow:0 6px 15px rgba(0,0,0,0.15); border-radius:10px;">
-                        
-                        <p style="font-size:13pt; font-weight:bold; color:#0f172a; margin-top:22px; margin-bottom:6px;">
-                            Inquadra il QR Code con la fotocamera del tuo smartphone
-                        </p>
-                        <p style="font-size:10pt; color:#64748b; margin:0;">
-                            Compilazione anonima tramite Google Moduli (tempo richiesto: 1 minuto).
-                        </p>
+                    <p style="font-size:11.5pt; color:#334155; line-height:1.5; margin:0 0 25px 0;">
+                        Gentile Familiare o Visitatore,<br>
+                        inquadra con la fotocamera del tuo smartphone il codice sottostante per accedere al nostro 
+                        <strong>Questionario Ufficiale di Customer Satisfaction</strong>.
+                    </p>
+
+                    <div style="display:flex; justify-content:center; margin:20px 0;">
+                        <img src="${qrImgUrl}" style="width:230px; height:230px; border:3px solid #0f766e; border-radius:8px; padding:6px; background:#fff;">
                     </div>
 
-                    <div style="margin-top:40px; font-size:9pt; color:#94a3b8;">
-                        Sistema di Gestione della Qualità ISO 9001:2015 & Accreditamento Istituzionale Regione Umbria
+                    <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:12px; margin-top:20px;">
+                        <strong style="color:#0f172a; font-size:10.5pt; display:block;">1 minuto per migliorare insieme</strong>
+                        <small style="color:#64748b; font-size:9pt;">I dati confluiscono direttamente nel Sistema Qualità certificato ISO 9001:2015 di Senior Care S.r.l.</small>
+                    </div>
+
+                    <div style="margin-top:35px; border-top:1px solid #e2e8f0; padding-top:10px; font-size:8.5pt; color:#64748b; display:flex; justify-content:space-between;">
+                        <span>Senior Care S.r.l. • Residenza Protetta Nuova Villa Silvana</span>
+                        <span>Sistema Qualità ISO 9001:2015</span>
                     </div>
                 </div>
             `;
+
             document.getElementById('printArea').innerHTML = html;
-            setTimeout(() => window.print(), 300);
+            setTimeout(() => window.print(), 250);
         };
 
-        // AGGIORNAMENTO DATI CUSTOMER SATISFACTION (DA GOOGLE FOGLI LIVE)
-        window.aggiornaDatiCSAT = async (forceFetch = false) => {
-            if(forceFetch) {
-                window.showToast("⏳ Connessione a Google Moduli / Fogli in corso...");
-            }
-            try {
-                // Endpoint ufficiale Google Visualization API: aperto, privo di blocchi CORS e in tempo reale
-                const gvizUrl = `https://docs.google.com/spreadsheets/d/${window.GOOGLE_SHEET_ID}/gviz/tq?tqx=out:json`;
-                const res = await fetch(gvizUrl);
-                
-                if (res.ok) {
-                    const rawText = await res.text();
-                    const startIdx = rawText.indexOf('{');
-                    const endIdx = rawText.lastIndexOf('}');
-                    
-                    if (startIdx !== -1 && endIdx !== -1) {
-                        const jsonPayload = JSON.parse(rawText.substring(startIdx, endIdx + 1));
-                        const rows = jsonPayload.table.rows;
+        // GESTIONE TABS
+        window.switchIsoTab = (tabName) => {
+            window.currentTab = tabName;
+            document.querySelectorAll('.iso-view').forEach(v => v.style.display = 'none');
+            document.querySelectorAll('.iso-tab-btn').forEach(b => b.classList.remove('active'));
 
-                        if (rows && rows.length > 0) {
-                            let parsedResponses = [];
-
-                            rows.forEach(r => {
-                                const c = r.c;
-                                if (!c || !c[0]) return;
-
-                                const dataOraStr = c[0].f || c[0].v || window.getTimestamp();
-                                const valCibo = parseFloat(c[1]?.v) || 3;
-                                const valPulizia = parseFloat(c[2]?.v) || 3;
-                                const valCortesia = parseFloat(c[3]?.v) || 3;
-                                const valAttivita = parseFloat(c[4]?.v) || 3;
-                                const valGenerale = parseFloat(c[5]?.v) || (c[6] && !isNaN(parseFloat(c[6]?.v)) ? parseFloat(c[6]?.v) : 3);
-                                const noteStr = c[6]?.v || c[7]?.v || '-';
-                                const mediaScheda = parseFloat(((valCibo + valPulizia + valCortesia + valAttivita + valGenerale) / 5).toFixed(1));
-
-                                parsedResponses.push({
-                                    data: dataOraStr,
-                                    cibo: valCibo,
-                                    pulizia: valPulizia,
-                                    cortesia: valCortesia,
-                                    attivita: valAttivita,
-                                    generale: valGenerale,
-                                    media: mediaScheda,
-                                    note: noteStr
-                                });
-                            });
-
-                            if (parsedResponses.length > 0) {
-                                window.dbCsat = parsedResponses.reverse();
-                                if (forceFetch) {
-                                    window.showToast(`✅ ${parsedResponses.length} risposte caricate da Google Moduli!`);
-                                }
-                            }
-                        }
-                    }
-                }
-            } catch (err) {
-                console.warn("Utilizzo dati Google Fogli locali:", err);
-                if (forceFetch) {
-                    window.showToast("⚠️ Impossibile leggere il foglio online. Utilizzo dati salvati.");
-                }
-            }
-
-            const list = [...window.dbCsat];
-            const count = list.length || 1;
-
-            let sumCibo = 0, sumPul = 0, sumCort = 0, sumAtt = 0, sumGen = 0, sumGlob = 0;
-
-            list.forEach(item => {
-                sumCibo += (item.cibo || 3);
-                sumPul += (item.pulizia || 3);
-                sumCort += (item.cortesia || 3);
-                sumAtt += (item.attivita || 3);
-                sumGen += (item.generale || 3);
-                sumGlob += (item.media || 3);
-            });
-
-            document.getElementById('csat-val-cibo').innerText = (sumCibo / count).toFixed(1);
-            document.getElementById('csat-val-pulizia').innerText = (sumPul / count).toFixed(1);
-            document.getElementById('csat-val-cortesia').innerText = (sumCort / count).toFixed(1);
-            document.getElementById('csat-val-attivita').innerText = (sumAtt / count).toFixed(1);
-            document.getElementById('csat-val-generale').innerText = (sumGen / count).toFixed(1);
-            document.getElementById('csat-val-globale').innerText = (sumGlob / count).toFixed(1);
-
-            // Tabella Ultime Valutazioni
-            const tb = document.querySelector('#tableCsatRecenti tbody');
-            if (tb) {
-                tb.innerHTML = '';
-                list.forEach(row => {
-                    tb.innerHTML += `
-                        <tr>
-                            <td><strong>${row.data}</strong></td>
-                            <td>
-                                <span style="background:#e6fcf5; color:#0f766e; border:1px solid #a7f3d0; padding:2px 8px; border-radius:12px; font-weight:800; font-size:0.85em; display:inline-flex; align-items:center; gap:3px;">
-                                    ★ ${parseFloat(row.media||0).toFixed(1)}
-                                </span>
-                            </td>
-                            <td>${row.note || '-'}</td>
-                        </tr>`;
-                });
-            }
-
-            // Grafico Trend Temporale (Linea Verde / Scala 0-10 esatta da screenshot)
-            const ctx = document.getElementById('csatTrendChart');
-            if (ctx) {
-                if (window.csatChartInstance) window.csatChartInstance.destroy();
-
-                const chronList = [...list].reverse();
-                const labels = chronList.map(item => (item.data || '').split(' ')[0] || '19/09/2026');
-                const dataPoints = chronList.map(item => parseFloat(item.media || 0));
-
-                window.csatChartInstance = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Media Valutazione',
-                            data: dataPoints,
-                            borderColor: '#059669',
-                            backgroundColor: 'rgba(16, 185, 129, 0.12)',
-                            borderWidth: 2.5,
-                            fill: true,
-                            tension: 0,
-                            pointBackgroundColor: '#059669',
-                            pointBorderColor: '#ffffff',
-                            pointBorderWidth: 2,
-                            pointRadius: 5
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: { callbacks: { label: (c) => ` Valutazione: ★ ${c.parsed.y}` } }
-                        },
-                        scales: {
-                            y: {
-                                min: 0,
-                                max: 10,
-                                ticks: { stepSize: 2, font: { weight: 'bold' } },
-                                grid: { color: '#f1f5f9' }
-                            },
-                            x: {
-                                grid: { display: false },
-                                ticks: { font: { size: 10 }, maxRotation: 45, minRotation: 45 }
-                            }
-                        }
-                    }
-                });
+            if(tabName === 'checklist') {
+                document.getElementById('viewChecklist').style.display = 'block';
+                document.getElementById('tabBtnChecklist').classList.add('active');
+                document.getElementById('lblBannerSub').innerText = 'Checklist Requisiti di Accreditamento Istituzionale (D.G.R. Umbria)';
+            } else if(tabName === 'customer') {
+                document.getElementById('viewCustomer').style.display = 'block';
+                document.getElementById('tabBtnCustomer').classList.add('active');
+                document.getElementById('lblBannerSub').innerText = 'Indagini di Gradimento Ospiti & Familiari (Punto Norma ISO 9.1.2)';
+            } else if(tabName === 'privacy') {
+                document.getElementById('viewPrivacy').style.display = 'block';
+                document.getElementById('tabBtnPrivacy').classList.add('active');
+                document.getElementById('lblBannerSub').innerText = 'Monitoraggio Cogenza Normativa, Nomine Reload & Audit Trail (ISO 8.4 & 7.5)';
+            } else if(tabName === 'nc') {
+                document.getElementById('viewNC').style.display = 'block';
+                document.getElementById('tabBtnNC').classList.add('active');
+                document.getElementById('lblBannerSub').innerText = 'Gestione Non Conformità, Reclami e Azioni Correttive (ISO 10.2)';
             }
         };
 
-        // CHECKLIST D.G.R. UMBRIA PREIMPOSTATA
-        const DGR_ITEMS = [
-            { id: "STR-01", ambito: "Strutturale & Impianti", criterio: "Assenza barriere architettoniche e ascensori dimensionati per lettighe" },
-            { id: "STR-02", ambito: "Strutturale & Impianti", criterio: "Impianto di climatizzazione e ricambi d'aria a norma con registro filtri" },
-            { id: "STR-03", ambito: "Strutturale & Impianti", criterio: "Impianto gas medicali O2 conforme con certificazione collaudo periodico" },
-            { id: "ORG-01", ambito: "Organizzazione & Direzione", criterio: "Nomina formale del Direttore Sanitario e presenza documentata in sede" },
-            { id: "ORG-02", ambito: "Standard Personale", criterio: "Rispettati i minutaggi assistenziali minimi DGR (OSS ≥120, Inf ≥25, Fisio ≥10)" },
-            { id: "ORG-03", ambito: "Standard Personale", criterio: "Verifica iscrizione agli Ordini professionali (OPI, OMCeO) e corsi ECM" },
-            { id: "ASS-01", ambito: "Processo Assistenziale", criterio: "Redazione formale del PAI multidisciplinare entro 30 giorni dall'ingresso" },
-            { id: "ASS-02", ambito: "Processo Assistenziale", criterio: "Rivalutazione PAI documentata almeno semestrale o in caso di evento acuto" },
-            { id: "ASS-03", ambito: "Processo Assistenziale", criterio: "Registro Contenzioni Fisiche con prescrizione medica e consenso informato" },
-            { id: "FAR-01", ambito: "Gestione Farmaco", criterio: "Armadio farmaceutico chiuso a chiave e registro stupefacenti conforme" },
-            { id: "FAR-02", ambito: "Gestione Farmaco", criterio: "Scheda Unica di Terapia (SUT) validata dal Medico Curante (MMG)" },
-            { id: "DOC-01", ambito: "Diritti Ospite & Privacy", criterio: "Carta dei Servizi aggiornata e consegnata a ospiti e familiari" },
-            { id: "DOC-02", ambito: "Diritti Ospite & Privacy", criterio: "Consenso al trattamento dati GDPR e fascicoli sanitari conservati in sicurezza" },
-            { id: "QLT-01", ambito: "Sistema Qualità ISO", criterio: "Presenza di Procedure Operative Standard (POS) formalizzate e condivise" },
-            { id: "QLT-02", ambito: "Sistema Qualità ISO", criterio: "Monitoraggio semestrale della Customer Satisfaction e registro reclami" },
-            { id: "QLT-03", ambito: "Risk Management", criterio: "Registro Incident Reporting (cadute, errori, infezioni ICA) con analisi CAPA" }
-        ];
+        // GESTIONE CHECKLIST
+        window.renderTableChecklist = () => {
+            const tb = document.querySelector('#tableChecklistAccredito tbody');
+            if(!tb) return;
+            tb.innerHTML = '';
 
-        window.initChecklist = () => {
-            const body = document.getElementById('checklistBody'); if(!body) return;
-            body.innerHTML = '';
-            DGR_ITEMS.forEach(it => {
-                const saved = window.dbChecklist[it.id] || { stato: "CONFORME", note: "" };
-                body.innerHTML += `
+            let conformi = 0; let adeguamento = 0; let nonConformi = 0;
+
+            window.dbChecklist.forEach((item, idx) => {
+                if(item.stato === 'CONFORME') conformi++;
+                else if(item.stato === 'ADEGUAMENTO') adeguamento++;
+                else nonConformi++;
+
+                tb.innerHTML += `
                     <tr>
-                        <td><strong>${it.id}</strong></td>
-                        <td><small style="color:var(--dir-color); font-weight:bold;">${it.ambito}</small></td>
-                        <td>${it.criterio}</td>
+                        <td><strong>${item.cat}</strong><br><small style="color:#64748b;">${item.id}</small></td>
+                        <td>${item.desc}</td>
                         <td>
-                            <select id="chk_stato_${it.id}" style="padding:4px; font-size:0.85em; font-weight:bold;">
-                                <option value="CONFORME" ${saved.stato==='CONFORME'?'selected':''}>🟢 Conforme</option>
-                                <option value="IN ADEGUAMENTO" ${saved.stato==='IN ADEGUAMENTO'?'selected':''}>🟡 In Adeguamento</option>
-                                <option value="NON CONFORME" ${saved.stato==='NON CONFORME'?'selected':''}>🔴 Non Conforme</option>
+                            <select id="chkStato_${idx}" onchange="window.aggiornaStatoChecklistLive(${idx})" style="font-weight:bold; color:${item.stato==='CONFORME'?'#166534':(item.stato==='ADEGUAMENTO'?'#b45309':'#991b1b')};">
+                                <option value="CONFORME" ${item.stato==='CONFORME'?'selected':''}>🟢 Conforme</option>
+                                <option value="ADEGUAMENTO" ${item.stato==='ADEGUAMENTO'?'selected':''}>🟡 In Adeguamento</option>
+                                <option value="NON_CONFORME" ${item.stato==='NON_CONFORME'?'selected':''}>🔴 Non Conforme</option>
                             </select>
                         </td>
-                        <td>
-                            <input type="text" id="chk_note_${it.id}" value="${saved.note||''}" placeholder="Rif. POS, verbale o nota..." style="padding:4px; font-size:0.85em;">
-                        </td>
-                    </tr>`;
-            });
-        };
-
-        window.salvaTuttaChecklist = async () => {
-            const dataToSave = {};
-            DGR_ITEMS.forEach(it => {
-                dataToSave[it.id] = {
-                    stato: document.getElementById(`chk_stato_${it.id}`).value,
-                    note: document.getElementById(`chk_note_${it.id}`).value.trim()
-                };
-            });
-            await setDoc(doc(db, "impostazioni", "iso_checklist"), { checklist: dataToSave, aggiornatoIl: window.getTimestamp() });
-            window.showToast("✅ Checklist Accreditamento salvata!");
-        };
-
-        // CALCOLO MINUTAGGI
-        window.calcolaMinutaggi = () => {
-            const presenti = window.dbOspiti.filter(g => !g.decesso && !g.dimissione).length || 1;
-            const oreOss = parseFloat(document.getElementById('oreSettOss')?.value) || 0;
-            const oreInf = parseFloat(document.getElementById('oreSettInf')?.value) || 0;
-            const oreFisio = parseFloat(document.getElementById('oreSettFisio')?.value) || 0;
-
-            const minOss = Math.round((oreOss * 60) / (7 * presenti));
-            const minInf = Math.round((oreInf * 60) / (7 * presenti));
-            const minFisio = Math.round((oreFisio * 60) / (7 * presenti));
-
-            document.getElementById('minutiOssEffettivi').innerText = `${minOss} min / die`;
-            document.getElementById('minutiInfEffettivi').innerText = `${minInf} min / die`;
-            document.getElementById('minutiFisioEffettivi').innerText = `${minFisio} min / die`;
-            if(document.getElementById('kpi-minutaggio-oss')) document.getElementById('kpi-minutaggio-oss').innerText = `${minOss} m/die`;
-
-            const bOss = document.getElementById('badgeOssConf');
-            if(bOss) { bOss.className = minOss >= 120 ? 'badge-status status-ok' : 'badge-status status-err'; bOss.innerText = minOss >= 120 ? '🟢 CONFORME' : '🔴 SOTTO STANDARD'; }
-            const bInf = document.getElementById('badgeInfConf');
-            if(bInf) { bInf.className = minInf >= 25 ? 'badge-status status-ok' : 'badge-status status-err'; bInf.innerText = minInf >= 25 ? '🟢 CONFORME' : '🔴 SOTTO STANDARD'; }
-            const bFis = document.getElementById('badgeFisioConf');
-            if(bFis) { bFis.className = minFisio >= 10 ? 'badge-status status-ok' : 'badge-status status-err'; bFis.innerText = minFisio >= 10 ? '🟢 CONFORME' : '🔴 SOTTO STANDARD'; }
-        };
-
-        // AGGIORNAMENTO INDICATORI
-        window.aggiornaIndicatoriSintesi = () => {
-            const attivi = window.dbOspiti.filter(g => !g.decesso && !g.dimissione);
-            const totPresenti = attivi.length;
-            const autorizzati = parseInt(document.getElementById('isoPostiAutorizzati')?.value, 10) || 40;
-
-            document.getElementById('isoPostiOccupati').value = totPresenti;
-            const satPerc = Math.round((totPresenti / autorizzati) * 100);
-            document.getElementById('isoTassoSaturazione').value = `${satPerc}%`;
-
-            let paiValidi = 0;
-            const tbPai = document.querySelector('#tablePaiMonitor tbody');
-            if(tbPai) tbPai.innerHTML = '';
-
-            attivi.forEach(g => {
-                const c = window.dbClinica[g.name] || {};
-                const hasPai = c.uvmData || c.lastPaiData;
-                if(hasPai) paiValidi++;
-                const bina = g.uvmPunteggio || c.binaLivello || 'Livello 3';
-
-                if(tbPai) {
-                    const st = hasPai ? `<span class="badge-status status-ok">🟢 PAI ATTIVO</span>` : `<span class="badge-status status-err">🔴 DA REDIGERE</span>`;
-                    tbPai.innerHTML += `
-                        <tr>
-                            <td>${st}</td>
-                            <td><strong>${g.name}</strong> (Stanza ${g.room||'-'})</td>
-                            <td>${window.formatDateSafe(g.ingresso)}</td>
-                            <td>${window.formatDateSafe(c.lastPaiData || g.uvmData || '-')}</td>
-                            <td><strong>${window.formatDateSafe(c.nextPaiData || 'Entro 6 mesi')}</strong></td>
-                            <td><span style="font-weight:bold; color:var(--dir-color);">${bina}</span></td>
-                            <td>${c.bradenScore || '14 (Medio)'}</td>
-                            <td>${c.barthelScore || '35/100'}</td>
-                        </tr>`;
-                }
+                        <td><input type="text" id="chkNote_${idx}" value="${item.note||''}" placeholder="Note / rif. documento..."></td>
+                        <td><input type="text" id="chkData_${idx}" value="${item.data||''}" style="font-size:0.85em;"></td>
+                    </tr>
+                `;
             });
 
-            const paiPerc = totPresenti > 0 ? Math.round((paiValidi / totPresenti) * 100) : 100;
-            document.getElementById('kpi-copertura-pai').innerText = `${paiPerc}%`;
+            const tot = window.dbChecklist.length;
+            const perc = tot > 0 ? Math.round((conformi / tot) * 100) : 100;
 
-            const contAttive = window.dbContenzioni.filter(c => c.stato === 'ATTIVA').length;
-            const contRate = totPresenti > 0 ? Math.round((contAttive / totPresenti) * 100) : 0;
-            document.getElementById('kpi-contenzioni-rate').innerText = `${contRate}%`;
-            document.getElementById('kpi-contenzioni-count').innerText = contAttive;
-
-            document.getElementById('kpi-cadute-tot').innerText = window.dbRischio.filter(r => (r.tipo || '').toLowerCase().includes('caduta')).length;
-            document.getElementById('kpi-errori-terapia').innerText = window.dbRischio.filter(r => (r.tipo || '').toLowerCase().includes('terapia') || (r.tipo || '').toLowerCase().includes('farmaco')).length;
-
-            let icaCount = 0;
-            attivi.forEach(g => { if((window.dbClinica[g.name] || {}).infezione) icaCount++; });
-            document.getElementById('kpi-ica-tot').innerText = icaCount;
-            document.getElementById('kpi-nc-aperte').innerText = window.dbCapa.length + window.dbReclami.length;
-
-            document.getElementById('cntOssStaff').innerText = window.dbOperatori.filter(o => o.qualifica === 'OSS').length;
-            document.getElementById('cntInfStaff').innerText = window.dbOperatori.filter(o => o.qualifica === 'Infermiere').length;
-            document.getElementById('cntFisioStaff').innerText = window.dbOperatori.filter(o => o.qualifica === 'Fisioterapista').length || 1;
-
-            window.calcolaMinutaggi();
-            window.aggiornaDatiCSAT();
+            document.getElementById('kpiAccreditoPerc').innerText = `${perc}%`;
+            document.getElementById('kpiAccreditoRatio').innerText = `${conformi} su ${tot} Requisiti Soddisfatti`;
+            document.getElementById('kpiAccreditoOk').innerText = conformi;
+            document.getElementById('kpiAccreditoWarn').innerText = adeguamento;
+            document.getElementById('kpiAccreditoCritici').innerText = nonConformi;
         };
 
-        // GESTIONE PROCEDURE POS
-        window.salvaProcedura = async () => {
-            const cod = document.getElementById('posCodice').value.trim();
-            const tit = document.getElementById('posTitolo').value.trim();
-            const rev = document.getElementById('posRev').value.trim() || 'Rev. 01';
-            const dt = document.getElementById('posData').value;
-            if(!cod || !tit) return window.showToast("⚠️ Codice e Titolo procedura obbligatori");
-
-            await addDoc(collection(db, "iso_procedure"), { codice: cod, titolo: tit, rev: rev, data: dt, op: window.activeOperator, ts: Date.now() });
-            document.getElementById('posCodice').value = ''; document.getElementById('posTitolo').value = '';
-            window.showToast("✅ Procedura archiviata!");
+        window.aggiornaStatoChecklistLive = (idx) => {
+            const sel = document.getElementById(`chkStato_${idx}`);
+            window.dbChecklist[idx].stato = sel.value;
+            window.renderTableChecklist();
         };
 
-        window.renderTableProcedure = () => {
-            const tb = document.querySelector('#tableProcedure tbody'); if(!tb) return;
-            tb.innerHTML = '';
-            window.dbProcedure.sort((a,b) => (a.codice||'').localeCompare(b.codice||'')).forEach(p => {
-                tb.innerHTML += `<tr><td><strong>${p.codice}</strong></td><td>${p.titolo}</td><td>${p.rev}</td><td>${window.formatDateSafe(p.data)}</td><td>Direzione</td><td class="restrict-oss"><button class="btn-danger" style="padding:2px 6px; font-size:0.75em;" onclick="window.eliminaDoc('iso_procedure','${p.id}')">✕</button></td></tr>`;
+        window.salvaChecklistAccreditamento = async () => {
+            window.dbChecklist.forEach((item, idx) => {
+                const sel = document.getElementById(`chkStato_${idx}`);
+                const not = document.getElementById(`chkNote_${idx}`);
+                const dat = document.getElementById(`chkData_${idx}`);
+                if(sel) item.stato = sel.value;
+                if(not) item.note = not.value.trim();
+                if(dat) item.data = dat.value.trim();
             });
-        };
 
-        // GESTIONE AUDIT
-        window.salvaAudit = async () => {
-            const a = document.getElementById('auditArea').value.trim();
-            const aud = document.getElementById('auditAuditor').value.trim();
-            const es = document.getElementById('auditEsito').value;
-            const dt = document.getElementById('auditData').value;
-            if(!a || !aud) return window.showToast("⚠️ Area e Auditor obbligatori");
-
-            await addDoc(collection(db, "iso_audit"), { area: a, auditor: aud, esito: es, data: dt, ts: Date.now() });
-            document.getElementById('auditArea').value = '';
-            window.showToast("✅ Audit registrato!");
-        };
-
-        window.renderTableAudit = () => {
-            const tb = document.querySelector('#tableAudit tbody'); if(!tb) return;
-            tb.innerHTML = '';
-            window.dbAudit.forEach(r => {
-                const b = r.esito === 'CONFORME' ? 'status-ok' : (r.esito === 'OSSERVAZIONE' ? 'status-warn' : 'status-err');
-                tb.innerHTML += `<tr><td><span class="badge-status ${b}">${r.esito}</span></td><td>${window.formatDateSafe(r.data)}</td><td><strong>${r.area}</strong></td><td>${r.auditor}</td><td class="restrict-oss"><button class="btn-danger" style="padding:2px 6px; font-size:0.75em;" onclick="window.eliminaDoc('iso_audit','${r.id}')">✕</button></td></tr>`;
-            });
-        };
-
-        // QUALIFICA FORNITORI
-        window.salvaFornitore = async () => {
-            const f = document.getElementById('fornRif').value.trim();
-            const s = document.getElementById('fornServizio').value.trim();
-            const r = document.getElementById('fornRating').value;
-            if(!f) return window.showToast("⚠️ Inserisci nome fornitore");
-
-            await addDoc(collection(db, "iso_fornitori"), { fornitore: f, servizio: s, rating: r, data: window.getTimestamp(), ts: Date.now() });
-            document.getElementById('fornRif').value = ''; document.getElementById('fornServizio').value = '';
-            window.showToast("✅ Fornitore qualificato!");
-        };
-
-        window.renderTableFornitori = () => {
-            const tb = document.querySelector('#tableFornitori tbody'); if(!tb) return;
-            tb.innerHTML = '';
-            window.dbFornitori.forEach(f => {
-                tb.innerHTML += `<tr><td><span class="badge-status status-ok">${f.rating}</span></td><td><strong>${f.fornitore}</strong></td><td>${f.servizio}</td><td>${f.data}</td><td class="restrict-oss"><button class="btn-danger" style="padding:2px 6px; font-size:0.75em;" onclick="window.eliminaDoc('iso_fornitori','${f.id}')">✕</button></td></tr>`;
-            });
-        };
-
-        // ASSET, RECLAMI, CAPA & FORMAZIONE
-        window.salvaAsset = async () => {
-            const m = document.getElementById('assetId').value.trim(), t = document.getElementById('assetTipo').value, r = document.getElementById('assetReparto').value.trim(), s = document.getElementById('assetScadenza').value;
-            if(!m || !s) return window.showToast("⚠️ Matricola e Scadenza obbligatorie");
-            await addDoc(collection(db, "iso_elettromedicali"), { matricola: m, tipo: t, reparto: r, scadenza: s, ts: Date.now() });
-            document.getElementById('assetId').value = ''; window.showToast("✅ Asset salvato!");
-        };
-
-        window.renderTableAsset = () => {
-            const tb = document.querySelector('#tableAsset tbody'); if(!tb) return;
-            tb.innerHTML = '';
-            const today = new Date(); today.setHours(0,0,0,0);
-            window.dbAsset.forEach(a => {
-                const exp = new Date(a.scadenza + 'T00:00:00');
-                const diffDays = Math.ceil((exp - today) / (1000 * 60 * 60 * 24));
-                const badge = diffDays < 0 ? `<span class="badge-status status-err">🔴 SCADUTO</span>` : `<span class="badge-status status-ok">🟢 REGOLARE</span>`;
-                tb.innerHTML += `<tr><td>${badge}</td><td><strong>${a.matricola}</strong></td><td>${a.tipo}</td><td>${a.reparto}</td><td>${window.formatDateSafe(a.scadenza)}</td><td>CEI 62-5 Conforme</td><td class="restrict-oss"><button class="btn-danger" style="padding:2px 6px; font-size:0.75em;" onclick="window.eliminaDoc('iso_elettromedicali','${a.id}')">✕</button></td></tr>`;
-            });
-        };
-
-        window.salvaReclamo = async () => {
-            const s = document.getElementById('recSegnalante').value.trim(), a = document.getElementById('recArea').value, d = document.getElementById('recDescrizione').value.trim(), r = document.getElementById('recRisposta').value.trim();
-            if(!d) return window.showToast("⚠️ Inserisci la descrizione del reclamo");
-            await addDoc(collection(db, "iso_reclami"), { segnalante: s, area: a, desc: d, risposta: r, data: window.getTimestamp(), ts: Date.now() });
-            document.getElementById('recDescrizione').value = ''; window.showToast("✅ Reclamo registrato!");
-        };
-
-        window.renderTableReclami = () => {
-            const tb = document.querySelector('#tableReclami tbody'); if(!tb) return;
-            tb.innerHTML = '';
-            window.dbReclami.forEach(r => {
-                tb.innerHTML += `<tr><td><span class="badge-status status-ok">🟢 GESTITO</span></td><td>${r.data}</td><td><strong>${r.segnalante}</strong></td><td>${r.area}</td><td>${r.desc}</td><td>${r.risposta}</td><td class="restrict-oss"><button class="btn-danger" style="padding:2px 6px; font-size:0.75em;" onclick="window.eliminaDoc('iso_reclami','${r.id}')">✕</button></td></tr>`;
-            });
-        };
-
-        window.salvaCapa = async () => {
-            const o = document.getElementById('ncOrigine').value.trim(), c = document.getElementById('ncCausa').value.trim(), a = document.getElementById('ncAzione').value.trim();
-            if(!o || !a) return window.showToast("⚠️ Origine e Azione obbligatori");
-            await addDoc(collection(db, "iso_capa"), { origine: o, causa: c, azione: a, data: window.getTimestamp(), op: window.activeOperator, ts: Date.now() });
-            document.getElementById('ncOrigine').value = ''; document.getElementById('ncAzione').value = ''; window.showToast("✅ CAPA registrata!");
-        };
-
-        window.renderTableCapa = () => {
-            const tb = document.querySelector('#tableCapa tbody'); if(!tb) return;
-            tb.innerHTML = '';
-            window.dbCapa.forEach(c => {
-                tb.innerHTML += `<tr><td><span class="badge-status status-ok">🟢 ATTUATA</span></td><td>${c.data}</td><td><strong>${c.origine}</strong></td><td>${c.causa}</td><td><strong style="color:var(--error-color);">${c.azione}</strong></td><td>${c.op}</td><td class="restrict-oss"><button class="btn-danger" style="padding:2px 6px; font-size:0.75em;" onclick="window.eliminaDoc('iso_capa','${c.id}')">✕</button></td></tr>`;
-            });
-        };
-
-        window.salvaFormazioneStaff = async () => {
-            const op = document.getElementById('formazOp').value, c = document.getElementById('formazCorso').value, sc = document.getElementById('formazScadenza').value;
-            if(!op || !sc) return window.showToast("⚠️ Operatore e scadenza obbligatori");
-            await addDoc(collection(db, "iso_formazione"), { operatore: op, corso: c, scadenza: sc, ts: Date.now() });
-            window.showToast("✅ Formazione registrata!");
-        };
-
-        window.renderTableFormazione = () => {
-            const tb = document.querySelector('#tableFormazione tbody'); if(!tb) return;
-            tb.innerHTML = '';
-            window.dbFormazione.forEach(f => {
-                tb.innerHTML += `<tr><td><span class="badge-status status-ok">🟢 VALIDO</span></td><td><strong>${f.operatore}</strong></td><td>${f.corso}</td><td>${window.formatDateSafe(f.scadenza)}</td><td class="restrict-oss"><button class="btn-danger" style="padding:2px 6px; font-size:0.75em;" onclick="window.eliminaDoc('iso_formazione','${f.id}')">✕</button></td></tr>`;
-            });
-        };
-
-        window.eliminaDoc = async (col, id) => {
-            if(confirm("Eliminare definitivamente questo record?")) { await deleteDoc(doc(db, col, id)); window.showToast("Record eliminato"); }
-        };
-
-        // STAMPE FASCICOLO UFFICIALE
-        window.stampaFascicoloAccreditamentoCompleto = () => {
-            const nomeStr = document.getElementById('isoRagioneSociale')?.value || 'NUOVA VILLA SILVANA S.R.L.';
-            const dirSan = document.getElementById('isoDirSanitario')?.value || 'Dott. Direttore Sanitario';
-            const presenti = window.dbOspiti.filter(g => !g.decesso && !g.dimissione).length;
-
-            let html = `
-                <div class="print-header">
-                    <h1>${nomeStr}</h1>
-                    <h3 style="margin:4px 0; color:#3730a3;">RELAZIONE ANNUALE SANITARIO-ASSISTENZIALE PER ACCREDITAMENTO ISTITUZIONALE</h3>
-                    <p style="font-size:10pt;">Regione Umbria - USL Umbria 2 | Data Emissione: ${window.getTimestamp()}</p>
-                </div>
-                <h4>1. DEGENZA & POSTI LETTO</h4>
-                <p>Ospiti presenti: <strong>${presenti}</strong> | Saturazione: <strong>${document.getElementById('isoTassoSaturazione').value}</strong></p>
-                <h4>2. MINUTAGGI ASSISTENZIALI EROGATI (D.G.R. UMBRIA)</h4>
-                <table class="print-table">
-                    <tr><th>Profilo Professionale</th><th>Minuti Erogati / Ospite / Die</th><th>Standard D.G.R.</th><th>Esito</th></tr>
-                    <tr><td>OSS</td><td><strong>${document.getElementById('minutiOssEffettivi').innerText}</strong></td><td>≥ 120 min</td><td>CONFORME</td></tr>
-                    <tr><td>Infermiere</td><td><strong>${document.getElementById('minutiInfEffettivi').innerText}</strong></td><td>≥ 25 min</td><td>CONFORME</td></tr>
-                    <tr><td>Fisioterapista</td><td><strong>${document.getElementById('minutiFisioEffettivi').innerText}</strong></td><td>≥ 10 min</td><td>CONFORME</td></tr>
-                </table>
-                <h4>3. QUALITÀ PERCEPITA & RISK MANAGEMENT</h4>
-                <p>- Media Customer Satisfaction (Google Moduli): <strong>★ ${document.getElementById('csat-val-globale').innerText} / 5.0</strong><br>
-                - Copertura P.A.I.: <strong>${document.getElementById('kpi-copertura-pai').innerText}</strong><br>
-                - Tasso Contenzioni Fisiche: <strong>${document.getElementById('kpi-contenzioni-rate').innerText}</strong><br>
-                - Cadute Segnalate: <strong>${document.getElementById('kpi-cadute-tot').innerText}</strong> | Infezioni ICA: <strong>${document.getElementById('kpi-ica-tot').innerText}</strong></p>
-                <div style="margin-top:40px; display:flex; justify-content:space-between;">
-                    <div>Terni, ${window.getTimestamp()}</div>
-                    <div>Firma Direttore Sanitario: ____________________<br><strong>${dirSan}</strong></div>
-                </div>
-            `;
-            document.getElementById('printArea').innerHTML = html;
-            setTimeout(() => window.print(), 300);
-        };
-
-        window.stampaVerbaleRiesameISO = () => {
-            const nomeStr = document.getElementById('isoRagioneSociale')?.value || 'NUOVA VILLA SILVANA S.R.L.';
-            let html = `
-                <div class="print-header">
-                    <h1>${nomeStr}</h1>
-                    <h3 style="margin:4px 0; color:#0f766e;">VERBALE DI RIESAME DELLA DIREZIONE (ISO 9001:2015)</h3>
-                </div>
-                <p>La Direzione ha riesaminato i processi del Sistema di Gestione della Qualità verificando:<br>
-                1. Rispettati gli standard di minutaggio assistenziale regionali.<br>
-                2. Verifiche di sicurezza elettrica CEI 62-5 regolarmente eseguite.<br>
-                3. Customer Satisfaction con rilevamento via Google Moduli & QR Code (Media: ★ ${document.getElementById('csat-val-globale').innerText}).<br>
-                4. Gestione dei reclami e analisi del rischio clinico (CAPA) attiva al 100%.</p>
-                <div style="margin-top:40px; display:flex; justify-content:space-between;">
-                    <div>Firma RSGQ: ____________________</div>
-                    <div>Firma Direzione Generale: ____________________</div>
-                </div>
-            `;
-            document.getElementById('printArea').innerHTML = html;
-            setTimeout(() => window.print(), 300);
-        };
-
-        // REAL-TIME FIRESTORE LISTENERS
-        onSnapshot(collection(db, "ospiti"), snap => { window.dbOspiti = snap.docs.map(d=>({id:d.id, ...d.data()})); window.aggiornaIndicatoriSintesi(); });
-        onSnapshot(collection(db, "operatori"), snap => { 
-            window.dbOperatori = snap.docs.map(d=>({id:d.id, ...d.data()})); 
-            const sel = document.getElementById('formazOp');
-            if(sel) { sel.innerHTML = ''; window.dbOperatori.forEach(op => sel.innerHTML += `<option value="${op.name}">${op.name} (${op.qualifica})</option>`); }
-            window.aggiornaIndicatoriSintesi(); 
-        });
-        onSnapshot(collection(db, "cartelle_cliniche"), snap => { window.dbClinica = {}; snap.forEach(d => { window.dbClinica[d.id] = d.data(); }); window.aggiornaIndicatoriSintesi(); });
-        onSnapshot(collection(db, "contenzioni"), snap => { window.dbContenzioni = snap.docs.map(d=>({id:d.id, ...d.data()})); window.aggiornaIndicatoriSintesi(); });
-        onSnapshot(collection(db, "rischio"), snap => { window.dbRischio = snap.docs.map(d=>({id:d.id, ...d.data()})); window.aggiornaIndicatoriSintesi(); });
-        onSnapshot(collection(db, "iso_elettromedicali"), snap => { window.dbAsset = snap.docs.map(d=>({id:d.id, ...d.data()})); window.renderTableAsset(); });
-        onSnapshot(collection(db, "iso_reclami"), snap => { window.dbReclami = snap.docs.map(d=>({id:d.id, ...d.data()})); window.renderTableReclami(); window.aggiornaIndicatoriSintesi(); });
-        onSnapshot(collection(db, "iso_formazione"), snap => { window.dbFormazione = snap.docs.map(d=>({id:d.id, ...d.data()})); window.renderTableFormazione(); });
-        onSnapshot(collection(db, "iso_capa"), snap => { window.dbCapa = snap.docs.map(d=>({id:d.id, ...d.data()})); window.renderTableCapa(); window.aggiornaIndicatoriSintesi(); });
-        onSnapshot(collection(db, "iso_procedure"), snap => { window.dbProcedure = snap.docs.map(d=>({id:d.id, ...d.data()})); window.renderTableProcedure(); });
-        onSnapshot(collection(db, "iso_audit"), snap => { window.dbAudit = snap.docs.map(d=>({id:d.id, ...d.data()})); window.renderTableAudit(); });
-        onSnapshot(collection(db, "iso_fornitori"), snap => { window.dbFornitori = snap.docs.map(d=>({id:d.id, ...d.data()})); window.renderTableFornitori(); });
-
-        onSnapshot(doc(db, "impostazioni", "iso_checklist"), docSnap => {
-            if(docSnap.exists()) window.dbChecklist = docSnap.data().checklist || {};
-            window.initChecklist();
-        });
-
-        onSnapshot(doc(db, "impostazioni", "azienda"), docSnap => {
-            if(docSnap.exists()) {
-                const az = docSnap.data();
-                if(document.getElementById('isoRagioneSociale')) document.getElementById('isoRagioneSociale').value = az.ragioneSociale || 'NUOVA VILLA SILVANA S.R.L.';
-                if(document.getElementById('isoPiva')) document.getElementById('isoPiva').value = az.piva || '01234567890';
-                if(document.getElementById('isoCodAccreditamento')) document.getElementById('isoCodAccreditamento').value = az.accreditamento || 'UMB-RP-TR-0045';
-                if(document.getElementById('isoDirSanitario')) document.getElementById('isoDirSanitario').value = az.dirSanitario || 'Dott. Direttore Sanitario';
+            try {
+                await setDoc(doc(db, "impostazioni", "accreditamento_checklist"), {
+                    items: window.dbChecklist,
+                    aggiornatoIl: new Date().toLocaleString('it-IT')
+                });
+                window.showToast("✅ Checklist Accreditamento Salvata!");
+            } catch(e) {
+                window.showToast("❌ Errore durante il salvataggio");
             }
+        };
+
+        // SALVATAGGIO CUSTOMER SATISFACTION MANUALE DAL DESK
+        window.salvaQuestionarioCs = async () => {
+            const dataQ = document.getElementById('csData').value || new Date().toISOString().slice(0,10);
+            const comp = document.getElementById('csTipoCompilatore').value;
+            const osp = document.getElementById('csSelOspite').value;
+            const vAss = parseInt(document.getElementById('csVotoAssistenza').value, 10);
+            const vVit = parseInt(document.getElementById('csVotoVitto').value, 10);
+            const vCom = parseInt(document.getElementById('csVotoComfort').value, 10);
+            const vAni = parseInt(document.getElementById('csVotoAnimazione').value, 10);
+            const vCor = parseInt(document.getElementById('csVotoCortesia').value, 10);
+            const note = document.getElementById('csNote').value.trim();
+
+            const media = parseFloat(((vAss + vVit + vCom + vAni + vCor) / 5).toFixed(1));
+
+            const payload = {
+                data: dataQ,
+                compilatore: comp,
+                ospite: osp,
+                votoAssistenza: vAss,
+                votoVitto: vVit,
+                votoComfort: vCom,
+                votoAnimazione: vAni,
+                votoCortesia: vCor,
+                media: media,
+                note: note || "[DESK MANUALE]",
+                canale: "DESK_MANUALE",
+                timestamp: Date.now()
+            };
+
+            await addDoc(collection(db, "customer_satisfaction"), payload);
+            document.getElementById('csNote').value = '';
+            window.showToast("✅ Questionario Registrato!");
+        };
+
+        window.renderCustomerSatisfaction = () => {
+            const tb = document.querySelector('#tableStoricoCs tbody');
+            if(!tb) return;
+
+            let totAss = 0, totVit = 0, totCom = 0, totGlobale = 0;
+            const n = window.dbCustomer.length;
+
+            if(n === 0) {
+                tb.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:15px; color:#64748b;">Nessun questionario registrato.</td></tr>';
+                document.getElementById('kpiCsMediaTot').innerText = "0.0 / 5";
+                document.getElementById('kpiCsTotQuestionari').innerText = "0 Questionari";
+                return;
+            }
+
+            tb.innerHTML = '';
+            window.dbCustomer.sort((a,b) => (b.timestamp||0) - (a.timestamp||0)).forEach(q => {
+                totAss += (q.votoAssistenza || 0);
+                totVit += (q.votoVitto || 0);
+                totCom += (q.votoComfort || 0);
+                totGlobale += (q.media || 0);
+
+                const isMobile = (q.canale === 'QR_CODE_SMARTPHONE' || (q.note && q.note.includes('SMARTPHONE')));
+
+                tb.innerHTML += `
+                    <tr>
+                        <td><strong>${q.data ? q.data.split('-').reverse().join('/') : '-'}</strong></td>
+                        <td>${q.compilatore || 'Familiare'}</td>
+                        <td><strong>${q.ospite || 'Anonimo'}</strong></td>
+                        <td style="text-align:center;">⭐ ${q.votoAssistenza}</td>
+                        <td style="text-align:center;">⭐ ${q.votoVitto}</td>
+                        <td style="text-align:center;">⭐ ${q.votoComfort}</td>
+                        <td style="text-align:center;">⭐ ${q.votoAnimazione}</td>
+                        <td style="text-align:center;">⭐ ${q.votoCortesia}</td>
+                        <td style="text-align:center;"><strong style="color:var(--primary);">${q.media}</strong></td>
+                        <td>
+                            ${isMobile ? '<span style="background:#e0f2fe; color:#0369a1; padding:2px 5px; border-radius:3px; font-weight:bold; font-size:0.8em; margin-right:4px;">📱 QR Smartphone</span>' : ''}
+                            ${q.note || '-'}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('kpiCsMediaTot').innerText = (totGlobale / n).toFixed(1) + " / 5";
+            document.getElementById('kpiCsTotQuestionari').innerText = `${n} Questionari Elaborati`;
+            document.getElementById('kpiCsMediaAss').innerText = (totAss / n).toFixed(1);
+            document.getElementById('kpiCsMediaVitto').innerText = (totVit / n).toFixed(1);
+            document.getElementById('kpiCsMediaComfort').innerText = (totCom / n).toFixed(1);
+        };
+
+        // GESTIONE NON CONFORMITÀ
+        window.salvaNuovaNC = async () => {
+            const dataNC = document.getElementById('ncData').value || new Date().toISOString().slice(0,10);
+            const orig = document.getElementById('ncOrigine').value;
+            const resp = document.getElementById('ncResp').value.trim();
+            const desc = document.getElementById('ncDesc').value.trim();
+            const causa = document.getElementById('ncCausa').value.trim();
+            const azione = document.getElementById('ncAzione').value.trim();
+
+            if(!desc) return window.showToast("⚠️ Descrizione obbligatoria!");
+
+            await addDoc(collection(db, "non_conformita"), {
+                data: dataNC,
+                origine: orig,
+                responsabile: resp || "Direzione",
+                descrizione: desc,
+                causa: causa || "-",
+                azione: azione || "-",
+                stato: "APERTA",
+                timestamp: Date.now()
+            });
+
+            document.getElementById('ncDesc').value = '';
+            document.getElementById('ncCausa').value = '';
+            document.getElementById('ncAzione').value = '';
+            window.showToast("⚠️ Non Conformità Registrata!");
+        };
+
+        window.renderNonConformita = () => {
+            const tb = document.querySelector('#tableRegistroNC tbody');
+            if(!tb) return;
+            if(window.dbNC.length === 0) {
+                tb.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:15px; color:#64748b;">Nessuna non conformità registrata.</td></tr>';
+                return;
+            }
+
+            tb.innerHTML = '';
+            window.dbNC.sort((a,b)=>(b.timestamp||0)-(a.timestamp||0)).forEach(nc => {
+                const isChiusa = nc.stato === 'CHIUSA';
+                tb.innerHTML += `
+                    <tr>
+                        <td>${nc.data ? nc.data.split('-').reverse().join('/') : '-'}</td>
+                        <td><strong>${nc.origine}</strong></td>
+                        <td>${nc.descrizione}</td>
+                        <td>${nc.causa || '-'}</td>
+                        <td>${nc.azione || '-'}</td>
+                        <td>${nc.responsabile || '-'}</td>
+                        <td style="text-align:center;">
+                            <span class="badge-kpi ${isChiusa?'bk-ok':'bk-warn'}">${nc.stato}</span>
+                        </td>
+                    </tr>
+                `;
+            });
+        };
+
+        // GESTIONE SEZIONE PRIVACY
+        window.renderPrivacySection = () => {
+            const staff = window.dbOperatori.filter(o => o && o.name && o.name !== "Admin");
+            const staffConformi = staff.filter(o => !!(o.privacyFirmata || (o.nominaReload && o.nominaReload.stato === "SOTTOSCRITTO")));
+            const percReload = staff.length > 0 ? Math.round((staffConformi.length / staff.length) * 100) : 100;
+            document.getElementById('kpiReloadPerc').innerText = `${percReload}%`;
+            document.getElementById('kpiReloadRatio').innerText = `${staffConformi.length} su ${staff.length} Incaricati`;
+
+            const tbStaff = document.querySelector('#tableIsoStaffReload tbody');
+            if(tbStaff) {
+                tbStaff.innerHTML = '';
+                staff.forEach(op => {
+                    const nr = op.nominaReload || {};
+                    const isOk = !!(op.privacyFirmata || nr.stato === "SOTTOSCRITTO");
+                    tbStaff.innerHTML += `
+                        <tr>
+                            <td><strong>${op.name}</strong></td>
+                            <td>${op.qualifica||'-'}</td>
+                            <td><code>${nr.cf || op.cf || '-'}</code></td>
+                            <td><span class="badge-kpi ${isOk?'bk-ok':'bk-warn'}">${isOk?'🟢 Conforme':'🔴 Mancante'}</span></td>
+                            <td>${nr.dataSottoscrizione || (isOk?'Registrato':'-')}</td>
+                        </tr>`;
+                });
+            }
+
+            const degenti = window.dbOspiti.filter(g => !g.decesso && !g.dimissione);
+            let consensiConformi = 0;
+            const tbDeg = document.querySelector('#tableIsoConsensiDegenti tbody');
+            if(tbDeg) {
+                tbDeg.innerHTML = '';
+                degenti.forEach(g => {
+                    const c = window.dbClinica[g.name]?.consensoLegale || {};
+                    const hasSigned = !!(c.firmaB64);
+                    if(hasSigned) consensiConformi++;
+                    tbDeg.innerHTML += `
+                        <tr>
+                            <td><strong>${g.name}</strong></td>
+                            <td>Stanza ${g.room||'-'}</td>
+                            <td><code>${g.cf||'-'}</code></td>
+                            <td>${c.statoGiuridico === 'ADS' ? 'AdS ('+(c.legaleNome||'-')+')' : (c.statoGiuridico||'Capace')}</td>
+                            <td><span class="badge-kpi ${hasSigned?'bk-ok':'bk-warn'}">${hasSigned?'🟢 Firmato':'🔴 Da Acquisire'}</span></td>
+                            <td>${c.consensoFoto === 'SI' ? 'Autorizzato' : 'Negato'}</td>
+                            <td>${c.dataAttoStr||'-'}</td>
+                        </tr>`;
+                });
+            }
+            const percCons = degenti.length > 0 ? Math.round((consensiConformi / degenti.length) * 100) : 100;
+            document.getElementById('kpiConsensiPerc').innerText = `${percCons}%`;
+            document.getElementById('kpiConsensiRatio').innerText = `${consensiConformi} su ${degenti.length} Formalizzati`;
+
+            document.getElementById('kpiAuditTotale').innerText = window.dbAudit.length;
+            let anom = window.dbAudit.filter(a => (a.categoria||'').toUpperCase()==='REVOCA'||(a.azione||'').includes('Fallito')).length;
+            document.getElementById('kpiAnomalieTot').innerText = anom;
+        };
+
+        window.stampaTabCorrente = () => {
+            let titolo = "REPORT AUDIT QUALITÀ & ACCREDITAMENTO";
+            let corpoHtml = "";
+
+            if(window.currentTab === 'checklist') {
+                titolo = "VERBALE DI VERIFICA ACCREDITAMENTO ISTITUZIONALE (REGIONE UMBRIA)";
+                corpoHtml = document.querySelector('#tableChecklistAccredito').outerHTML;
+            } else if(window.currentTab === 'customer') {
+                titolo = "REPORT RIESAME CUSTOMER SATISFACTION (PUNTO NORMA ISO 9.1.2)";
+                corpoHtml = document.querySelector('#tableStoricoCs').outerHTML;
+            } else if(window.currentTab === 'privacy') {
+                titolo = "REPORT COGENZA PRIVACY, NOMINE FORNITORI & LOG SANITARI (ISO 8.4 & 7.5)";
+                corpoHtml = document.querySelector('#tableIsoStaffReload').outerHTML + "<br>" + document.querySelector('#tableIsoConsensiDegenti').outerHTML;
+            } else if(window.currentTab === 'nc') {
+                titolo = "REGISTRO NON CONFORMITÀ & AZIONI CORRETTIVE (ISO 10.2)";
+                corpoHtml = document.querySelector('#tableRegistroNC').outerHTML;
+            }
+
+            const html = `
+                <div style="border-bottom:2px solid #b45309; padding-bottom:8px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div>
+                        <h2 style="margin:0; color:#0f766e; font-size:15pt;">SENIOR CARE S.R.L. - NUOVA VILLA SILVANA</h2>
+                        <p style="margin:2px 0; font-size:8.5pt; color:#475569;">P.IVA: 03982400545 | Loc. Molinaccio, 25 - Spoleto (PG)</p>
+                    </div>
+                    <div style="text-align:right;">
+                        <h3 style="margin:0; font-size:11pt; color:#b45309;">SISTEMA GESTIONE QUALITÀ ISO 9001:2015</h3>
+                        <small style="font-size:7.5pt; color:#64748b;">Estratto Ufficiale del Sistema Qualità</small>
+                    </div>
+                </div>
+                <h3 style="text-align:center; font-size:12pt; text-transform:uppercase; margin:14px 0 10px 0;">${titolo}</h3>
+                <div style="font-size:8pt; margin-bottom:10px;">Data Estrazione: <strong>${new Date().toLocaleString('it-IT')}</strong></div>
+                ${corpoHtml}
+                <div style="margin-top:35px; display:flex; justify-content:space-between; font-size:8.5pt;">
+                    <div>Conformità Sistema Gestione Qualità Senior Care S.r.l.</div>
+                    <div style="text-align:center;">Firma Responsabile Qualità / Direzione:<br><br>____________________________________</div>
+                </div>
+            `;
+
+            document.getElementById('printArea').innerHTML = html;
+            setTimeout(() => window.print(), 250);
+        };
+
+        // REAL-TIME LISTENERS FIRESTORE
+        onSnapshot(doc(db, "impostazioni", "accreditamento_checklist"), snap => {
+            if(snap.exists() && snap.data().items) {
+                window.dbChecklist = snap.data().items;
+            }
+            window.renderTableChecklist();
+        });
+
+        onSnapshot(collection(db, "customer_satisfaction"), snap => {
+            window.dbCustomer = snap.docs.map(d=>({id:d.id, ...d.data()}));
+            window.renderCustomerSatisfaction();
+        });
+
+        onSnapshot(collection(db, "non_conformita"), snap => {
+            window.dbNC = snap.docs.map(d=>({id:d.id, ...d.data()}));
+            window.renderNonConformita();
+        });
+
+        onSnapshot(collection(db, "operatori"), snap => {
+            window.dbOperatori = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            window.renderPrivacySection();
+        });
+
+        onSnapshot(collection(db, "ospiti"), snap => {
+            window.dbOspiti = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            const sel = document.getElementById('csSelOspite');
+            if(sel) {
+                sel.innerHTML = '<option value="Anonimo">-- Scheda Anonima --</option>';
+                window.dbOspiti.filter(g=>!g.decesso&&!g.dimissione).sort((a,b)=>a.name.localeCompare(b.name)).forEach(g => {
+                    sel.innerHTML += `<option value="${g.name}">${g.name} (Stanza ${g.room||'-'})</option>`;
+                });
+            }
+            window.renderPrivacySection();
+        });
+
+        onSnapshot(collection(db, "cartelle_cliniche"), snap => {
+            window.dbClinica = {};
+            snap.forEach(d => { window.dbClinica[d.id] = d.data(); });
+            window.renderPrivacySection();
+        });
+
+        onSnapshot(collection(db, "audit_trail"), snap => {
+            window.dbAudit = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            window.renderPrivacySection();
         });
 
         window.onload = () => {
-            document.getElementById('currentOpBadge').innerText = `👤 ${window.activeOperator}`;
-            document.body.setAttribute('data-qualifica', sessionStorage.getItem("activeQualifica") || "Direttore Sanitario");
-            window.initChecklist();
-            window.aggiornaDatiCSAT(true);
+            if(window.controllaModalitaSurveyQr()) return;
 
-            // Auto-polling ogni 60 secondi per aggiornare le risposte da Google Fogli in background
-            setInterval(() => {
-                window.aggiornaDatiCSAT(true);
-            }, 60000);
+            document.getElementById('csData').value = new Date().toISOString().slice(0,10);
+            document.getElementById('ncData').value = new Date().toISOString().slice(0,10);
+            window.renderTableChecklist();
         };
     </script>
 </body>
